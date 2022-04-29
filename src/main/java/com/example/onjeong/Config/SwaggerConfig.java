@@ -30,7 +30,11 @@ public class SwaggerConfig implements WebMvcConfigurer {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
+<<<<<<< HEAD
                 .apis(RequestHandlerSelectors.basePackage("com.onjeong"))
+=======
+                .apis(RequestHandlerSelectors.basePackage("com.example.onjeong"))
+>>>>>>> 5d8ce342c6bbb9b2d17ba29629416f8c24779fa5
                 .paths(PathSelectors.any())
                 .build();
     }
