@@ -2,7 +2,6 @@ package com.example.onjeong.controller;
 
 import com.example.onjeong.domain.MyUserDetails;
 import com.example.onjeong.domain.User;
-import com.example.onjeong.dto.UserLoginDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;

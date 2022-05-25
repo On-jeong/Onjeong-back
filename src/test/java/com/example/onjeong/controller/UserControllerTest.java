@@ -26,29 +26,14 @@ public class UserControllerTest {
 
     @Test
     public void test(){
-        /*
+
         UserJoinDto userJoinDto=new UserJoinDto();
         userJoinDto.setUserName("홍길동");
         userJoinDto.setUserNickname("abc");
         userJoinDto.setUserPassword("abc123");
         userJoinDto.setUserStatus("daughter");
-        userJoinDto.setUserBirth(Date.valueOf(LocalDate.of(2022,7,7)));
-        userController.join(userJoinDto);
 
-        User user =new User();
-        user.setUserName("홍길동");
-        user.setUserNickname("abc");
-        user.setUserPassword("abc123");
-        user.setUserStatus("daughter");
-        user.setUserBirth(Date.valueOf(LocalDate.of(2022,7,7)));
-        user.setRole(UserRole.USER);
-        userRepository.save(user);
-        User result=userRepository.findById(user.getUserId()).get();
-        System.out.println("user: "+user);
-        System.out.println("result: "+result);
-        assertThat(user.equals(result)).isTrue();
 
-         */
     }
 
     @Test

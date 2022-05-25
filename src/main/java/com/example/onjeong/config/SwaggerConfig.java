@@ -1,4 +1,4 @@
-package com.example.onjeong.Config;
+package com.example.onjeong.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

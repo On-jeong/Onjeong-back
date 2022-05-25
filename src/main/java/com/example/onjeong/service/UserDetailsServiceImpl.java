@@ -2,13 +2,10 @@ package com.example.onjeong.service;
 
 import com.example.onjeong.controller.UserNotFoundException;
 import com.example.onjeong.domain.MyUserDetails;
-import com.example.onjeong.domain.User;
 import com.example.onjeong.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

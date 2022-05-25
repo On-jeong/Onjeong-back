@@ -1,7 +1,6 @@
 package com.example.onjeong.controller;
 
 import com.example.onjeong.domain.User;
-import com.example.onjeong.controller.InputNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -5,7 +5,6 @@ import com.example.onjeong.dto.UserJoinDto;
 import com.example.onjeong.dto.UserJoinedDto;
 import com.example.onjeong.dto.UserLoginDto;
 import io.swagger.annotations.*;
-import com.example.onjeong.repository.UserRepository;
 import com.example.onjeong.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
