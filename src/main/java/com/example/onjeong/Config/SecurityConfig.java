@@ -1,8 +1,8 @@
 package com.example.onjeong.Config;
 
-import com.example.onjeong.controller.CustomAuthenticationFilter;
-import com.example.onjeong.controller.CustomLoginSuccessHandler;
-import lombok.RequiredArgsConstructor;
+import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
+import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,13 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
-import java.net.http.HttpClient;
 
 @Configuration
-//@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITELIST = {
@@ -38,6 +36,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/h2/**"
     };
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Autowired
+    protected SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Override
     public void configure(WebSecurity web) throws Exception{
         //정적 파일 요청에 대해 Security 설정 무시
@@ -51,30 +56,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        /*
-        http.authorizeRequests()
-                //로그인없이 접근 허용하는 url
-                .antMatchers().permitAll()
-                //해당권한을 가지고 있는 사용자만 접근 가능
-                .antMatchers().hasRole("ADMIN")
-                //그 외 모든 요청은 인증과정 필요
-                .anyRequest().authenticated();
-        */
         http.csrf().disable().authorizeRequests()
-            // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 함
-                .anyRequest().permitAll().and()
+                .antMatchers("/login","/accounts").permitAll()
+                // '/admin'의 경우 ADMIN 권한이 있는 사용자만 접근이 가능
+                .antMatchers("/admin").hasRole("ADMIN")
+                // 그 외 모든 요청은 인증과정 필요
+                //.anyRequest().authenticated()
             // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
             // form 기반의 로그인에 대해 비활성화 한다.
                 .formLogin()
                 .disable()
-                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .logout() // 로그아웃 처리
+                .logoutUrl("/logout") // 로그아웃 처리 URL
+                .logoutSuccessUrl("/login") // 로그아웃 성공 후 이동페이지
+                .invalidateHttpSession(true);
+
+        http.addFilterAfter(
+                jwtAuthenticationFilter,
+                CorsFilter.class
+        );
     }
 
     //필터추가
     @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {   //
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setFilterProcessesUrl("/login");
         customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());

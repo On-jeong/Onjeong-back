@@ -3,6 +3,7 @@ package com.example.onjeong.Config;
 import lombok.extern.log4j.Log4j2;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -12,6 +13,7 @@ public class HeaderFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final HttpServletResponse res = (HttpServletResponse) response;
+        final HttpServletRequest req = (HttpServletRequest) request;
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST");
         res.setHeader("Access-Control-Max-Age", "3600");
@@ -23,5 +25,4 @@ public class HeaderFilter implements Filter {
 
         chain.doFilter(request, response);
     }
-
 }
