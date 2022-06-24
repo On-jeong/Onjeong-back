@@ -1,4 +1,4 @@
-package com.example.onjeong.config;
+package com.example.onjeong.Config;
 
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;

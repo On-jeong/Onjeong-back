@@ -1,4 +1,4 @@
-package com.example.onjeong.config;
+package com.example.onjeong.Config;
 
 import lombok.extern.log4j.Log4j2;
 

@@ -1,5 +1,6 @@
 package com.example.onjeong.user.domain;
 
+
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.quesiton.domain.Answer;
