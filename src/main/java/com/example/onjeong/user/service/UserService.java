@@ -1,6 +1,8 @@
 package com.example.onjeong.user.service;
 
 import com.example.onjeong.family.domain.Family;
+import com.example.onjeong.profile.domain.Flower;
+import com.example.onjeong.profile.repository.FlowerRepository;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -28,6 +30,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
+    private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -45,7 +48,16 @@ public class UserService {
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
                 .build();
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        Flower newFlower = Flower.builder()
+                .flowerBloom(false)
+                .flowerLevel(1)
+                .family(family)
+                .build();
+        flowerRepository.save(newFlower);
+
+        return user;
     }
 
     //가족회원이 있는 회원 가입
