@@ -1,8 +1,10 @@
 package com.example.onjeong.family.domain;
 
+import com.example.onjeong.question.domain.Question;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +20,9 @@ public class Family {
 
     @Column(name = "family_coin", nullable = false)
     private Integer familyCoin;
+
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Question> questionList;
 
     public Family(){
         this.familyCoin=0;
