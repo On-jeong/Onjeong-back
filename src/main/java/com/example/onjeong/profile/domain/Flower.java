@@ -4,6 +4,7 @@ import com.example.onjeong.family.domain.Family;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -26,10 +27,12 @@ public class Flower {
     @Column(name="flower_level")
     private Integer flowerLevel;
 
+    @Column(name="flower_bloom_date")
+    private LocalDate flowerBloomDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "family_id", nullable = false)
     private Family family;
-
 
     public void levelUp(){
         this.flowerLevel++;

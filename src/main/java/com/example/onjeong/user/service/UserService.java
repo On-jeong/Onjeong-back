@@ -48,7 +48,7 @@ public class UserService {
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
                 .build();
-        userRepository.save(user);
+        User getUser = userRepository.save(user);
 
         Flower newFlower = Flower.builder()
                 .flowerBloom(false)
@@ -57,7 +57,7 @@ public class UserService {
                 .build();
         flowerRepository.save(newFlower);
 
-        return user;
+        return getUser;
     }
 
     //가족회원이 있는 회원 가입

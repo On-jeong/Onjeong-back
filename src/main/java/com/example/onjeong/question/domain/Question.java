@@ -17,13 +17,13 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="question_id")
+    @Column(name="question_id", nullable = false, unique = true)
     private Long questionId;
 
-    @Column(name="question_content")
+    @Column(name="question_content", nullable = false)
     private String questionContent;
 
-    @Column(name = "question_time")
+    @Column(name = "question_time", nullable = false)
     private LocalDateTime questionTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

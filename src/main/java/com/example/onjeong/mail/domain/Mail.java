@@ -15,10 +15,10 @@ public class Mail {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="mail_id")
+    @Column(name="mail_id", nullable = false, unique = true)
     private Long mailId;
 
-    @Column(name="mail_content")
+    @Column(name="mail_content", nullable = false)
     private String mailContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,16 +29,16 @@ public class Mail {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiveUser;
 
-    @Column(name="send_time")
+    @Column(name="send_time", nullable = false)
     private LocalDateTime sendTime;
 
-    @Column(name="check_read")
+    @Column(name="check_read", nullable = false)
     boolean checkRead;
 
-    @Column(name="sender_delete")
+    @Column(name="sender_delete", nullable = false)
     boolean senderWantDelete;
 
-    @Column(name="receiver_delete")
+    @Column(name="receiver_delete", nullable = false)
     boolean receiverWantDelete;
 
     public void Read(){

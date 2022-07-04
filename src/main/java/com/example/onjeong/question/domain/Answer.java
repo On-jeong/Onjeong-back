@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 public class Answer {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="answer_id")
+    @Column(name="answer_id", nullable = false, unique = true)
     private Long answerId;
 
-    @Column(name="answer_content")
+    @Column(name="answer_content", nullable = false)
     private String answerContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,7 +27,7 @@ public class Answer {
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    @Column(name = "answer_time")
+    @Column(name = "answer_time", nullable = false)
     private LocalDateTime answerTime;
 
     public void updateContent(String content) {
