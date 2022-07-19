@@ -1,11 +1,11 @@
-package com.example.onjeong.profile.controller;
+package com.example.onjeong.home.controller;
 
-import com.example.onjeong.profile.domain.CoinHistory;
-import com.example.onjeong.profile.domain.CoinHistoryType;
-import com.example.onjeong.profile.domain.FlowerKind;
-import com.example.onjeong.profile.dto.CoinHistoryDto;
-import com.example.onjeong.profile.service.CoinService;
-import com.example.onjeong.profile.service.FlowerService;
+import com.example.onjeong.home.domain.CoinHistoryType;
+import com.example.onjeong.home.domain.FlowerKind;
+import com.example.onjeong.home.dto.CoinHistoryDto;
+import com.example.onjeong.home.dto.FlowerDto;
+import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.home.service.FlowerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +16,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Api(tags="Profile")
+@Api(tags="Home")
 @RequiredArgsConstructor
 @RestController
-public class ProfileController {
+public class HomeController {
 
     private final FlowerService flowerService;
     private final CoinService coinService;
 
     @ApiOperation(value = "패밀리 레벨에 따른 꽃 종류")
     @GetMapping("/flowers")
-    public ResponseEntity<FlowerKind> flowers() {
+    public ResponseEntity<FlowerDto> flowers() {
         return ResponseEntity.ok(flowerService.showFlower());
     }
 
     @ApiOperation(value = "만개한 꽃장 보여주기")
     @GetMapping("/flowers-bloom")
-    public ResponseEntity<List<FlowerKind>> flowersBloom() {
+    public ResponseEntity<List<FlowerDto>> flowersBloom() {
         return ResponseEntity.ok(flowerService.showFlowerBloom());
     }
 
@@ -50,8 +50,9 @@ public class ProfileController {
 
     @ApiOperation(value = "랜덤하게 데일리 코인 지급")
     @PostMapping("/coins-random")
-    public ResponseEntity<CoinHistoryDto> coinsRandom() {
+    public ResponseEntity<Integer> coinsRandom() {
         int randAmount = (int) (Math.random() * (100 - 10 + 1)) + 10; // 10~100 사이 랜덤
-        return ResponseEntity.ok(coinService.coinSave(CoinHistoryType.RAND, randAmount));
+        CoinHistoryDto coinRand = coinService.coinSave(CoinHistoryType.RAND, randAmount);
+        return ResponseEntity.ok(coinRand.getAmount());
     }
 }

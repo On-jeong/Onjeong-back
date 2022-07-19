@@ -87,6 +87,22 @@ public class QuestionService {
         return answerDtos;
     }
 
+    public List<String> showAllAnswerFamily(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+
+        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+
+        List<String> answeredFamily = new ArrayList<>();
+        List<Answer> answers = answerRepository.findByQuestion(question);
+
+        for(Answer a : answers){
+            answeredFamily.add(a.getUser().getUserStatus());
+        }
+
+        return answeredFamily;
+    }
+
     @Transactional
     public AnswerDto registerAnswer(String answerContent){
 

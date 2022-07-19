@@ -1,8 +1,6 @@
-package com.example.onjeong.profile.repository;
+package com.example.onjeong.home.repository;
 
-import com.example.onjeong.profile.domain.CoinHistory;
-import com.example.onjeong.profile.domain.Flower;
-import com.example.onjeong.question.domain.Question;
+import com.example.onjeong.home.domain.Flower;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

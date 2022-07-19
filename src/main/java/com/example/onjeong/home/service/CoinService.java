@@ -1,12 +1,10 @@
-package com.example.onjeong.profile.service;
+package com.example.onjeong.home.service;
 
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.profile.domain.CoinHistory;
-import com.example.onjeong.profile.domain.CoinHistoryType;
-import com.example.onjeong.profile.domain.Flower;
-import com.example.onjeong.profile.dto.CoinHistoryDto;
-import com.example.onjeong.profile.repository.CoinHistoryRepository;
-import com.example.onjeong.profile.repository.FlowerRepository;
+import com.example.onjeong.home.domain.*;
+import com.example.onjeong.home.dto.CoinHistoryDto;
+import com.example.onjeong.home.repository.CoinHistoryRepository;
+import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -80,6 +79,8 @@ public class CoinService {
         if(flower.getFlowerLevel() == 20) { // 만렙이 되면 새로운 꽃 추가
             Flower newFlower = Flower.builder()
                     .flowerBloom(false)
+                    .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
+                    .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
                     .flowerLevel(1)
                     .family(family)
                     .build();

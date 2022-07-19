@@ -1,4 +1,4 @@
-package com.example.onjeong.profile.domain;
+package com.example.onjeong.home.domain;
 
 import com.example.onjeong.family.domain.Family;
 import lombok.*;
@@ -15,16 +15,19 @@ public class Flower {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="flower_id")
+    @Column(name="flower_id", nullable = false, unique = true)
     private Long flowerId;
 
     @Enumerated(EnumType.STRING)
     private FlowerKind flowerKind;
 
+    @Enumerated(EnumType.STRING)
+    private FlowerColor flowerColor;
+
     @Column(name="flower_bloom")
     private Boolean flowerBloom;
 
-    @Column(name="flower_level")
+    @Column(name="flower_level", nullable = false)
     private Integer flowerLevel;
 
     @Column(name="flower_bloom_date")
@@ -39,6 +42,7 @@ public class Flower {
 
         if(this.flowerLevel == 20){
             this.flowerBloom = true;
+            this.flowerBloomDate = LocalDate.now();
         }
     }
 }

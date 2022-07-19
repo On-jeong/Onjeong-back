@@ -1,7 +1,7 @@
 package com.example.onjeong.family.domain;
 
-import com.example.onjeong.profile.domain.CoinHistory;
-import com.example.onjeong.profile.domain.Flower;
+import com.example.onjeong.home.domain.CoinHistory;
+import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.question.domain.Question;
 import lombok.*;
 

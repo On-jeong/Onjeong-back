@@ -1,6 +1,6 @@
-package com.example.onjeong.profile.dto;
+package com.example.onjeong.home.dto;
 
-import com.example.onjeong.profile.domain.CoinHistoryType;
+import com.example.onjeong.home.domain.CoinHistoryType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.example.onjeong.profile.domain;
+package com.example.onjeong.home.domain;
 
 import com.example.onjeong.family.domain.Family;
 import lombok.*;
