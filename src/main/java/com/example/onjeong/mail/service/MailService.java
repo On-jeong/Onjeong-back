@@ -55,7 +55,7 @@ public class MailService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByUserNickname(authentication.getName());
 
-        List<Mail> mailList = mailRepository.findByReceiver(user.get());
+        List<Mail> mailList = mailRepository.findByReceiver(user.get().getUserId());
         List<MailDto> mailDtoList = new ArrayList<>();
 
         for(Mail m : mailList){
@@ -76,7 +76,7 @@ public class MailService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userRepository.findByUserNickname(authentication.getName());
 
-        List<Mail> mailList = mailRepository.findBySender(user.get());
+        List<Mail> mailList = mailRepository.findBySender(user.get().getUserId());
         List<MailDto> mailDtoList = new ArrayList<>();
 
         for(Mail m : mailList){
@@ -112,19 +112,23 @@ public class MailService {
 
     // 특정 보낸 메시지 삭제
     @Transactional
-    public boolean deleteSendMail(Long mailId){
-        Mail mail = mailRepository.findById(mailId)
-                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
-        mail.deleteSend();
+    public boolean deleteSendMail(Long[] mailIds){
+        for(Long mailId : mailIds){
+            Mail mail = mailRepository.findById(mailId)
+                    .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
+            mail.deleteSend();
+        }
         return true;
     }
 
     // 특정 받은 메시지 삭제
     @Transactional
-    public boolean deleteReceiveMail(Long mailId){
-        Mail mail = mailRepository.findById(mailId)
-                .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
-        mail.deleteReceive();
+    public boolean deleteReceiveMail(Long[] mailIds){
+        for(Long mailId : mailIds) {
+            Mail mail = mailRepository.findById(mailId)
+                    .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
+            mail.deleteReceive();
+        }
         return true;
     }
 

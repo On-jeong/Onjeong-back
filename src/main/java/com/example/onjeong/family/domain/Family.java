@@ -1,5 +1,7 @@
 package com.example.onjeong.family.domain;
 
+import com.example.onjeong.home.domain.CoinHistory;
+import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.question.domain.Question;
 import lombok.*;
 
@@ -24,7 +26,17 @@ public class Family {
     @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Question> questionList;
 
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Flower> flowerList;
+
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<CoinHistory> coinHistoryList;
+
     public Family(){
         this.familyCoin=0;
+    }
+
+    public void updateCoin(Integer amount){
+        this.familyCoin += amount;
     }
 }

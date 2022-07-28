@@ -1,6 +1,10 @@
 package com.example.onjeong.user.service;
 
 import com.example.onjeong.family.domain.Family;
+import com.example.onjeong.home.domain.Flower;
+import com.example.onjeong.home.domain.FlowerColor;
+import com.example.onjeong.home.domain.FlowerKind;
+import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -20,6 +24,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
+import java.util.Random;
 
 
 @Service
@@ -28,6 +33,7 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
+    private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -45,7 +51,18 @@ public class UserService {
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
                 .build();
-        return userRepository.save(user);
+        User getUser = userRepository.save(user);
+
+        Flower newFlower = Flower.builder()
+                .flowerBloom(false)
+                .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
+                .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
+                .flowerLevel(1)
+                .family(family)
+                .build();
+        flowerRepository.save(newFlower);
+
+        return getUser;
     }
 
     //가족회원이 있는 회원 가입
