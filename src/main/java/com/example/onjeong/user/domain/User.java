@@ -40,7 +40,7 @@ public class User extends Common implements Serializable {
     private UserRole role;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
 

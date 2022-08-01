@@ -1,11 +1,14 @@
 package com.example.onjeong.family.domain;
 
+import com.example.onjeong.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 @AllArgsConstructor
 @Builder
 @Entity
@@ -19,7 +22,6 @@ public class Family {
     @Column(name = "family_coin", nullable = false)
     private Integer familyCoin;
 
-    public Family(){
-        this.familyCoin=0;
-    }
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<User> users = new ArrayList<>();
 }
