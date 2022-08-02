@@ -3,9 +3,11 @@ package com.example.onjeong.family.domain;
 import com.example.onjeong.home.domain.CoinHistory;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.question.domain.Question;
+import com.example.onjeong.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,6 +33,9 @@ public class Family {
 
     @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CoinHistory> coinHistoryList;
+
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<User> users = new ArrayList<>();
 
     public Family(){
         this.familyCoin=0;
