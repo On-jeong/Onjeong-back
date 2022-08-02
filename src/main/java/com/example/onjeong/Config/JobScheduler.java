@@ -18,7 +18,7 @@ public class JobScheduler {
     private final JobConfig jobConfig;
 
     // 매주 월요일 0시에 실행
-    @Scheduled(cron="0 37 23 1/1 * ?")
+    @Scheduled(cron="0 0 0 ? * MON")
     public void task() {
 
         try {
