@@ -1,12 +1,15 @@
 package com.example.onjeong.user.domain;
 
 import com.example.onjeong.family.domain.Family;
+import com.example.onjeong.mail.domain.Mail;
+import com.example.onjeong.question.domain.Answer;
 import lombok.*;
 
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +46,15 @@ public class User extends Common implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
+
+    @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Mail> sendMailList;
+
+    @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Mail> receiveMailList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Answer> answerList;
 
     public void updateUserName(String userName){ this.userName=userName; }
 
