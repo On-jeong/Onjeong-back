@@ -9,6 +9,7 @@ import com.example.onjeong.mail.service.MailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +25,10 @@ public class MailController {
 
     @ApiOperation(value = "메시지 전송")
     @PostMapping("/mails")
-    public ResponseEntity<Boolean> sendMail(@RequestBody MailRequestDto mailSendDto) {
-        coinService.coinSave(CoinHistoryType.MAIL, 10);
+    public ResponseEntity<HttpStatus> sendMail(@RequestBody MailRequestDto mailSendDto) {
         mailService.sendMail(mailSendDto);
-        return ResponseEntity.ok(true);
+        coinService.coinSave(CoinHistoryType.MAIL, 10);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value = "받은 메일함 확인")

@@ -96,6 +96,7 @@ public class QuestionService {
             if(!answeredFamily.contains(a.getUser())) answeredFamily.add(a.getUser());
         }
 
+        System.out.println(answeredFamily.size());
         if(answeredFamily.equals(question.getFamily().getUsers())) return true;
         else return false;
 

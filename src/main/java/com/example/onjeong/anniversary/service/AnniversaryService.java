@@ -85,12 +85,12 @@ public class AnniversaryService {
 
     //해당 일의 특수일정 삭제하기
     @Transactional
-    public String anniversaryRemove(final LocalDate anniversaryDate, final Long anniversaryId){
+    public Boolean anniversaryRemove(final LocalDate anniversaryDate, final Long anniversaryId){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
-        if(anniversaryRepository.deleteByAnniversaryDateAndAnniversaryIdAndFamily(anniversaryDate,anniversaryId,family).equals("1")) return "true";
-        else return "false";
+        if(anniversaryRepository.deleteByAnniversaryDateAndAnniversaryIdAndFamily(anniversaryDate,anniversaryId,family).equals("1")) return true;
+        else return false;
     }
 }
