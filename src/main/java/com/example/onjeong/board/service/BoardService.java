@@ -38,7 +38,7 @@ public class BoardService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user=userRepository.findByUserNickname(authentication.getName()).get();
         List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,user.getFamily()).get();
-        List<BoardDto> result= new ArrayList<>();
+        final List<BoardDto> result= new ArrayList<>();
         for(Board b: boards){
             final BoardDto boardDto= BoardDto.builder()
                     .boardId(b.getBoardId())

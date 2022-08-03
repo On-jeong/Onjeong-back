@@ -1,6 +1,5 @@
 package com.example.onjeong.anniversary.controller;
 
-import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.anniversary.dto.AnniversaryDto;
 import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;

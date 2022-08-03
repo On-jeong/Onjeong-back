@@ -1,11 +1,5 @@
 package com.example.onjeong.user.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.repository.ProfileRepository;
@@ -16,8 +10,6 @@ import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,18 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -146,12 +130,11 @@ public class UserService {
     public UserDto userGet(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName()).get();
-        UserDto userDto= UserDto.builder()
+        return UserDto.builder()
                 .userId(user.getUserId())
                 .userName(user.getUserName())
                 .userStatus(user.getUserStatus())
                 .userBirth(user.getUserBirth())
                 .build();
-        return userDto;
     }
 }
