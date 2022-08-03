@@ -1,6 +1,7 @@
 package com.example.onjeong.anniversary.controller;
 
 import com.example.onjeong.anniversary.domain.Anniversary;
+import com.example.onjeong.anniversary.dto.AnniversaryDto;
 import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;
 import com.example.onjeong.anniversary.service.AnniversaryService;
@@ -27,29 +28,29 @@ public class AnniversaryController {
 
     @ApiOperation(value="월별 모든 특수일정 가져오기")
     @GetMapping(value = "/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Map<LocalDate,Anniversary>>> allAnniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
-        List<Map<LocalDate,Anniversary>> result= anniversaryService.allAnniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
+    public ResponseEntity<List<Map<LocalDate, AnniversaryDto>>> allAnniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
+        List<Map<LocalDate,AnniversaryDto>> result= anniversaryService.allAnniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value="해당 일의 특수일정 가져오기")
-    @GetMapping(value = "/anniversary/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Anniversary>> anniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
-        List<Anniversary> result= anniversaryService.anniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
+    @GetMapping(value = "/anniversaries/days/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AnniversaryDto>> anniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
+        List<AnniversaryDto> result= anniversaryService.anniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value="해당 일의 특수일정 등록하기")
-    @PostMapping(value = "/anniversary/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Anniversary> anniversaryRegister(@PathVariable("anniversaryDate") String anniversaryDate, @RequestBody AnniversaryRegisterDto anniversaryRegisterDto){
-        Anniversary result= anniversaryService.anniversaryRegister(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryRegisterDto);
+    @PostMapping(value = "/anniversaries/days/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> anniversaryRegister(@PathVariable("anniversaryDate") String anniversaryDate, @RequestBody AnniversaryRegisterDto anniversaryRegisterDto){
+        String result= anniversaryService.anniversaryRegister(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryRegisterDto);
         return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value="해당 일의 특수일정 수정하기")
-    @PutMapping(value = "/anniversary/{anniversaryDate}/{anniversaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Anniversary> anniversaryModify(@PathVariable("anniversaryDate") String anniversaryDate,@PathVariable("anniversaryId") Long anniversaryId, @RequestBody AnniversaryModifyDto anniversaryModifyDto){
-        Anniversary result= anniversaryService.anniversaryModify(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryId,anniversaryModifyDto);
+    @PutMapping(value = "/anniversaries/days/{anniversaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> anniversaryModify(@PathVariable("anniversaryId") Long anniversaryId, @RequestBody AnniversaryModifyDto anniversaryModifyDto){
+        String result= anniversaryService.anniversaryModify(anniversaryId,anniversaryModifyDto);
         return ResponseEntity.ok(result);
     }
 
@@ -58,5 +59,6 @@ public class AnniversaryController {
     public ResponseEntity<HttpStatus> anniversaryRemove(@PathVariable("anniversaryDate") String anniversaryDate,@PathVariable("anniversaryId") Long anniversaryId){
         anniversaryService.anniversaryRemove(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryId);
         return ResponseEntity.ok(HttpStatus.OK);
+
     }
 }

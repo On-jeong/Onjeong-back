@@ -22,15 +22,21 @@ public class Anniversary {
     @Column(name = "anniversary_content", nullable = false)     //글자수 제한 필요
     private String anniversaryContent;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "anniversary_type", nullable = false)     //글자수 제한 필요
+    private AnniversaryType anniversaryType;
+
     @Column(name = "anniversary_date", nullable = false)
     private LocalDate anniversaryDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
 
 
     public void updateAnniversaryContent(String anniversaryContent){ this.anniversaryContent=anniversaryContent; }
+
+    public void updateAnniversaryType(AnniversaryType anniversaryType){ this.anniversaryType=anniversaryType; }
 
     public void updateAnniversaryDate(LocalDate anniversaryDate){ this.anniversaryDate=anniversaryDate; }
 }

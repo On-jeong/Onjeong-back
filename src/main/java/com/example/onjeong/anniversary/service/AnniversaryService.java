@@ -1,6 +1,8 @@
 package com.example.onjeong.anniversary.service;
 
 import com.example.onjeong.anniversary.domain.Anniversary;
+import com.example.onjeong.anniversary.domain.AnniversaryType;
+import com.example.onjeong.anniversary.dto.AnniversaryDto;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
@@ -22,75 +24,111 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class AnniversaryService {
     private final AnniversaryRepository anniversaryRepository;
-    private final FamilyRepository familyRepository;
     private final UserRepository userRepository;
 
     //월별 모든 특수일정 가져오기
     @Transactional
-    public List<Map<LocalDate,Anniversary>> allAnniversaryGet(final LocalDate anniversaryDate){
+    public List<Map<LocalDate, AnniversaryDto>> allAnniversaryGet(final LocalDate anniversaryDate){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user=userRepository.findByUserNickname(authentication.getName());
-        Long familyId=user.get().getFamily().getFamilyId();
+        Optional<User> user= userRepository.findByUserNickname(authentication.getName());
+        Family family= user.get().getFamily();
 
         LocalDate start= anniversaryDate.withDayOfMonth(1);
         LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
-        List<Map<LocalDate,Anniversary>> result= new ArrayList<>();
-        for(Anniversary a:anniversaryRepository.findAllByAnniversaryDateBetween(start,end).get()){
-            if(familyId==a.getFamily().getFamilyId()){
-                Map<LocalDate,Anniversary> map=new HashMap<>();
-                map.put(a.getAnniversaryDate(),a);
-                result.add(map);
-            }
+        List<Map<LocalDate,AnniversaryDto>> result= new ArrayList<>();
+        for(Anniversary a:anniversaryRepository.findAllByAnniversaryDateBetweenAndFamily(start,end, family).get()){ //해당 패밀리만 가져오는지 체크
+            Map<LocalDate,AnniversaryDto> map=new HashMap<>();
+            final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
+                    .anniversaryId(a.getAnniversaryId())
+                    .anniversaryContent(a.getAnniversaryContent())
+                    .anniversaryType(a.getAnniversaryType())
+                    .build();
+            map.put(a.getAnniversaryDate(),anniversaryDto);
+            result.add(map);
         }
         return result;
     }
 
     //해당 일의 특수일정 가져오기
     @Transactional
-    public List<Anniversary> anniversaryGet(final LocalDate anniversaryDate){
+    public List<AnniversaryDto> anniversaryGet(final LocalDate anniversaryDate){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
-        return anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
+        List<AnniversaryDto> result= new ArrayList<>();
+        List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
+        for(Anniversary a: anniversaries){
+            final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
+                    .anniversaryId(a.getAnniversaryId())
+                    .anniversaryContent(a.getAnniversaryContent())
+                    .anniversaryType(a.getAnniversaryType())
+                    .build();
+            result.add(anniversaryDto);
+        }
+        return result;
     }
 
     //해당 일의 특수일정 등록하기
     @Transactional
-    public Anniversary anniversaryRegister(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
+    public String anniversaryRegister(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
 
-        final Anniversary anniversary= Anniversary.builder()
-                .anniversaryDate(anniversaryDate)
-                .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
-                .family(user.get().getFamily())
-                .build();
-
-        return anniversaryRepository.save(anniversary);
+        if(anniversaryRegisterDto.getAnniversaryType().equals("ANNIVERSARY")) {
+            final Anniversary anniversary= Anniversary.builder()
+                    .anniversaryDate(anniversaryDate)
+                    .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
+                    .anniversaryType(AnniversaryType.ANNIVERSARY)
+                    .family(user.get().getFamily())
+                    .build();
+            anniversaryRepository.save(anniversary);
+            return "true";
+        }
+        else {
+            final Anniversary anniversary = Anniversary.builder()
+                    .anniversaryDate(anniversaryDate)
+                    .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
+                    .anniversaryType(AnniversaryType.SPECIAL_SCHEDULE)
+                    .family(user.get().getFamily())
+                    .build();
+            anniversaryRepository.save(anniversary);
+            return "true";
+        }
     }
 
     //해당 일의 특수일정 수정하기
     @Transactional
-    public Anniversary anniversaryModify(final LocalDate anniversaryDate, final Long anniversaryId, final AnniversaryModifyDto anniversaryModifyDto){
+    public String anniversaryModify(final Long anniversaryId, final AnniversaryModifyDto anniversaryModifyDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
-        Optional<Anniversary> anniversary= anniversaryRepository.findByAnniversaryDateAndAnniversaryIdAndFamily(anniversaryDate,anniversaryId,family);
+        Optional<Anniversary> anniversary= anniversaryRepository.findByAnniversaryIdAndFamily(anniversaryId,family);
         anniversary.get().updateAnniversaryContent(anniversaryModifyDto.getAnniversaryContent());
-        anniversary.get().updateAnniversaryDate(anniversaryDate);       //변경 x
-        return anniversaryRepository.save(anniversary.get());
+        if(anniversaryModifyDto.getAnniversaryType().equals("ANNIVERSARY")) anniversary.get().updateAnniversaryType(AnniversaryType.ANNIVERSARY);
+        else anniversary.get().updateAnniversaryType(AnniversaryType.SPECIAL_SCHEDULE);
+        anniversary.get().updateAnniversaryDate(anniversaryModifyDto.getAnniversaryDate());       //변경 x
+        return "true";
     }
 
     //해당 일의 특수일정 삭제하기
     @Transactional
+<<<<<<< HEAD
     public Boolean anniversaryRemove(final LocalDate anniversaryDate, final Long anniversaryId){
+=======
+    public String anniversaryRemove(final Long anniversaryId){
+>>>>>>> fb8fcf4d4e8117bf277d169b87f4490f67710f1a
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
+<<<<<<< HEAD
         if(anniversaryRepository.deleteByAnniversaryDateAndAnniversaryIdAndFamily(anniversaryDate,anniversaryId,family).equals("1")) return true;
         else return false;
+=======
+        if(anniversaryRepository.deleteByAnniversaryIdAndFamily(anniversaryId,family).equals("1")) return "true";
+        else return "false";
+>>>>>>> fb8fcf4d4e8117bf277d169b87f4490f67710f1a
     }
 }
