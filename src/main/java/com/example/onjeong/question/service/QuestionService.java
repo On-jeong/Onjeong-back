@@ -34,25 +34,6 @@ public class QuestionService {
     private final AnswerRepository answerRepository;
     private final FamilyRepository familyRepository;
 
-    // 관리자용 질문 등록
-    @Transactional
-    public Boolean registerQuestion(String questionContent){
-        List<Family> families = familyRepository.findAll();
-        List<Question> questionList = new ArrayList<>();
-
-        for(Family f : families){
-            Question q = Question.builder()
-                .questionContent(questionContent)
-                .questionTime(LocalDateTime.now())
-                .family(f)
-                .build();
-            questionList.add(q);
-        }
-
-        questionRepository.saveAll(questionList);
-
-        return true;
-    }
 
     public QuestionDto showQuestion(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -101,6 +82,23 @@ public class QuestionService {
         }
 
         return answeredFamily;
+    }
+
+    public Boolean answerFamilyCheck(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+
+        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+
+        List<Answer> answers = answerRepository.findByQuestion(question);
+        List<User> answeredFamily = new ArrayList<>();
+        for(Answer a : answers){
+            if(!answeredFamily.contains(a.getUser())) answeredFamily.add(a.getUser());
+        }
+
+        if(answeredFamily.equals(question.getFamily().getUsers())) return true;
+        else return false;
+
     }
 
     @Transactional

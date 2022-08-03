@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import com.example.onjeong.home.domain.CoinHistory;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.question.domain.Question;
+import com.example.onjeong.user.domain.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
