@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
     //Map<LocalDate,Anniversary> findAllByAnniversaryDateBetween(LocalDate start, LocalDate end);
-    Optional<List<Anniversary>> findAllByAnniversaryDateBetween(LocalDate start, LocalDate end);
+    Optional<List<Anniversary>> findAllByAnniversaryDateBetweenAndFamily(LocalDate start, LocalDate end, Family family);
     Optional<List<Anniversary>> findAllByAnniversaryDateAndFamily(LocalDate anniversaryDate, Family family);
-    Optional<Anniversary> findByAnniversaryDateAndAnniversaryIdAndFamily(LocalDate anniversaryDate, Long anniversaryId, Family family);
-    String deleteByAnniversaryDateAndAnniversaryIdAndFamily(LocalDate anniversaryDate, Long anniversaryId, Family family);
+    Optional<Anniversary> findByAnniversaryIdAndFamily(Long anniversaryId, Family family);
+    String deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
 }
