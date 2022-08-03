@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
 	implementation 'mysql:mysql-connector-java'
+
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'

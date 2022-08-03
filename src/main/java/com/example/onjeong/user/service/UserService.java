@@ -7,8 +7,15 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.family.domain.Family;
+
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.repository.ProfileRepository;
+
+import com.example.onjeong.home.domain.Flower;
+import com.example.onjeong.home.domain.FlowerColor;
+import com.example.onjeong.home.domain.FlowerKind;
+import com.example.onjeong.home.repository.FlowerRepository;
+
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -37,8 +44,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +55,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
+    private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
@@ -64,9 +73,18 @@ public class UserService {
                 .userBirth(userJoinDto.getUserBirth())
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
-                .build();
+                .build();               
         User savedUser= userRepository.save(user);
         profileRepository.save(Profile.builder().user(savedUser).family(family).build());
+        
+        Flower newFlower = Flower.builder()
+                .flowerBloom(false)
+                .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
+                .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
+                .flowerLevel(1)
+                .family(family)
+                .build();
+        flowerRepository.save(newFlower);
         return savedUser;
     }
 
