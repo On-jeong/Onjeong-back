@@ -1,10 +1,21 @@
 package com.example.onjeong.user.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.family.domain.Family;
+
+import com.example.onjeong.profile.domain.Profile;
+import com.example.onjeong.profile.repository.ProfileRepository;
+
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.domain.FlowerColor;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
+
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -12,6 +23,8 @@ import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,12 +33,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
+import java.util.UUID;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +54,7 @@ import java.util.Random;
 public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
+    private final ProfileRepository profileRepository;
     private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -40,8 +62,9 @@ public class UserService {
     //가족회원이 없는 회원 가입
     @Transactional
     public User signUp(final UserJoinDto userJoinDto){
-        Family family=new Family();
-
+        final Family family= Family.builder()
+                .familyCoin(0)
+                .build();
         final User user= User.builder()
                 .userName(userJoinDto.getUserName())
                 .userNickname(userJoinDto.getUserNickname())
@@ -50,9 +73,10 @@ public class UserService {
                 .userBirth(userJoinDto.getUserBirth())
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
-                .build();
-        User getUser = userRepository.save(user);
-
+                .build();               
+        User savedUser= userRepository.save(user);
+        profileRepository.save(Profile.builder().user(savedUser).family(family).build());
+        
         Flower newFlower = Flower.builder()
                 .flowerBloom(false)
                 .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
@@ -61,8 +85,7 @@ public class UserService {
                 .family(family)
                 .build();
         flowerRepository.save(newFlower);
-
-        return getUser;
+        return savedUser;
     }
 
     //가족회원이 있는 회원 가입
@@ -81,7 +104,9 @@ public class UserService {
                     .role(UserRole.ROLE_USER)
                     .family(joinedUser.get().getFamily())
                     .build();
-            return userRepository.save(user);
+            User savedUser= userRepository.save(user);
+            profileRepository.save(Profile.builder().user(savedUser).family(joinedUser.get().getFamily()).build());
+            return savedUser;
         }
         else{
             return null;
@@ -103,29 +128,27 @@ public class UserService {
 
     //회원정보 수정
     @Transactional
-    public User userInformationModify(final UserAccountsDto userAccountsDto){
-        String userNickname=userAccountsDto.getUserNickname();
-        Optional<User> user=userRepository.findByUserNickname(userNickname);
+    public String userInformationModify(final UserAccountsDto userAccountsDto){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user= userRepository.findByUserNickname(authentication.getName()).get();
 
-        user.get().updateUserName(userAccountsDto.getUserName());
-        user.get().updateUserNickname(user.get().getUserNickname());    //변경 x
-        user.get().setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
-        user.get().updateUserStatus(userAccountsDto.getUserStatus());
-        user.get().updateUserBirth(user.get().getUserBirth());      //변경 x
-        user.get().updateRole(UserRole.ROLE_USER);
-        user.get().updateFamily(user.get().getFamily());            //변경 x
-
-        return userRepository.save(user.get());
+        user.updateUserName(userAccountsDto.getUserName());
+        user.updateUserNickname(user.getUserNickname());    //변경 x
+        user.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
+        user.updateUserStatus(userAccountsDto.getUserStatus());
+        user.updateUserBirth(userAccountsDto.getUserBirth());      //변경 x
+        user.updateRole(UserRole.ROLE_USER);
+        user.updateFamily(user.getFamily());            //변경 x
+        return "true";
     }
 
     //회원탈퇴
     @Transactional
     public String userDelete(final UserDeleteDto userDeleteDto) throws Exception{
-        String userNickname=userDeleteDto.getUserNickname();
-        Optional<User> user=userRepository.findByUserNickname(userNickname);
-
-        if(passwordEncoder.matches(userDeleteDto.getUserPassword(),user.get().getUserPassword())){
-            userRepository.delete(user.get());
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        if(passwordEncoder.matches(userDeleteDto.getUserPassword(),user.getUserPassword())){
+            userRepository.delete(user);
             return "true";
         }
         else return "false";
@@ -133,5 +156,20 @@ public class UserService {
 
     public boolean isUserNicknameDuplicated(final String userNickname) {
         return userRepository.existsByUserNickname(userNickname);
+    }
+
+
+    //유저 기본정보 알기
+    @Transactional
+    public UserDto userGet(){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        UserDto userDto= UserDto.builder()
+                .userId(user.getUserId())
+                .userName(user.getUserName())
+                .userStatus(user.getUserStatus())
+                .userBirth(user.getUserBirth())
+                .build();
+        return userDto;
     }
 }

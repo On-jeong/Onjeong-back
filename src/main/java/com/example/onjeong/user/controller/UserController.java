@@ -13,11 +13,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 @Api(tags="User")
 @RequiredArgsConstructor
@@ -59,10 +63,10 @@ public class UserController {
     }
 
     @ApiOperation(value="회원정보 수정")
-    @PutMapping(value="/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value="/accounts/user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> userInformationModify (@Validated  @RequestBody UserAccountsDto userAccountsDto){
-        User user=userService.userInformationModify(userAccountsDto);
-        return ResponseEntity.ok(TokenUtils.generateJwtToken(user));
+        String result= userService.userInformationModify(userAccountsDto);
+        return ResponseEntity.ok(result);
     }
 
     @ApiOperation(value = "회원탈퇴")
@@ -82,5 +86,12 @@ public class UserController {
         else result="false";
 
         return result;
+    }
+
+    @ApiOperation(value="유저 기본정보 알기")
+    @GetMapping(value="/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDto> userGet (){
+        UserDto userDto= userService.userGet();
+        return ResponseEntity.ok(userDto);
     }
 }

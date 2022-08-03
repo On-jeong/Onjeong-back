@@ -22,18 +22,23 @@ public class Board {
     @Column(name = "board_content", nullable = false)
     private String boardContent;
 
+    @Column(name = "board_image_url")
+    private String boardImageUrl;
+
     @Column(name = "board_date", nullable = false)
     private LocalDate boardDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private User user;
 
     public void updateBoardContent(String boardContent){ this.boardContent=boardContent; }
 
     public void updateBoardDate(LocalDate boardDate){ this.boardDate=boardDate; }
+
+    public void updateBoardImageUrl(String boardImageUrl){ this.boardImageUrl=boardImageUrl; }
 }

@@ -5,9 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class UserDeleteDto {
-    private String userNickname;
     private String userPassword;
 }
