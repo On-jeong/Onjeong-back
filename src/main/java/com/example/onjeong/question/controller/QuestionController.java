@@ -23,12 +23,6 @@ public class QuestionController {
     private final QuestionService questionService;
     private final CoinService coinService;
 
-    @ApiOperation(value = "이주의 문답 질문 등록하기 - 관리자용")
-    @PostMapping("/questions")
-    public ResponseEntity<Boolean> showQuestion(String questionContent) {
-        return ResponseEntity.ok(questionService.registerQuestion(questionContent));
-    }
-
     @ApiOperation(value = "이주의 문답 질문 보여주기")
     @GetMapping("/questions")
     public ResponseEntity<QuestionDto> showQuestion() {
@@ -49,9 +43,13 @@ public class QuestionController {
 
     @ApiOperation(value = "이주의 문답 답변 작성하기")
     @PostMapping("/answers/register")
-    public ResponseEntity<AnswerDto> registerAnswer(String answerContent) {
-        coinService.coinSave(CoinHistoryType.MAIL, 10);
-        return ResponseEntity.ok(questionService.registerAnswer(answerContent));
+    public ResponseEntity<Boolean> registerAnswer(String answerContent) {
+        questionService.registerAnswer(answerContent);
+
+        if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.MAIL, 210);
+        else coinService.coinSave(CoinHistoryType.MAIL, 10);
+
+        return ResponseEntity.ok(true);
     }
 
     @ApiOperation(value = "이주의 문답 답변 수정하기")

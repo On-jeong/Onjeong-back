@@ -117,6 +117,10 @@ public class MailService {
             Mail mail = mailRepository.findById(mailId)
                     .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
             mail.deleteSend();
+
+            if(mail.isReceiverWantDelete() && mail.isSenderWantDelete()){
+                mailRepository.delete(mail);
+            }
         }
         return true;
     }
@@ -128,17 +132,11 @@ public class MailService {
             Mail mail = mailRepository.findById(mailId)
                     .orElseThrow(() -> new IllegalArgumentException("아이디에 해당하는 메일이 존재하지 않습니다."));
             mail.deleteReceive();
+
+            if(mail.isReceiverWantDelete() && mail.isSenderWantDelete()){
+                mailRepository.delete(mail);
+            }
         }
         return true;
     }
-
-    // 추후 배치 등록 - db에서 메일 완전히 삭제
-    public boolean deleteMail(){
-        List<Mail> mailList = mailRepository.findDeleteMail();
-        for(Mail m : mailList){
-            mailRepository.delete(m);
-        }
-        return true;
-    }
-
 }
