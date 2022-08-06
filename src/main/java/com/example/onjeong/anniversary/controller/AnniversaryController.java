@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,8 +56,8 @@ public class AnniversaryController {
 
     @ApiOperation(value="해당 일의 특수일정 삭제하기")
     @DeleteMapping(value = "/anniversaries/days/{anniversaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> anniversaryRemove(@PathVariable("anniversaryId") Long anniversaryId){
-        String result= anniversaryService.anniversaryRemove(anniversaryId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> anniversaryRemove(@PathVariable("anniversaryId") Long anniversaryId){
+        anniversaryService.anniversaryRemove(anniversaryId);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
