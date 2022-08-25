@@ -62,8 +62,8 @@ public class MailService {
             mailDtoList.add(MailDto.builder()
                     .mailId(m.getMailId())
                     .mailContent(m.getMailContent())
-                    .sendUserName(m.getSendUser().getUserNickname())
-                    .receiveUserName(m.getReceiveUser().getUserNickname())
+                    .sendUserName(m.getSendUser().getUserStatus())
+                    .receiveUserName(m.getReceiveUser().getUserStatus())
                     .checkRead(m.isCheckRead())
                     .sendTime(m.getSendTime())
                     .build());
@@ -83,8 +83,8 @@ public class MailService {
             mailDtoList.add(MailDto.builder()
                     .mailId(m.getMailId())
                     .mailContent(m.getMailContent())
-                    .sendUserName(m.getSendUser().getUserNickname())
-                    .receiveUserName(m.getReceiveUser().getUserNickname())
+                    .sendUserName(m.getSendUser().getUserStatus())
+                    .receiveUserName(m.getReceiveUser().getUserStatus())
                     .checkRead(m.isCheckRead())
                     .sendTime(m.getSendTime())
                     .build());
@@ -103,8 +103,8 @@ public class MailService {
         return MailDto.builder()
                 .mailId(mail.getMailId())
                 .mailContent(mail.getMailContent())
-                .sendUserName(mail.getSendUser().getUserNickname())
-                .receiveUserName(mail.getReceiveUser().getUserNickname())
+                .sendUserName(mail.getSendUser().getUserStatus())
+                .receiveUserName(mail.getReceiveUser().getUserStatus())
                 .checkRead(mail.isCheckRead())
                 .sendTime(mail.getSendTime())
                 .build();
