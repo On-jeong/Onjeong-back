@@ -10,6 +10,8 @@ import com.example.onjeong.home.domain.FlowerColor;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
 
+import com.example.onjeong.user.Auth.JwtTokenProvider;
+import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -30,7 +32,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
-import java.util.UUID;
 import java.util.Random;
 
 @Service
@@ -43,6 +44,7 @@ public class UserService {
     private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     //가족회원이 없는 회원 가입
     @Transactional
@@ -60,7 +62,7 @@ public class UserService {
                 .family(familyRepository.save(family))
                 .build();               
         User savedUser= userRepository.save(user);
-        profileRepository.save(Profile.builder().user(savedUser).family(family).build());
+        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(family).build());
         
         Flower newFlower = Flower.builder()
                 .flowerBloom(false)
@@ -90,7 +92,8 @@ public class UserService {
                     .family(joinedUser.get().getFamily())
                     .build();
             User savedUser= userRepository.save(user);
-            profileRepository.save(Profile.builder().user(savedUser).family(joinedUser.get().getFamily()).build());
+            profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false)
+                    .family(joinedUser.get().getFamily()).build());
             return savedUser;
         }
         else{
@@ -143,7 +146,6 @@ public class UserService {
         return userRepository.existsByUserNickname(userNickname);
     }
 
-
     //유저 기본정보 알기
     @Transactional
     public UserDto userGet(){
@@ -153,7 +155,35 @@ public class UserService {
                 .userId(user.getUserId())
                 .userName(user.getUserName())
                 .userStatus(user.getUserStatus())
-                .userBirth(user.getUserBirth())
+                .userBirth(user.getUserBirth().toString())
                 .build();
     }
+
+
+    @Transactional
+    public String refreshToken(String token, String refreshToken) {
+        String accessToken= null;
+        try {
+            User user = userRepository.findByUserNickname(TokenUtils.getUserNicknameFromToken(token)).orElseThrow();
+            if(user.getRefreshToken().equals(refreshToken)&&jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){   //만료기간 안지남-> access만
+                if(!jwtTokenProvider.validateTokenExceptExpiration(token)){
+                    accessToken = TokenUtils.generateJwtToken(user);
+                }
+                else{
+                    System.out.println("access 토큰이 만료되지 않았습니다.");
+                }
+            }
+            else if(user.getRefreshToken().equals(refreshToken)&&!jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){ //만료기간 지남->다시 로그인
+                //로그인페이지로 이동
+            }
+            else{
+                System.out.println("refresh token이 다릅니다.");
+            }
+
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+        return accessToken;
+    }
+
 }

@@ -26,6 +26,15 @@ public class TokenUtils {
                 .setSubject(user.getUserNickname())
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
+                .setExpiration(createExpireHourForOneYear())
+                .signWith(SignatureAlgorithm.HS256, createSigningKey());
+        return builder.compact();
+    }
+
+    public static String generateJwtRefreshToken(User user) {
+        JwtBuilder builder = Jwts.builder()
+                .setSubject(user.getUserNickname())
+                .setHeader(createHeader())
                 .setExpiration(createExpireDateForOneYear())
                 .signWith(SignatureAlgorithm.HS256, createSigningKey());
         return builder.compact();
@@ -55,9 +64,15 @@ public class TokenUtils {
         return header.split(" ")[1];
     }
 
-    private static Date createExpireDateForOneYear() { // 토큰 만료시간은 30일으로 설정
+    private static Date createExpireHourForOneYear() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 30);
+        c.add(Calendar.HOUR, 2);
+        return c.getTime();
+    }
+
+    private static Date createExpireDateForOneYear() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 14);
         return c.getTime();
     }
 
@@ -69,7 +84,7 @@ public class TokenUtils {
         return header;
     }
 
-    private static Map<String, Object> createClaims(User user) { // 공개 클레임에 사용자의 이름과 이메일을 설정하여 정보를 조회할 수 있다.
+    private static Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userNickname", user.getUserNickname());
         claims.put("userName", user.getUserName());
@@ -82,7 +97,7 @@ public class TokenUtils {
         return new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
-    private static Claims getClaimsFormToken(String token) {
+    public static Claims getClaimsFormToken(String token) {
         return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
                 .parseClaimsJws(token).getBody();
     }
@@ -91,12 +106,4 @@ public class TokenUtils {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("userNickname");
     }
-
-    private static UserRole getRoleFromToken(String token) {
-        Claims claims = getClaimsFormToken(token);
-        return (UserRole) claims.get("role");
-    }
-
-
-
 }

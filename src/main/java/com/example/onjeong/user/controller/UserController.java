@@ -1,5 +1,6 @@
 package com.example.onjeong.user.controller;
 
+import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.*;
@@ -7,10 +8,9 @@ import io.swagger.annotations.*;
 import com.example.onjeong.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -52,11 +52,11 @@ public class UserController {
     }
 
     @ApiOperation(value = "로그아웃")
-    @GetMapping(value = "/logout")
+    @PostMapping(value = "/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response){
-        new SecurityContextLogoutHandler().logout(request,response, SecurityContextHolder.getContext().getAuthentication());
-        return "redirect:/login";
+        return "true";
     }
+
 
     @ApiOperation(value="회원정보 수정")
     @PutMapping(value="/accounts/user", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,4 +90,31 @@ public class UserController {
         UserDto userDto= userService.userGet();
         return ResponseEntity.ok(userDto);
     }
+
+    @ApiOperation(value="기본 홈")
+    @GetMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> homeGet (){
+        return ResponseEntity.ok("home");
+    }
+
+
+    @ApiOperation(value = "토큰 재발급", notes = "토큰을 재발급한다")
+    @PostMapping(value = "/refresh")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ACCESS-TOKEN", value = "access-token", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "REFRESH-TOKEN", value = "refresh-token", required = true, dataType = "String", paramType = "header")
+    })
+    public ResponseEntity<String> refreshToken(
+            @RequestHeader(value="ACCESS-TOKEN") String token,
+            @RequestHeader(value="REFRESH-TOKEN") String refreshToken
+            ) {
+        String accessToken= userService.refreshToken(token, refreshToken);
+        if(accessToken == null) return ResponseEntity.ok("true");
+        else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
+            return ResponseEntity.ok().headers(headers).body("New Access Token 발급");
+        }
+    }
+
 }

@@ -14,7 +14,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
                                        final Object handler) throws IOException {
-        final String header = request.getHeader(AuthConstants.AUTH_HEADER);
+        final String header = request.getHeader(AuthConstants.AUTH_HEADER_ACCESS);
         if (header != null) {
             if (TokenUtils.isValidToken(header)) {
                 return true;

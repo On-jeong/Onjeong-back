@@ -38,9 +38,11 @@ public class User extends Common implements Serializable {
     @Column(name = "user_birth", nullable = false)
     private LocalDate userBirth;
 
-    //@Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Column(name = "refresh_token")
+    private String refreshToken;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -80,5 +82,9 @@ public class User extends Common implements Serializable {
 
     public void updateFamily(Family family){
         this.family=family;
+    }
+
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken=refreshToken;
     }
 }
