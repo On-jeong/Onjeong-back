@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain) throws IOException, ServletException {
         try {
-            String token = req.getHeader(AuthConstants.AUTH_HEADER);
+            String token = req.getHeader(AuthConstants.AUTH_HEADER_ACCESS);
             if (token != null) {
                 String userNickname = TokenUtils.getUserNicknameFromToken(token);
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

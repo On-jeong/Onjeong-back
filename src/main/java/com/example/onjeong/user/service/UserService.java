@@ -1,11 +1,5 @@
 package com.example.onjeong.user.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.family.domain.Family;
 
 import com.example.onjeong.profile.domain.Profile;
@@ -16,6 +10,8 @@ import com.example.onjeong.home.domain.FlowerColor;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
 
+import com.example.onjeong.user.Auth.JwtTokenProvider;
+import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
@@ -23,8 +19,6 @@ import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,19 +27,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import java.util.UUID;
 import java.util.Random;
 
 @Service
@@ -58,6 +44,7 @@ public class UserService {
     private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
     //가족회원이 없는 회원 가입
     @Transactional
@@ -75,7 +62,7 @@ public class UserService {
                 .family(familyRepository.save(family))
                 .build();               
         User savedUser= userRepository.save(user);
-        profileRepository.save(Profile.builder().user(savedUser).family(family).build());
+        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(family).build());
         
         Flower newFlower = Flower.builder()
                 .flowerBloom(false)
@@ -105,7 +92,8 @@ public class UserService {
                     .family(joinedUser.get().getFamily())
                     .build();
             User savedUser= userRepository.save(user);
-            profileRepository.save(Profile.builder().user(savedUser).family(joinedUser.get().getFamily()).build());
+            profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false)
+                    .family(joinedUser.get().getFamily()).build());
             return savedUser;
         }
         else{
@@ -158,18 +146,44 @@ public class UserService {
         return userRepository.existsByUserNickname(userNickname);
     }
 
-
     //유저 기본정보 알기
     @Transactional
     public UserDto userGet(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName()).get();
-        UserDto userDto= UserDto.builder()
+        return UserDto.builder()
                 .userId(user.getUserId())
                 .userName(user.getUserName())
                 .userStatus(user.getUserStatus())
-                .userBirth(user.getUserBirth())
+                .userBirth(user.getUserBirth().toString())
                 .build();
-        return userDto;
     }
+
+
+    @Transactional
+    public String refreshToken(String token, String refreshToken) {
+        String accessToken= null;
+        try {
+            User user = userRepository.findByUserNickname(TokenUtils.getUserNicknameFromToken(token)).orElseThrow();
+            if(user.getRefreshToken().equals(refreshToken)&&jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){   //만료기간 안지남-> access만
+                if(!jwtTokenProvider.validateTokenExceptExpiration(token)){
+                    accessToken = TokenUtils.generateJwtToken(user);
+                }
+                else{
+                    System.out.println("access 토큰이 만료되지 않았습니다.");
+                }
+            }
+            else if(user.getRefreshToken().equals(refreshToken)&&!jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){ //만료기간 지남->다시 로그인
+                //로그인페이지로 이동
+            }
+            else{
+                System.out.println("refresh token이 다릅니다.");
+            }
+
+        }catch (Exception e) {
+            System.out.println(e);
+        }
+        return accessToken;
+    }
+
 }

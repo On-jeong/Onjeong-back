@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAQX4HZPVEGGDVHHK3
+      secretKey: 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
+    s3:
+      bucket: onjeong-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

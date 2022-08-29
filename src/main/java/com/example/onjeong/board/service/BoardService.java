@@ -4,6 +4,7 @@ package com.example.onjeong.board.service;
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.dto.BoardDto;
+import com.example.onjeong.board.dto.ImageDto;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.user.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -38,7 +40,7 @@ public class BoardService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user=userRepository.findByUserNickname(authentication.getName()).get();
         List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,user.getFamily()).get();
-        List<BoardDto> result= new ArrayList<>();
+        final List<BoardDto> result= new ArrayList<>();
         for(Board b: boards){
             final BoardDto boardDto= BoardDto.builder()
                     .boardId(b.getBoardId())
