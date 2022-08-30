@@ -2,7 +2,6 @@ package com.example.onjeong.board.controller;
 
 
 import com.example.onjeong.board.dto.BoardDto;
-import com.example.onjeong.board.dto.ImageDto;
 import com.example.onjeong.board.service.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
