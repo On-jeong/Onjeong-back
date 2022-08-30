@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class EmailDuplicateException extends RuntimeException{
 
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
     public EmailDuplicateException(String message, ErrorCode errorCode){
         super(message);

@@ -37,3 +37,6 @@ aws.yml
 
 ### VS Code ###
 .vscode/
+
+.yml
+.properties

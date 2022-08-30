@@ -2,6 +2,7 @@ package com.example.onjeong.Config;
 
 import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
+import com.example.onjeong.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
 
@@ -37,15 +39,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserRepository userRepository;
 
     @Autowired
-    protected SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    protected SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserRepository userRepository) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userRepository = userRepository;
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception{
-        //정적 파일 요청에 대해 Security 설정 무시
         web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 
@@ -56,24 +59,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.csrf().disable().authorizeRequests()
-                .antMatchers("/login","/accounts").permitAll()
-                // '/admin'의 경우 ADMIN 권한이 있는 사용자만 접근이 가능
-                .antMatchers("/admin").hasRole("ADMIN")
-                // 그 외 모든 요청은 인증과정 필요
-                //.anyRequest().authenticated()
-            // 토큰을 활용하면 세션이 필요 없으므로 STATELESS로 설정하여 Session을 사용하지 않는다.
+        http.authorizeRequests()
+                .antMatchers("/login", "/logout").authenticated()
+                .antMatchers("/board/**").authenticated()
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .anyRequest().permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-            // form 기반의 로그인에 대해 비활성화 한다.
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        http.csrf().disable();
+
+        http
                 .formLogin()
                 .disable()
-                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .logout() // 로그아웃 처리
-                .logoutUrl("/logout") // 로그아웃 처리 URL
-                .logoutSuccessUrl("/login") // 로그아웃 성공 후 이동페이지
-                .invalidateHttpSession(true);
+                .addFilterBefore(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+                .logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.sendRedirect("/home");
+                })
+                .deleteCookies("remember-me");
 
         http.addFilterAfter(
                 jwtAuthenticationFilter,
@@ -93,7 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CustomLoginSuccessHandler customLoginSuccessHandler(){
-        return new CustomLoginSuccessHandler();
+        return new CustomLoginSuccessHandler(userRepository);
     }
 
     @Bean

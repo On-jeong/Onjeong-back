@@ -61,7 +61,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey("JWT", "Authorization-Access", "header");
     }
 
     private SecurityContext securityContext() {
