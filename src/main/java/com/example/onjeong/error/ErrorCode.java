@@ -11,7 +11,7 @@ public enum ErrorCode {
     EMAIL_DUPLICATION(400,"MEMBER-ERR-400","EMAIL DUPLICATED"),
     ;
 
-    private int status;
-    private String errorCode;
-    private String message;
+    final private int status;
+    final private String errorCode;
+    final private String message;
 }

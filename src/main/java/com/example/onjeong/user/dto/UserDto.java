@@ -15,5 +15,5 @@ public class UserDto {
     private Long userId;
     private String userName;
     private String userStatus;
-    private LocalDate userBirth;
+    private String userBirth;
 }

@@ -1,6 +1,5 @@
 package com.example.onjeong.anniversary.controller;
 
-import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.anniversary.dto.AnniversaryDto;
 import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;
@@ -55,10 +54,9 @@ public class AnniversaryController {
     }
 
     @ApiOperation(value="해당 일의 특수일정 삭제하기")
-    @DeleteMapping(value = "/anniversary/{anniversaryDate}/{anniversaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> anniversaryRemove(@PathVariable("anniversaryDate") String anniversaryDate,@PathVariable("anniversaryId") Long anniversaryId){
-        anniversaryService.anniversaryRemove(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryId);
+    @DeleteMapping(value = "/anniversaries/days/{anniversaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<HttpStatus> anniversaryRemove(@PathVariable("anniversaryId") Long anniversaryId){
+        anniversaryService.anniversaryRemove(anniversaryId);
         return ResponseEntity.ok(HttpStatus.OK);
-
     }
 }

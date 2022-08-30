@@ -1,6 +1,5 @@
 package com.example.onjeong.profile.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.profile.domain.*;
 import com.example.onjeong.profile.dto.*;
@@ -42,9 +41,9 @@ public class ProfileService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user= userRepository.findByUserNickname(authentication.getName());
         List<User> users= user.get().getFamily().getUsers();
-        List<FamilyGetDto> result= new ArrayList<>();
+        final List<FamilyGetDto> result= new ArrayList<>();
         for(User u:users){
-            FamilyGetDto familyGetDto= FamilyGetDto.builder()
+            final FamilyGetDto familyGetDto= FamilyGetDto.builder()
                     .userId(u.getUserId())
                     .userStatus(u.getUserStatus())
                     .build();
@@ -55,26 +54,26 @@ public class ProfileService {
 
     //프로필 상단에 개인 정보 보여주기
     @Transactional
-    public UserInformationDto userInformationGet(Long userId){
+    public UserInformationDto userInformationGet(final Long userId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
-        return UserInformationDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl()).checkProfileImage(profile.isCheckProfileImage()).build();
+        return UserInformationDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
+                .checkProfileImage(profile.isCheckProfileImage()).build();
     }
 
     //프로필 사진 등록하기
     @Transactional
-    public String profileImageRegister(MultipartFile multipartFile){
+    public void profileImageRegister(final MultipartFile multipartFile){
         try {
             Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
             User user= userRepository.findByUserNickname(authentication.getName()).get();
             Profile profile= profileRepository.findByUser(user).get();
             String imageUrl= s3Uploader.upload(multipartFile, "profile");
-            profile.setProfileImageUrl(imageUrl);
-            profile.setCheckProfileImage(true);
-            return imageUrl;
+            profile.updateProfileImageUrl(imageUrl);
+            profile.updateCheckProfileImage(true);
+            profile.updateCheckProfileUpload(true);
         } catch (IOException e) {
             e.printStackTrace();
-            return "profile image upload fail";
         }
     }
 
@@ -88,14 +87,14 @@ public class ProfileService {
         String fileName = deletedImage.substring(AWS_S3_BUCKET_URL.length());
         s3Uploader.deleteFile(fileName);
 
-        profile.setProfileImageUrl("");
-        profile.setCheckProfileImage(false);
+        profile.updateProfileImageUrl("");
+        profile.updateCheckProfileImage(false);
         return "success";
     }
 
     //상태메시지 보여주기
     @Transactional
-    public ProfileMessageDto profileMessageGet(Long userId){
+    public ProfileMessageDto profileMessageGet(final Long userId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
         return ProfileMessageDto.builder()
@@ -105,32 +104,32 @@ public class ProfileService {
 
     //상태메시지 작성하기
     @Transactional
-    public String profileMessageRegister(ProfileMessageDto profileMessageDto){
+    public void profileMessageRegister(final ProfileMessageDto profileMessageDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName()).get();
         Profile profile= profileRepository.findByUser(user).get();
-        profile.setMessage(profileMessageDto.getMessage());
-        return profile.getMessage();
+        profile.updateMessage(profileMessageDto.getMessage());
+        profile.updateCheckProfileUpload(true);
     }
 
     //상태메시지 수정하기
     @Transactional
-    public String profileMessageModify(ProfileMessageDto profileMessageDto){
+    public String profileMessageModify(final ProfileMessageDto profileMessageDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName()).get();
         Profile profile= profileRepository.findByUser(user).get();
-        profile.setMessage(profileMessageDto.getMessage());
+        profile.updateMessage(profileMessageDto.getMessage());
         return profile.getMessage();
     }
 
     //좋아하는 것 목록 보여주기
     @Transactional
-    public List<FavoriteGetDto> profileFavoritesGet(Long userId){
+    public List<FavoriteGetDto> profileFavoritesGet(final Long userId){
         User user= userRepository.findById(userId).get();
         List<Favorite> favorites=profileRepository.findByUser(user).get().getFavorites();
-        List<FavoriteGetDto> result= new ArrayList<>();
+        final List<FavoriteGetDto> result= new ArrayList<>();
         for(Favorite f:favorites){
-            FavoriteGetDto favoriteGetDto= FavoriteGetDto.builder()
+            final FavoriteGetDto favoriteGetDto= FavoriteGetDto.builder()
                     .favoriteId(f.getFavoriteId())
                     .favoriteContent(f.getFavoriteContent())
                     .build();
@@ -141,19 +140,20 @@ public class ProfileService {
 
     //좋아하는 것 작성하기
     @Transactional
-    public String profileFavoriteRegister(Long userId, FavoriteDto favoriteDto){
+    public void profileFavoriteRegister(final Long userId, final FavoriteDto favoriteDto){
         User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
         final Favorite favorite= Favorite.builder()
                 .favoriteContent(favoriteDto.getFavoriteContent())
-                .profile(profileRepository.findByUser(user).get())
+                .profile(profile)
                 .build();
         favoriteRepository.save(favorite);
-        return "true";
+        profile.updateCheckProfileUpload(true);
     }
 
     //좋아하는 것 삭제하기
     @Transactional
-    public String profileFavoriteRemove(Long userId, Long favoriteId){
+    public String profileFavoriteRemove(final Long userId, final Long favoriteId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
         if(favoriteRepository.deleteByFavoriteIdAndProfile(favoriteId,profile).equals("1")) return "true";
@@ -162,12 +162,12 @@ public class ProfileService {
 
     //싫어하는 것 목록 보여주기
     @Transactional
-    public List<HateGetDto> profileHatesGet(Long userId){
+    public List<HateGetDto> profileHatesGet(final Long userId){
         User user= userRepository.findById(userId).get();
         List<Hate> hates=profileRepository.findByUser(user).get().getHates();
-        List<HateGetDto> result= new ArrayList<>();
+        final List<HateGetDto> result= new ArrayList<>();
         for(Hate f:hates){
-            HateGetDto hateGetDto= HateGetDto.builder()
+            final HateGetDto hateGetDto= HateGetDto.builder()
                     .hateId(f.getHateId())
                     .hateContent(f.getHateContent())
                     .build();
@@ -178,19 +178,20 @@ public class ProfileService {
 
     //싫어하는 것 작성하기
     @Transactional
-    public String profileHateRegister(Long userId, HateDto hateDto){
+    public void profileHateRegister(final Long userId, final HateDto hateDto){
         User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
         final Hate hate= Hate.builder()
                 .hateContent(hateDto.getHateContent())
-                .profile(profileRepository.findByUser(user).get())
+                .profile(profile)
                 .build();
         hateRepository.save(hate);
-        return "true";
+        profile.updateCheckProfileUpload(true);
     }
 
     //싫어하는 것 삭제하기
     @Transactional
-    public String profileHateRemove(Long userId, Long hateId){
+    public String profileHateRemove(final Long userId, final Long hateId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
         if(hateRepository.deleteByHateIdAndProfile(hateId,profile).equals("1")) return "true";
@@ -199,12 +200,12 @@ public class ProfileService {
 
     //한단어로 표현하는 것 목록 보여주기
     @Transactional
-    public List<ExpressionGetDto> profileExpressionsGet(Long userId){
+    public List<ExpressionGetDto> profileExpressionsGet(final Long userId){
         User user= userRepository.findById(userId).get();
         List<Expression> expressions=profileRepository.findByUser(user).get().getExpressions();
-        List<ExpressionGetDto> result= new ArrayList<>();
+        final List<ExpressionGetDto> result= new ArrayList<>();
         for(Expression e:expressions){
-            ExpressionGetDto expressionGetDto= ExpressionGetDto.builder()
+            final ExpressionGetDto expressionGetDto= ExpressionGetDto.builder()
                     .expressionId(e.getExpressionId())
                     .expressionContent(e.getExpressionContent())
                     .build();
@@ -215,19 +216,20 @@ public class ProfileService {
 
     //한단어로 표현하는 것 작성하기
     @Transactional
-    public String profileExpressionRegister(Long userId, ExpressionDto expressionDto){
+    public void profileExpressionRegister(final Long userId, final ExpressionDto expressionDto){
         User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
         final Expression expression= Expression.builder()
                 .expressionContent(expressionDto.getExpressionContent())
-                .profile(profileRepository.findByUser(user).get())
+                .profile(profile)
                 .build();
         expressionRepository.save(expression);
-        return "true";
+        profile.updateCheckProfileUpload(true);
     }
 
     //한단어로 표현하는 것 삭제하기
     @Transactional
-    public String profileExpressionRemove(Long userId, Long expressionId){
+    public String profileExpressionRemove(final Long userId, final Long expressionId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
         if(expressionRepository.deleteByExpressionIdAndProfile(expressionId,profile).equals("1")) return "true";
@@ -236,12 +238,12 @@ public class ProfileService {
 
     //관심사 목록 보여주기
     @Transactional
-    public List<InterestGetDto> profileInterestsGet(Long userId){
+    public List<InterestGetDto> profileInterestsGet(final Long userId){
         User user= userRepository.findById(userId).get();
         List<Interest> interests=profileRepository.findByUser(user).get().getInterests();
-        List<InterestGetDto> result= new ArrayList<>();
+        final List<InterestGetDto> result= new ArrayList<>();
         for(Interest i:interests){
-            InterestGetDto interestGetDto= InterestGetDto.builder()
+            final InterestGetDto interestGetDto= InterestGetDto.builder()
                     .interestId(i.getInterestId())
                     .interestContent(i.getInterestContent())
                     .build();
@@ -252,23 +254,85 @@ public class ProfileService {
 
     //관심사 작성하기
     @Transactional
-    public String profileInterestRegister(Long userId, InterestDto interestDto){
+    public void profileInterestRegister(final Long userId, final InterestDto interestDto){
         User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
         final Interest interest= Interest.builder()
                 .interestContent(interestDto.getInterestContent())
-                .profile(profileRepository.findByUser(user).get())
+                .profile(profile)
                 .build();
         interestRepository.save(interest);
-        return "true";
+        profile.updateCheckProfileUpload(true);
     }
 
     //관심사 삭제하기
     @Transactional
-    public String profileInterestRemove(Long userId, Long interestId){
+    public String profileInterestRemove(final Long userId, final Long interestId){
         User user= userRepository.findById(userId).get();
         Profile profile= profileRepository.findByUser(user).get();
         if(interestRepository.deleteByInterestIdAndProfile(interestId,profile).equals("1")) return "true";
         else return "false";
     }
 
+    //유저 프로필(개인정보+상태메시지) 보여주기
+    @Transactional
+    public UserProfileGetDto userProfileGet(final Long userId){
+        User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
+        return UserProfileGetDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
+                .checkProfileImage(profile.isCheckProfileImage()).message(profile.getMessage()).build();
+    }
+
+    //유저 개인정보(좋아하는것, 싫어하는것..등) 보여주기
+    @Transactional
+    public UserInformationsGetDto userInformationsGet(final Long userId){
+        User user= userRepository.findById(userId).get();
+        Profile profile= profileRepository.findByUser(user).get();
+        List<Favorite> favorites= profile.getFavorites();
+        final List<FavoriteGetDto> favoriteGetDtos= new ArrayList<>();
+        for(Favorite f:favorites){
+            final FavoriteGetDto favoriteGetDto= FavoriteGetDto.builder()
+                    .favoriteId(f.getFavoriteId())
+                    .favoriteContent(f.getFavoriteContent())
+                    .build();
+            favoriteGetDtos.add(favoriteGetDto);
+        }
+        List<Hate> hates= profile.getHates();
+        final List<HateGetDto> hateGetDtos= new ArrayList<>();
+        for(Hate h:hates){
+            final HateGetDto hateGetDto= HateGetDto.builder()
+                    .hateId(h.getHateId())
+                    .hateContent(h.getHateContent())
+                    .build();
+            hateGetDtos.add(hateGetDto);
+        }
+        List<Expression> expressions= profile.getExpressions();
+        final List<ExpressionGetDto> expressionGetDtos= new ArrayList<>();
+        for(Expression e:expressions){
+            final ExpressionGetDto expressionGetDto= ExpressionGetDto.builder()
+                    .expressionId(e.getExpressionId())
+                    .expressionContent(e.getExpressionContent())
+                    .build();
+            expressionGetDtos.add(expressionGetDto);
+        }
+        List<Interest> interests= profile.getInterests();
+        final List<InterestGetDto> interestGetDtos= new ArrayList<>();
+        for(Interest i:interests){
+            final InterestGetDto interestGetDto= InterestGetDto.builder()
+                    .interestId(i.getInterestId())
+                    .interestContent(i.getInterestContent())
+                    .build();
+            interestGetDtos.add(interestGetDto);
+        }
+        return UserInformationsGetDto.builder().favorites(favoriteGetDtos).hates(hateGetDtos)
+                .expressions(expressionGetDtos).interests(interestGetDtos).build();
+    }
+
+    @Transactional
+    public boolean checkProfileUpload(){
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        Profile profile= profileRepository.findByUser(user).get();
+        return profile.isCheckProfileUpload();
+    }
 }

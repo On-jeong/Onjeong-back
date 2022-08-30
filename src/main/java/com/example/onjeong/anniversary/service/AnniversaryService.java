@@ -8,7 +8,6 @@ import com.example.onjeong.user.domain.User;
 import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;
 import com.example.onjeong.anniversary.repository.AnniversaryRepository;
-import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -37,7 +36,7 @@ public class AnniversaryService {
         LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
         List<Map<LocalDate,AnniversaryDto>> result= new ArrayList<>();
         for(Anniversary a:anniversaryRepository.findAllByAnniversaryDateBetweenAndFamily(start,end, family).get()){ //해당 패밀리만 가져오는지 체크
-            Map<LocalDate,AnniversaryDto> map=new HashMap<>();
+            final Map<LocalDate,AnniversaryDto> map=new HashMap<>();
             final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                     .anniversaryId(a.getAnniversaryId())
                     .anniversaryContent(a.getAnniversaryContent())
@@ -56,8 +55,8 @@ public class AnniversaryService {
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
-        List<AnniversaryDto> result= new ArrayList<>();
-        List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
+        final List<AnniversaryDto> result= new ArrayList<>();
+        final List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
         for(Anniversary a: anniversaries){
             final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                     .anniversaryId(a.getAnniversaryId())
@@ -75,26 +74,25 @@ public class AnniversaryService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
 
+        final Anniversary anniversary;
         if(anniversaryRegisterDto.getAnniversaryType().equals("ANNIVERSARY")) {
-            final Anniversary anniversary= Anniversary.builder()
+            anniversary = Anniversary.builder()
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.ANNIVERSARY)
                     .family(user.get().getFamily())
                     .build();
-            anniversaryRepository.save(anniversary);
-            return "true";
         }
         else {
-            final Anniversary anniversary = Anniversary.builder()
+            anniversary = Anniversary.builder()
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.SPECIAL_SCHEDULE)
                     .family(user.get().getFamily())
                     .build();
-            anniversaryRepository.save(anniversary);
-            return "true";
         }
+        anniversaryRepository.save(anniversary);
+        return "true";
     }
 
     //해당 일의 특수일정 수정하기
@@ -114,21 +112,12 @@ public class AnniversaryService {
 
     //해당 일의 특수일정 삭제하기
     @Transactional
-<<<<<<< HEAD
-    public Boolean anniversaryRemove(final LocalDate anniversaryDate, final Long anniversaryId){
-=======
     public String anniversaryRemove(final Long anniversaryId){
->>>>>>> fb8fcf4d4e8117bf277d169b87f4490f67710f1a
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user=userRepository.findByUserNickname(authentication.getName());
         Family family=user.get().getFamily();
 
-<<<<<<< HEAD
-        if(anniversaryRepository.deleteByAnniversaryDateAndAnniversaryIdAndFamily(anniversaryDate,anniversaryId,family).equals("1")) return true;
-        else return false;
-=======
         if(anniversaryRepository.deleteByAnniversaryIdAndFamily(anniversaryId,family).equals("1")) return "true";
         else return "false";
->>>>>>> fb8fcf4d4e8117bf277d169b87f4490f67710f1a
     }
 }

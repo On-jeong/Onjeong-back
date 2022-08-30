@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 @Log4j2
 public class BoardController {
     private final BoardService boardService;
+    private HttpServletRequest httpServletRequest;
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
     @GetMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,12 +33,11 @@ public class BoardController {
     }
 
     @ApiOperation(value="오늘의 기록 작성하기")
-    @PostMapping(value = "/boards/{boardDate}")
-    public ResponseEntity<String> boardRegister(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestParam("boardContent") String boardContent){
+    @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> boardRegister(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(value = "boardContent") String boardContent){
         String result= boardService.boardRegister(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), multipartFile, boardContent);
         return ResponseEntity.ok(result);
     }
-
 
     @ApiOperation(value="오늘의 기록 한개 가져오기")
     @GetMapping(value = "/boards/{boardId}/one", produces = MediaType.APPLICATION_JSON_VALUE)

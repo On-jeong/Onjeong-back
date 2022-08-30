@@ -1,17 +1,19 @@
 package com.example.onjeong.profile.controller;
 
+import com.example.onjeong.home.domain.CoinHistoryType;
+import com.example.onjeong.home.service.CoinService;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.service.ProfileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Api(tags="Profile")
@@ -20,6 +22,7 @@ import java.util.List;
 @Log4j2
 public class ProfileController {
     private final ProfileService profileService;
+    private final CoinService coinService;
 
     @ApiOperation(value="가족 프로필 중 구성원 보여주기")
     @GetMapping(value = "/families", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,8 +40,13 @@ public class ProfileController {
 
     @ApiOperation(value="프로필 사진 등록하기")
     @PostMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileImageRegister(@RequestPart(value = "images", required = false) MultipartFile multipartFile) {
-        return ResponseEntity.ok(profileService.profileImageRegister(multipartFile));
+    public ResponseEntity<HttpStatus> profileImageRegister(@RequestPart(value = "images", required = false) MultipartFile multipartFile) {
+        if(profileService.checkProfileUpload()) profileService.profileImageRegister(multipartFile);
+        else{
+            profileService.profileImageRegister(multipartFile);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="프로필 사진 수정하기")
@@ -65,9 +73,13 @@ public class ProfileController {
 
     @ApiOperation(value="상태메시지 작성하기")
     @PostMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileMessageRegister(@RequestBody ProfileMessageDto profileMessageDto) {
-        String result= profileService.profileMessageRegister(profileMessageDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> profileMessageRegister(@RequestBody ProfileMessageDto profileMessageDto) {
+        if(profileService.checkProfileUpload()) profileService.profileMessageRegister(profileMessageDto);
+        else{
+            profileService.profileMessageRegister(profileMessageDto);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="상태메시지 수정하기")
@@ -87,9 +99,13 @@ public class ProfileController {
 
     @ApiOperation(value="좋아하는 것 작성하기")
     @PostMapping(value = "/profiles/favorites/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileFavoriteRegister(@PathVariable("userId") Long userId, @RequestBody FavoriteDto favoriteDto) {
-        String result= profileService.profileFavoriteRegister(userId, favoriteDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> profileFavoriteRegister(@PathVariable("userId") Long userId, @RequestBody FavoriteDto favoriteDto) {
+        if(profileService.checkProfileUpload()) profileService.profileFavoriteRegister(userId, favoriteDto);
+        else{
+            profileService.profileFavoriteRegister(userId, favoriteDto);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="좋아하는 것 삭제하기")
@@ -108,9 +124,13 @@ public class ProfileController {
 
     @ApiOperation(value="싫어하는 것 작성하기")
     @PostMapping(value = "/profiles/hates/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileHateRegister(@PathVariable("userId") Long userId, @RequestBody HateDto hateDto) {
-        String result= profileService.profileHateRegister(userId, hateDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> profileHateRegister(@PathVariable("userId") Long userId, @RequestBody HateDto hateDto) {
+        if(profileService.checkProfileUpload()) profileService.profileHateRegister(userId, hateDto);
+        else{
+            profileService.profileHateRegister(userId, hateDto);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="싫어하는 것 삭제하기")
@@ -129,9 +149,13 @@ public class ProfileController {
 
     @ApiOperation(value="한단어로 표현하는 것 작성하기")
     @PostMapping(value = "/profiles/expressions/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileExpressionRegister(@PathVariable("userId") Long userId, @RequestBody ExpressionDto expressionDto) {
-        String result= profileService.profileExpressionRegister(userId, expressionDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> profileExpressionRegister(@PathVariable("userId") Long userId, @RequestBody ExpressionDto expressionDto) {
+        if(profileService.checkProfileUpload()) profileService.profileExpressionRegister(userId, expressionDto);
+        else{
+            profileService.profileExpressionRegister(userId, expressionDto);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="한단어로 표현하는 것 삭제하기")
@@ -150,15 +174,33 @@ public class ProfileController {
 
     @ApiOperation(value="관심사 작성하기")
     @PostMapping(value = "/profiles/interests/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileInterestRegister(@PathVariable("userId") Long userId, @RequestBody InterestDto interestDto) {
-        String result= profileService.profileInterestRegister(userId, interestDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<HttpStatus> profileInterestRegister(@PathVariable("userId") Long userId, @RequestBody InterestDto interestDto) {
+        if(profileService.checkProfileUpload()) profileService.profileInterestRegister(userId, interestDto);
+        else{
+            profileService.profileInterestRegister(userId, interestDto);
+            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="관심사 삭제하기")
     @DeleteMapping(value = "/profiles/interests/{userId}/{interestId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> profileInterestRemove(@PathVariable("userId") Long userId, @PathVariable("interestId") Long interestId) {
         String result= profileService.profileInterestRemove(userId, interestId);
+        return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value="유저 프로필(개인정보+상태메시지) 보여주기")
+    @GetMapping(value = "/profiles/{userId}/user-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserProfileGetDto> userProfileGet(@PathVariable("userId") Long userId) {
+        UserProfileGetDto result= profileService.userProfileGet(userId);
+        return ResponseEntity.ok(result);
+    }
+
+    @ApiOperation(value="유저 개인정보(좋아하는것, 싫어하는것..등) 보여주기")
+    @GetMapping(value = "/profiles/{userId}/user-informations", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserInformationsGetDto> userInformationsGet(@PathVariable("userId") Long userId) {
+        UserInformationsGetDto result= profileService.userInformationsGet(userId);
         return ResponseEntity.ok(result);
     }
 }

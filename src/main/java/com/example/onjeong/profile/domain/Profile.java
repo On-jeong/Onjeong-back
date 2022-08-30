@@ -30,6 +30,9 @@ public class Profile {
     @Column(name = "check_profile_image")
     private boolean checkProfileImage;
 
+    @Column(name = "check_profile_upload")
+    private boolean checkProfileUpload;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
@@ -51,47 +54,19 @@ public class Profile {
     private final List<Interest> interests = new ArrayList<>();
 
 
-    public void setMessage(String message){
+    public void updateMessage(String message){
         this.message=message;
     }
 
-    public void setProfileImageUrl(String profileImageUrl){
+    public void updateProfileImageUrl(String profileImageUrl){
         this.profileImageUrl=profileImageUrl;
     }
 
-    public void setCheckProfileImage(boolean checkProfileImage){
+    public void updateCheckProfileImage(boolean checkProfileImage){
         this.checkProfileImage=checkProfileImage;
     }
 
-    public List<String> favoriteToString(List<Favorite> favorites){
-        List<String> result= new ArrayList<>();
-        for(Favorite f:favorites){
-            result.add(f.getFavoriteContent());
-        }
-        return result;
-    }
-
-    public List<String> hateToString(List<Hate> hates){
-        List<String> result= new ArrayList<>();
-        for(Hate h:hates){
-            result.add(h.getHateContent());
-        }
-        return result;
-    }
-
-    public List<String> expressionToString(List<Expression> introductions){
-        List<String> result= new ArrayList<>();
-        for(Expression i:introductions){
-            result.add(i.getExpressionContent());
-        }
-        return result;
-    }
-
-    public List<String> interestToString(List<Interest> interests){
-        List<String> result= new ArrayList<>();
-        for(Interest i:interests){
-            result.add(i.getInterestContent());
-        }
-        return result;
+    public void updateCheckProfileUpload(boolean checkProfileUpload){
+        this.checkProfileUpload=checkProfileUpload;
     }
 }
