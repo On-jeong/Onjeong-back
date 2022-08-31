@@ -27,8 +27,8 @@ public class AnniversaryController {
 
     @ApiOperation(value="월별 모든 특수일정 가져오기")
     @GetMapping(value = "/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Map<LocalDate, AnniversaryDto>>> allAnniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
-        List<Map<LocalDate,AnniversaryDto>> result= anniversaryService.allAnniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
+    public ResponseEntity<List<AnniversaryDto>> allAnniversaryGet(@PathVariable("anniversaryDate") String anniversaryDate){
+        List<AnniversaryDto> result= anniversaryService.allAnniversaryGet(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(result);
     }
 

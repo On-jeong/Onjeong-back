@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class AnniversaryDto {
     private Long anniversaryId;
     private String anniversaryContent;
     private AnniversaryType anniversaryType;
+    private LocalDate anniversaryDate;
 }
