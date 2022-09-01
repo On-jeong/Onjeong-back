@@ -16,4 +16,6 @@ public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
     Optional<List<Anniversary>> findAllByAnniversaryDateAndFamily(LocalDate anniversaryDate, Family family);
     Optional<Anniversary> findByAnniversaryIdAndFamily(Long anniversaryId, Family family);
     String deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
+
+    Optional<List<Anniversary>> findAllByAnniversaryDate(LocalDate anniversaryDate);
 }

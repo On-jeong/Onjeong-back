@@ -186,4 +186,7 @@ public class UserService {
         return accessToken;
     }
 
+    public User findUser(String userNickname) {
+        return userRepository.findByUserNickname(userNickname).get();
+    }
 }
