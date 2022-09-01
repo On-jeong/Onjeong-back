@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -23,7 +22,6 @@ import java.util.List;
 @Log4j2
 public class BoardController {
     private final BoardService boardService;
-    private HttpServletRequest httpServletRequest;
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
     @GetMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)

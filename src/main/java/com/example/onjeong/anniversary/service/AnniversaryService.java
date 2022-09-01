@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -27,23 +28,25 @@ public class AnniversaryService {
 
     //월별 모든 특수일정 가져오기
     @Transactional
-    public List<Map<LocalDate, AnniversaryDto>> allAnniversaryGet(final LocalDate anniversaryDate){
+    public List<AnniversaryDto> allAnniversaryGet(final LocalDate anniversaryDate){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user= userRepository.findByUserNickname(authentication.getName());
         Family family= user.get().getFamily();
 
         LocalDate start= anniversaryDate.withDayOfMonth(1);
         LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
-        List<Map<LocalDate,AnniversaryDto>> result= new ArrayList<>();
-        for(Anniversary a:anniversaryRepository.findAllByAnniversaryDateBetweenAndFamily(start,end, family).get()){ //해당 패밀리만 가져오는지 체크
-            final Map<LocalDate,AnniversaryDto> map=new HashMap<>();
-            final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
-                    .anniversaryId(a.getAnniversaryId())
-                    .anniversaryContent(a.getAnniversaryContent())
-                    .anniversaryType(a.getAnniversaryType())
-                    .build();
-            map.put(a.getAnniversaryDate(),anniversaryDto);
-            result.add(map);
+        List<AnniversaryDto> result= new ArrayList<>();
+        while(!start.isAfter(end)){
+            for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId()).get()){ //해당 패밀리만 가져오는지 체크
+                final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
+                        .anniversaryId(a.getAnniversaryId())
+                        .anniversaryContent(a.getAnniversaryContent())
+                        .anniversaryType(a.getAnniversaryType())
+                        .anniversaryDate(a.getAnniversaryDate())
+                        .build();
+                result.add(anniversaryDto);
+            }
+            start= start.plus(1, ChronoUnit.DAYS);
         }
         return result;
     }
@@ -62,6 +65,7 @@ public class AnniversaryService {
                     .anniversaryId(a.getAnniversaryId())
                     .anniversaryContent(a.getAnniversaryContent())
                     .anniversaryType(a.getAnniversaryType())
+                    .anniversaryDate(a.getAnniversaryDate())
                     .build();
             result.add(anniversaryDto);
         }
