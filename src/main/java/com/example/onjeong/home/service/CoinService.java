@@ -1,18 +1,25 @@
 package com.example.onjeong.home.service;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.*;
 import com.example.onjeong.home.dto.CoinHistoryDto;
 import com.example.onjeong.home.repository.CoinHistoryRepository;
 import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,8 +38,9 @@ public class CoinService {
     public CoinHistoryDto coinSave(CoinHistoryType coinHistoryType, int amount){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
-        Family family = user.get().getFamily();
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family = user.getFamily();
 
         // 가족 코인 수 업데이트
         family.updateCoin(amount);
@@ -76,7 +84,8 @@ public class CoinService {
             }
         }
 
-        if(flower.getFlowerLevel() == 20) { // 만렙이 되면 새로운 꽃 추가
+        if(flower.getFlowerLevel() == 20) {
+            // 새로운 꽃 추가
             Flower newFlower = Flower.builder()
                     .flowerBloom(false)
                     .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
@@ -98,8 +107,9 @@ public class CoinService {
 
     public List<CoinHistoryDto> coinHistoryList(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> sendUser = userRepository.findByUserNickname(authentication.getName());
-        Family family = sendUser.get().getFamily();
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family = user.getFamily();
 
         List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family);
         List<CoinHistoryDto> coinHistoryDtoList = new ArrayList<>();
@@ -118,8 +128,9 @@ public class CoinService {
     public int coinShow(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> sendUser = userRepository.findByUserNickname(authentication.getName());
-        Family family = sendUser.get().getFamily();
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family = user.getFamily();
 
         return family.getFamilyCoin();
     }

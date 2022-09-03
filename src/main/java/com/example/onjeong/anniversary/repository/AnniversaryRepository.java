@@ -19,8 +19,11 @@ public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
     Optional<Anniversary> findByAnniversaryIdAndFamily(Long anniversaryId, Family family);
     String deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
 
+    Optional<List<Anniversary>> findAllByAnniversaryDate(LocalDate anniversaryDate);
+
     @Query(nativeQuery = true,
             value="SELECT * FROM anniversaries a WHERE a.anniversary_date = :anniversaryDate AND a.family_id = :familyId" +
                     " ORDER BY a.anniversary_id ASC LIMIT 3")
     Optional<List<Anniversary>> findByAnniversaryDate(@Param("anniversaryDate") LocalDate anniversaryDate, @Param("familyId") Long familyId);
+
 }

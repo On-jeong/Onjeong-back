@@ -1,14 +1,16 @@
 package com.example.onjeong.question.service;
 
 
-import com.example.onjeong.family.domain.Family;
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.repository.FamilyRepository;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.question.dto.AnswerDto;
 import com.example.onjeong.question.dto.AnswerModifyRequestDto;
-import com.example.onjeong.question.dto.AnswerRequestDto;
 import com.example.onjeong.question.dto.QuestionDto;
+import com.example.onjeong.question.exception.AnswerNotExistException;
+import com.example.onjeong.question.exception.NullQuestionException;
 import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.domain.User;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -37,9 +38,14 @@ public class QuestionService {
 
     public QuestionDto showQuestion(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
-        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+           throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
+
         QuestionDto questionDto = QuestionDto.builder()
                 .questonId(question.getQuestionId())
                 .questionContent(question.getQuestionContent())
@@ -49,9 +55,14 @@ public class QuestionService {
 
     public List<AnswerDto> showAllAnswer(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
-        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
+
 
         List<AnswerDto> answerDtos = new ArrayList<>();
         List<Answer> answers = answerRepository.findByQuestion(question);
@@ -70,9 +81,13 @@ public class QuestionService {
 
     public List<String> showAllAnswerFamily(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
-        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
 
         List<String> answeredFamily = new ArrayList<>();
         List<Answer> answers = answerRepository.findByQuestion(question);
@@ -86,9 +101,13 @@ public class QuestionService {
 
     public Boolean answerFamilyCheck(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
-        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
 
         List<Answer> answers = answerRepository.findByQuestion(question);
         List<User> answeredFamily = new ArrayList<>();
@@ -96,41 +115,41 @@ public class QuestionService {
             if(!answeredFamily.contains(a.getUser())) answeredFamily.add(a.getUser());
         }
 
+        System.out.println(answeredFamily.size());
         if(answeredFamily.equals(question.getFamily().getUsers())) return true;
         else return false;
 
     }
 
     @Transactional
-    public AnswerDto registerAnswer(String answerContent){
+    public Answer registerAnswer(String answerContent){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userRepository.findByUserNickname(authentication.getName());
-        Question question = questionRepository.findWeeklyQuestion(user.get().getFamily().getFamilyId());
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
 
         Answer answer = Answer.builder()
                 .question(question)
-                .user(user.get())
+                .user(user)
                 .answerContent(answerContent)
                 .answerTime(LocalDateTime.now())
                 .build();
 
         answerRepository.save(answer);
 
-        AnswerDto answerDto = AnswerDto.builder()
-                .userName(answer.getUser().getUserName())
-                .answerContent(answer.getAnswerContent())
-                .answerTime(answer.getAnswerTime())
-                .build();
-
-        return answerDto;
+        return answer;
     }
 
     @Transactional
     public AnswerDto modifyAnswer(AnswerModifyRequestDto answerModifyRequestDto) {
 
         Answer answer = answerRepository.findById(answerModifyRequestDto.getAnswerId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 답변입니다."));
+                .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         if (answerModifyRequestDto.getAnswerContent() != null) {
             answer.updateContent(answerModifyRequestDto.getAnswerContent());
@@ -149,7 +168,7 @@ public class QuestionService {
     public boolean deleteAnswer(Long answerId){
 
         Answer answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 답변입니다."));
+                .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         answerRepository.delete(answer);
         return true;
