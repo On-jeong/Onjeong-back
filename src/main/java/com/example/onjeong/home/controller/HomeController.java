@@ -6,6 +6,7 @@ import com.example.onjeong.home.dto.CoinHistoryDto;
 import com.example.onjeong.home.dto.FlowerDto;
 import com.example.onjeong.home.service.CoinService;
 import com.example.onjeong.home.service.FlowerService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class HomeController {
     @ApiOperation(value = "패밀리 코인 적립 내역")
     @GetMapping("/histories")
     public ResponseEntity<List<CoinHistoryDto>> histories() {
+
         return ResponseEntity.ok(coinService.coinHistoryList());
     }
 
@@ -50,7 +52,7 @@ public class HomeController {
 
     @ApiOperation(value = "랜덤하게 데일리 코인 지급")
     @PostMapping("/coins-random")
-    public ResponseEntity<Integer> coinsRandom() {
+    public ResponseEntity<Integer> coinsRandom() throws FirebaseMessagingException {
         int randAmount = (int) (Math.random() * (100 - 10 + 1)) + 10; // 10~100 사이 랜덤
         CoinHistoryDto coinRand = coinService.coinSave(CoinHistoryType.RAND, randAmount);
         return ResponseEntity.ok(coinRand.getAmount());

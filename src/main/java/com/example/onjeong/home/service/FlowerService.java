@@ -1,11 +1,13 @@
 package com.example.onjeong.home.service;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.dto.FlowerDto;
 import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -28,8 +30,9 @@ public class FlowerService {
     public FlowerDto showFlower(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> sendUser = userRepository.findByUserNickname(authentication.getName());
-        Family family = sendUser.get().getFamily();
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family = user.getFamily();
 
         Flower flower = flowerRepository.findBlooming(family.getFamilyId());
         FlowerDto flowerDto = FlowerDto.builder()
@@ -44,8 +47,9 @@ public class FlowerService {
     public List<FlowerDto> showFlowerBloom(){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> sendUser = userRepository.findByUserNickname(authentication.getName());
-        Family family = sendUser.get().getFamily();
+        User user = userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family = user.getFamily();
 
         List<Flower> flower = flowerRepository.findFullBloom(family.getFamilyId());
         List<FlowerDto> bloomFlower = new ArrayList<>();

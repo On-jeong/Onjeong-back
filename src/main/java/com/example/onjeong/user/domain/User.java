@@ -44,6 +44,8 @@ public class User extends Common implements Serializable {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @Column(name = "device_token")
+    private String deviceToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
@@ -86,5 +88,9 @@ public class User extends Common implements Serializable {
 
     public void updateRefreshToken(String refreshToken){
         this.refreshToken=refreshToken;
+    }
+
+    public void updateDeviceToken(String deviceToken){
+        this.deviceToken = deviceToken;
     }
 }

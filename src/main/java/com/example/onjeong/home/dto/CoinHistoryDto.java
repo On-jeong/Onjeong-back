@@ -14,5 +14,6 @@ public class CoinHistoryDto {
 
     private CoinHistoryType type;
     private Integer amount;
+    private boolean bloomFlag;
 
 }
