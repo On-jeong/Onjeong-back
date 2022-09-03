@@ -31,7 +31,7 @@ public class ProfileService {
     private final InterestRepository interestRepository;
     private final S3Uploader s3Uploader;
 
-    @Value("https://onjeong-bucket.s3.ap-northeast-2.amazonaws.com/")
+    @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
     private String AWS_S3_BUCKET_URL;
 
 
