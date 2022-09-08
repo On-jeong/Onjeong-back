@@ -1,10 +1,12 @@
 package com.example.onjeong.profile.service;
 
 import com.example.onjeong.S3.S3Uploader;
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.profile.domain.*;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.repository.*;
 import com.example.onjeong.user.domain.User;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +40,9 @@ public class ProfileService {
     @Transactional
     public List<FamilyGetDto> allUserGet(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user= userRepository.findByUserNickname(authentication.getName());
-        List<User> users= user.get().getFamily().getUsers();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<User> users= user.getFamily().getUsers();
         final List<FamilyGetDto> result= new ArrayList<>();
         for(User u:users){
             final FamilyGetDto familyGetDto= FamilyGetDto.builder()
@@ -55,34 +57,37 @@ public class ProfileService {
     //프로필 상단에 개인 정보 보여주기
     @Transactional
     public UserInformationDto userInformationGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         return UserInformationDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
                 .checkProfileImage(profile.isCheckProfileImage()).build();
     }
 
     //프로필 사진 등록하기
     @Transactional
-    public void profileImageRegister(final MultipartFile multipartFile){
-        try {
-            Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-            User user= userRepository.findByUserNickname(authentication.getName()).get();
-            Profile profile= profileRepository.findByUser(user).get();
-            String imageUrl= s3Uploader.upload(multipartFile, "profile");
-            profile.updateProfileImageUrl(imageUrl);
-            profile.updateCheckProfileImage(true);
-            profile.updateCheckProfileUpload(true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Profile profileImageRegister(final MultipartFile multipartFile) throws IOException{
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
+        String imageUrl= s3Uploader.upload(multipartFile, "profile");
+        profile.updateProfileImageUrl(imageUrl);
+        profile.updateCheckProfileImage(true);
+        profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //프로필 사진 삭제하기
     @Transactional
     public String profileImageDelete(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         String deletedImage= profile.getProfileImageUrl();
         String fileName = deletedImage.substring(AWS_S3_BUCKET_URL.length());
         s3Uploader.deleteFile(fileName);
@@ -95,8 +100,10 @@ public class ProfileService {
     //상태메시지 보여주기
     @Transactional
     public ProfileMessageDto profileMessageGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         return ProfileMessageDto.builder()
                 .message(profile.getMessage())
                 .build();
@@ -104,20 +111,25 @@ public class ProfileService {
 
     //상태메시지 작성하기
     @Transactional
-    public void profileMessageRegister(final ProfileMessageDto profileMessageDto){
+    public Profile profileMessageRegister(final ProfileMessageDto profileMessageDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         profile.updateMessage(profileMessageDto.getMessage());
         profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //상태메시지 수정하기
     @Transactional
     public String profileMessageModify(final ProfileMessageDto profileMessageDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         profile.updateMessage(profileMessageDto.getMessage());
         return profile.getMessage();
     }
@@ -125,8 +137,10 @@ public class ProfileService {
     //좋아하는 것 목록 보여주기
     @Transactional
     public List<FavoriteGetDto> profileFavoritesGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        List<Favorite> favorites=profileRepository.findByUser(user).get().getFavorites();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<Favorite> favorites=profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("favorites not exist", ErrorCode.USER_NOTEXIST)).getFavorites();
         final List<FavoriteGetDto> result= new ArrayList<>();
         for(Favorite f:favorites){
             final FavoriteGetDto favoriteGetDto= FavoriteGetDto.builder()
@@ -140,22 +154,27 @@ public class ProfileService {
 
     //좋아하는 것 작성하기
     @Transactional
-    public void profileFavoriteRegister(final Long userId, final FavoriteDto favoriteDto){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+    public Profile profileFavoriteRegister(final Long userId, final FavoriteDto favoriteDto){
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         final Favorite favorite= Favorite.builder()
                 .favoriteContent(favoriteDto.getFavoriteContent())
                 .profile(profile)
                 .build();
         favoriteRepository.save(favorite);
         profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //좋아하는 것 삭제하기
     @Transactional
     public String profileFavoriteRemove(final Long userId, final Long favoriteId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         if(favoriteRepository.deleteByFavoriteIdAndProfile(favoriteId,profile).equals("1")) return "true";
         else return "false";
     }
@@ -163,8 +182,10 @@ public class ProfileService {
     //싫어하는 것 목록 보여주기
     @Transactional
     public List<HateGetDto> profileHatesGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        List<Hate> hates=profileRepository.findByUser(user).get().getHates();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<Hate> hates=profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("hates not exist", ErrorCode.USER_NOTEXIST)).getHates();
         final List<HateGetDto> result= new ArrayList<>();
         for(Hate f:hates){
             final HateGetDto hateGetDto= HateGetDto.builder()
@@ -178,22 +199,27 @@ public class ProfileService {
 
     //싫어하는 것 작성하기
     @Transactional
-    public void profileHateRegister(final Long userId, final HateDto hateDto){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+    public Profile profileHateRegister(final Long userId, final HateDto hateDto){
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         final Hate hate= Hate.builder()
                 .hateContent(hateDto.getHateContent())
                 .profile(profile)
                 .build();
         hateRepository.save(hate);
         profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //싫어하는 것 삭제하기
     @Transactional
     public String profileHateRemove(final Long userId, final Long hateId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         if(hateRepository.deleteByHateIdAndProfile(hateId,profile).equals("1")) return "true";
         else return "false";
     }
@@ -201,8 +227,10 @@ public class ProfileService {
     //한단어로 표현하는 것 목록 보여주기
     @Transactional
     public List<ExpressionGetDto> profileExpressionsGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        List<Expression> expressions=profileRepository.findByUser(user).get().getExpressions();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<Expression> expressions=profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("expressions not exist", ErrorCode.USER_NOTEXIST)).getExpressions();
         final List<ExpressionGetDto> result= new ArrayList<>();
         for(Expression e:expressions){
             final ExpressionGetDto expressionGetDto= ExpressionGetDto.builder()
@@ -216,22 +244,27 @@ public class ProfileService {
 
     //한단어로 표현하는 것 작성하기
     @Transactional
-    public void profileExpressionRegister(final Long userId, final ExpressionDto expressionDto){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+    public Profile profileExpressionRegister(final Long userId, final ExpressionDto expressionDto){
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         final Expression expression= Expression.builder()
                 .expressionContent(expressionDto.getExpressionContent())
                 .profile(profile)
                 .build();
         expressionRepository.save(expression);
         profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //한단어로 표현하는 것 삭제하기
     @Transactional
     public String profileExpressionRemove(final Long userId, final Long expressionId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         if(expressionRepository.deleteByExpressionIdAndProfile(expressionId,profile).equals("1")) return "true";
         else return "false";
     }
@@ -239,8 +272,10 @@ public class ProfileService {
     //관심사 목록 보여주기
     @Transactional
     public List<InterestGetDto> profileInterestsGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        List<Interest> interests=profileRepository.findByUser(user).get().getInterests();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<Interest> interests=profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("interests not exist", ErrorCode.USER_NOTEXIST)).getInterests();
         final List<InterestGetDto> result= new ArrayList<>();
         for(Interest i:interests){
             final InterestGetDto interestGetDto= InterestGetDto.builder()
@@ -254,22 +289,27 @@ public class ProfileService {
 
     //관심사 작성하기
     @Transactional
-    public void profileInterestRegister(final Long userId, final InterestDto interestDto){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+    public Profile profileInterestRegister(final Long userId, final InterestDto interestDto){
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         final Interest interest= Interest.builder()
                 .interestContent(interestDto.getInterestContent())
                 .profile(profile)
                 .build();
         interestRepository.save(interest);
         profile.updateCheckProfileUpload(true);
+        return profile;
     }
 
     //관심사 삭제하기
     @Transactional
     public String profileInterestRemove(final Long userId, final Long interestId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         if(interestRepository.deleteByInterestIdAndProfile(interestId,profile).equals("1")) return "true";
         else return "false";
     }
@@ -277,8 +317,10 @@ public class ProfileService {
     //유저 프로필(개인정보+상태메시지) 보여주기
     @Transactional
     public UserProfileGetDto userProfileGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         return UserProfileGetDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
                 .checkProfileImage(profile.isCheckProfileImage()).message(profile.getMessage()).build();
     }
@@ -286,8 +328,10 @@ public class ProfileService {
     //유저 개인정보(좋아하는것, 싫어하는것..등) 보여주기
     @Transactional
     public UserInformationsGetDto userInformationsGet(final Long userId){
-        User user= userRepository.findById(userId).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         List<Favorite> favorites= profile.getFavorites();
         final List<FavoriteGetDto> favoriteGetDtos= new ArrayList<>();
         for(Favorite f:favorites){
@@ -331,8 +375,10 @@ public class ProfileService {
     @Transactional
     public boolean checkProfileUpload(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
-        Profile profile= profileRepository.findByUser(user).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Profile profile= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profile not exist", ErrorCode.USER_NOTEXIST));
         return profile.isCheckProfileUpload();
     }
 }
