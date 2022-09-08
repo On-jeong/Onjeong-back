@@ -4,6 +4,7 @@ import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,14 @@ public interface MailRepository extends JpaRepository<Mail, Long> {
 
     @Query("SELECT m FROM Mail m WHERE m.receiverWantDelete = true AND m.senderWantDelete = true")
     List<Mail> findDeleteMail();
+
+    @Modifying
+    @Query(nativeQuery = true,
+            value="DELETE FROM mail m WHERE m.receiver_id = :receiverId")
+    void deleteByReceiver(@Param("receiverId") Long userId);
+
+    @Modifying
+    @Query(nativeQuery = true,
+            value="DELETE FROM mail m WHERE m.sender_id = :senderId")
+    void deleteBySender(@Param("senderId") Long userId);
 }

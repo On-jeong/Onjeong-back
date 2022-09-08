@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> {
     List<CoinHistory> findByFamily(Family family);
+    void deleteByFamily(Family family);
 }

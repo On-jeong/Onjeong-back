@@ -1,10 +1,13 @@
 package com.example.onjeong.question.repository;
 
 
+import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.question.domain.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
@@ -12,4 +15,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             value = "SELECT * FROM question q WHERE q.family_id = :id " +
                     "ORDER BY q.question_time DESC limit 1")
     Question findWeeklyQuestion(@Param("id") Long id);
+
+    void deleteByFamily(Family family);
 }

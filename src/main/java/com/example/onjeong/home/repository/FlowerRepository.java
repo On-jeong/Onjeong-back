@@ -1,5 +1,6 @@
 package com.example.onjeong.home.repository;
 
+import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,6 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
             value = "SELECT * FROM flower f WHERE f.family_id = :id " +
                     "AND f.flower_bloom = true")
     List<Flower> findFullBloom(@Param("id") Long id);
+
+    void deleteByFamily(Family family);
 }
