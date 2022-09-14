@@ -9,6 +9,7 @@ import com.example.onjeong.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -67,21 +68,11 @@ public class UserController {
 
     @ApiOperation(value = "회원탈퇴")
     @DeleteMapping(value = "/accounts")
-    public String userDelete(@RequestBody UserDeleteDto userDeleteDto, HttpSession session) throws Exception{
-        String result="";
-        if(userService.userDelete(userDeleteDto)=="true") {
-            Object object=session.getAttribute("login");
-            if(object!=null){
-                session.removeAttribute("login");
-                session.invalidate();
-
-                result="true";
-            }
-            else result="false";
+    public ResponseEntity<HttpStatus> userDelete(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
+        if(userService.userDelete(userDeleteDto, httpServletRequest)) {
+            return ResponseEntity.ok(HttpStatus.OK);
         }
-        else result="false";
-
-        return result;
+        else return ResponseEntity.ok(HttpStatus.BAD_GATEWAY);
     }
 
     @ApiOperation(value="유저 기본정보 알기")
@@ -101,12 +92,12 @@ public class UserController {
     @ApiOperation(value = "토큰 재발급", notes = "토큰을 재발급한다")
     @PostMapping(value = "/refresh")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ACCESS-TOKEN", value = "access-token", required = true, dataType = "String", paramType = "header"),
-            @ApiImplicitParam(name = "REFRESH-TOKEN", value = "refresh-token", required = true, dataType = "String", paramType = "header")
+            @ApiImplicitParam(name = "AuthorizationAccess", value = "AuthorizationAccess", required = true, dataType = "String", paramType = "header"),
+            @ApiImplicitParam(name = "AuthorizationRefresh", value = "AuthorizationRefresh", required = true, dataType = "String", paramType = "header")
     })
     public ResponseEntity<String> refreshToken(
-            @RequestHeader(value="ACCESS-TOKEN") String token,
-            @RequestHeader(value="REFRESH-TOKEN") String refreshToken
+            @RequestHeader(value="AuthorizationAccess") String token,
+            @RequestHeader(value="AuthorizationRefresh") String refreshToken
             ) {
         String accessToken= userService.refreshToken(token, refreshToken);
         if(accessToken == null) return ResponseEntity.ok("true");

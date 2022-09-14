@@ -1,9 +1,12 @@
 package com.example.onjeong.profile.controller;
 
+import com.example.onjeong.fcm.FCMService;
 import com.example.onjeong.home.domain.CoinHistoryType;
 import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.service.ProfileService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(tags="Profile")
@@ -23,6 +27,7 @@ import java.util.List;
 public class ProfileController {
     private final ProfileService profileService;
     private final CoinService coinService;
+    private final FCMService fcmService;
 
     @ApiOperation(value="가족 프로필 중 구성원 보여주기")
     @GetMapping(value = "/families", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,10 +45,10 @@ public class ProfileController {
 
     @ApiOperation(value="프로필 사진 등록하기")
     @PostMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileImageRegister(@RequestPart(value = "images", required = false) MultipartFile multipartFile) {
-        if(profileService.checkProfileUpload()) profileService.profileImageRegister(multipartFile);
+    public ResponseEntity<HttpStatus> profileImageRegister(@RequestPart(value = "images", required = false) MultipartFile multipartFile) throws FirebaseMessagingException, IOException {
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileImageRegister(multipartFile));
         else{
-            profileService.profileImageRegister(multipartFile);
+            fcmService.sendProfileModify(profileService.profileImageRegister(multipartFile));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -51,9 +56,10 @@ public class ProfileController {
 
     @ApiOperation(value="프로필 사진 수정하기")
     @PutMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> profileImageModify(@RequestPart(value = "images", required = false) MultipartFile multipartFile) {
+    public ResponseEntity<String> profileImageModify(@RequestPart(value = "images", required = false) MultipartFile multipartFile) throws FirebaseMessagingException, IOException {
         profileService.profileImageDelete();
-        profileService.profileImageRegister(multipartFile);
+        Profile profile= profileService.profileImageRegister(multipartFile);
+        fcmService.sendProfileModify(profile);
         return ResponseEntity.ok("success");
     }
 
@@ -73,10 +79,10 @@ public class ProfileController {
 
     @ApiOperation(value="상태메시지 작성하기")
     @PostMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileMessageRegister(@RequestBody ProfileMessageDto profileMessageDto) {
-        if(profileService.checkProfileUpload()) profileService.profileMessageRegister(profileMessageDto);
+    public ResponseEntity<HttpStatus> profileMessageRegister(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileMessageRegister(profileMessageDto));
         else{
-            profileService.profileMessageRegister(profileMessageDto);
+            fcmService.sendProfileModify(profileService.profileMessageRegister(profileMessageDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -99,10 +105,10 @@ public class ProfileController {
 
     @ApiOperation(value="좋아하는 것 작성하기")
     @PostMapping(value = "/profiles/favorites/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileFavoriteRegister(@PathVariable("userId") Long userId, @RequestBody FavoriteDto favoriteDto) {
-        if(profileService.checkProfileUpload()) profileService.profileFavoriteRegister(userId, favoriteDto);
+    public ResponseEntity<HttpStatus> profileFavoriteRegister(@PathVariable("userId") Long userId, @RequestBody FavoriteDto favoriteDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileFavoriteRegister(userId, favoriteDto));
         else{
-            profileService.profileFavoriteRegister(userId, favoriteDto);
+            fcmService.sendProfileModify(profileService.profileFavoriteRegister(userId, favoriteDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -124,10 +130,10 @@ public class ProfileController {
 
     @ApiOperation(value="싫어하는 것 작성하기")
     @PostMapping(value = "/profiles/hates/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileHateRegister(@PathVariable("userId") Long userId, @RequestBody HateDto hateDto) {
-        if(profileService.checkProfileUpload()) profileService.profileHateRegister(userId, hateDto);
+    public ResponseEntity<HttpStatus> profileHateRegister(@PathVariable("userId") Long userId, @RequestBody HateDto hateDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileHateRegister(userId, hateDto));
         else{
-            profileService.profileHateRegister(userId, hateDto);
+            fcmService.sendProfileModify(profileService.profileHateRegister(userId, hateDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -149,10 +155,10 @@ public class ProfileController {
 
     @ApiOperation(value="한단어로 표현하는 것 작성하기")
     @PostMapping(value = "/profiles/expressions/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileExpressionRegister(@PathVariable("userId") Long userId, @RequestBody ExpressionDto expressionDto) {
-        if(profileService.checkProfileUpload()) profileService.profileExpressionRegister(userId, expressionDto);
+    public ResponseEntity<HttpStatus> profileExpressionRegister(@PathVariable("userId") Long userId, @RequestBody ExpressionDto expressionDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileExpressionRegister(userId, expressionDto));
         else{
-            profileService.profileExpressionRegister(userId, expressionDto);
+            fcmService.sendProfileModify(profileService.profileExpressionRegister(userId, expressionDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);
@@ -174,10 +180,10 @@ public class ProfileController {
 
     @ApiOperation(value="관심사 작성하기")
     @PostMapping(value = "/profiles/interests/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> profileInterestRegister(@PathVariable("userId") Long userId, @RequestBody InterestDto interestDto) {
-        if(profileService.checkProfileUpload()) profileService.profileInterestRegister(userId, interestDto);
+    public ResponseEntity<HttpStatus> profileInterestRegister(@PathVariable("userId") Long userId, @RequestBody InterestDto interestDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileInterestRegister(userId, interestDto));
         else{
-            profileService.profileInterestRegister(userId, interestDto);
+            fcmService.sendProfileModify(profileService.profileInterestRegister(userId, interestDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(HttpStatus.OK);

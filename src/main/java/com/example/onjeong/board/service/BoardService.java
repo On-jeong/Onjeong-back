@@ -4,8 +4,10 @@ package com.example.onjeong.board.service;
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.dto.BoardDto;
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.board.repository.BoardRepository;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,8 +38,10 @@ public class BoardService {
     @Transactional
     public List<BoardDto> allBoardGet(final LocalDate boardDate){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName()).get();
-        List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,user.getFamily()).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,user.getFamily())
+                .orElseThrow(()-> new UserNotExistException("boards not exist", ErrorCode.USER_NOTEXIST));
         final List<BoardDto> result= new ArrayList<>();
         for(Board b: boards){
             final BoardDto boardDto= BoardDto.builder()
@@ -53,9 +57,10 @@ public class BoardService {
 
     //오늘의 기록 작성하기
     @Transactional
-    public String boardRegister(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent){
+    public Board boardRegister(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent) throws IOException{
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName()).get();
+        User user=userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         if(multipartFile == null) {
             final Board board=Board.builder()
                     .boardContent(boardContent)
@@ -64,31 +69,25 @@ public class BoardService {
                     .user(user)
                     .family(user.getFamily())
                     .build();
-            boardRepository.save(board);
-            return "true";
+            return boardRepository.save(board);
         }
         else {
-            try {
-                final Board board=Board.builder()
-                        .boardContent(boardContent)
-                        .boardImageUrl(s3Uploader.upload(multipartFile, "board"))
-                        .boardDate(boardDate)
-                        .user(user)
-                        .family(user.getFamily())
-                        .build();
-                boardRepository.save(board);
-                return "true";
-            } catch (IOException e) {
-                e.printStackTrace();
-                return e.getMessage();
-            }
+            final Board board=Board.builder()
+                    .boardContent(boardContent)
+                    .boardImageUrl(s3Uploader.upload(multipartFile, "board"))
+                    .boardDate(boardDate)
+                    .user(user)
+                    .family(user.getFamily())
+                    .build();
+            return boardRepository.save(board);
         }
     }
 
     //오늘의 기록 한개 가져오기
     @Transactional
     public BoardDto boardGet(final Long boardId){
-        Board board= boardRepository.findByBoardId(boardId).get();
+        Board board= boardRepository.findByBoardId(boardId)
+                .orElseThrow(()-> new UserNotExistException("board not exist", ErrorCode.USER_NOTEXIST));
         return BoardDto.builder()
                 .boardId(board.getBoardId())
                 .boardContent(board.getBoardContent())
@@ -101,9 +100,11 @@ public class BoardService {
     @Transactional
     public String boardModify(final Long boardId, final MultipartFile multipartFile, final String boardContent, final LocalDate boardDate){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user= userRepository.findByUserNickname(authentication.getName());
-        Board board= boardRepository.findByBoardId(boardId).get();
-        if(user.get()==board.getUser()){
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Board board= boardRepository.findByBoardId(boardId)
+                .orElseThrow(()-> new UserNotExistException("board not exist", ErrorCode.USER_NOTEXIST));
+        if(user==board.getUser()){
             board.updateBoardContent(boardContent);
             try {
                 if(multipartFile==null && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
@@ -132,9 +133,11 @@ public class BoardService {
     @Transactional
     public String boardRemove(final Long boardId){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user=userRepository.findByUserNickname(authentication.getName());
-        String deletedImage= boardRepository.findByBoardId(boardId).get().getBoardImageUrl();
-        if(boardRepository.deleteByBoardIdAndUser(boardId,user.get()).equals("1")) {
+        User user=userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        String deletedImage= boardRepository.findByBoardId(boardId)
+                .orElseThrow(()-> new UserNotExistException("deletedImage not exist", ErrorCode.USER_NOTEXIST)).getBoardImageUrl();
+        if(boardRepository.deleteByBoardIdAndUser(boardId,user).equals("1")) {
             if(deletedImage!=null) s3Uploader.deleteFile(deletedImage.substring(AWS_S3_BUCKET_URL.length()));
             return "true";
         }

@@ -1,35 +1,49 @@
 package com.example.onjeong.user.service;
 
+import com.example.onjeong.S3.S3Uploader;
+import com.example.onjeong.anniversary.repository.AnniversaryRepository;
+import com.example.onjeong.board.repository.BoardRepository;
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 
+import com.example.onjeong.home.repository.CoinHistoryRepository;
+import com.example.onjeong.mail.repository.MailRepository;
 import com.example.onjeong.profile.domain.Profile;
-import com.example.onjeong.profile.repository.ProfileRepository;
+import com.example.onjeong.profile.repository.*;
 
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.domain.FlowerColor;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
 
+import com.example.onjeong.question.repository.AnswerRepository;
+import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.Auth.JwtTokenProvider;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
 import com.example.onjeong.family.repository.FamilyRepository;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
 import java.util.Optional;
 
 import java.util.Random;
@@ -41,10 +55,24 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
+    private final AnniversaryRepository anniversaryRepository;
+    private final BoardRepository boardRepository;
     private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final S3Uploader s3Uploader;
+    private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
+    private final CoinHistoryRepository coinHistoryRepository;
+    private final ExpressionRepository expressionRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final HateRepository hateRepository;
+    private final InterestRepository interestRepository;
+    private final MailRepository mailRepository;
+
+    @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
+    private String AWS_S3_BUCKET_URL;
 
     //가족회원이 없는 회원 가입
     @Transactional
@@ -118,7 +146,8 @@ public class UserService {
     @Transactional
     public String userInformationModify(final UserAccountsDto userAccountsDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
         user.updateUserName(userAccountsDto.getUserName());
         user.updateUserNickname(user.getUserNickname());    //변경 x
@@ -132,14 +161,42 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public String userDelete(final UserDeleteDto userDeleteDto) throws Exception{
+    public boolean userDelete(final UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
+        HttpSession httpSession = httpServletRequest.getSession();
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        Family family= familyRepository.findById(user.getFamily().getFamilyId())
+                .orElseThrow(()-> new UserNotExistException("family not exist", ErrorCode.USER_NOTEXIST));
+        Long profileId= profileRepository.findByUser(user)
+                .orElseThrow(()-> new UserNotExistException("profileId not exist", ErrorCode.USER_NOTEXIST)).getProfileId();
         if(passwordEncoder.matches(userDeleteDto.getUserPassword(),user.getUserPassword())){
-            userRepository.delete(user);
-            return "true";
+            expressionRepository.deleteInBatch(expressionRepository.findAllById(Collections.singleton(profileId)));
+            favoriteRepository.deleteInBatch(favoriteRepository.findAllById(Collections.singleton(profileId)));
+            hateRepository.deleteInBatch(hateRepository.findAllById(Collections.singleton(profileId)));
+            interestRepository.deleteInBatch(interestRepository.findAllById(Collections.singleton(profileId)));
+            String profileImgUrl= profileRepository.findByUser(user)
+                    .orElseThrow(()-> new UserNotExistException("profileImgUrl not exist", ErrorCode.USER_NOTEXIST)).getProfileImageUrl();
+            if(profileImgUrl!=null) s3Uploader.deleteFile(profileImgUrl.substring(AWS_S3_BUCKET_URL.length()));
+            profileRepository.deleteByUser(user);
+            boardRepository.deleteByUser(user);
+            answerRepository.deleteByUser(user.getUserId());
+            mailRepository.deleteByReceiver(user.getUserId());
+            mailRepository.deleteBySender(user.getUserId());
+            userRepository.deleteUser(user.getUserId());
+            if(family.getUsers().size()==0) {
+                anniversaryRepository.deleteByFamily(family);
+                questionRepository.deleteByFamily(family);
+                coinHistoryRepository.deleteByFamily(family);
+                flowerRepository.deleteByFamily(family);
+                familyRepository.delete(family);
+            }
+            httpSession.invalidate();
+            SecurityContextHolder.getContext().setAuthentication(null);
+            SecurityContextHolder.clearContext();
+            return true;
         }
-        else return "false";
+        else return false;
     }
 
     public boolean isUserNicknameDuplicated(final String userNickname) {
@@ -150,7 +207,8 @@ public class UserService {
     @Transactional
     public UserDto userGet(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName()).get();
+        User user= userRepository.findByUserNickname(authentication.getName())
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         return UserDto.builder()
                 .userId(user.getUserId())
                 .userName(user.getUserName())
@@ -187,6 +245,7 @@ public class UserService {
     }
 
     public User findUser(String userNickname) {
-        return userRepository.findByUserNickname(userNickname).get();
+        return userRepository.findByUserNickname(userNickname)
+                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
     }
 }
