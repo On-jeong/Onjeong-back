@@ -1,9 +1,11 @@
 package com.example.onjeong.user.controller;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.*;
+import com.example.onjeong.user.exception.UserNicknameDuplicationException;
 import io.swagger.annotations.*;
 import com.example.onjeong.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -30,16 +32,19 @@ public class UserController {
     @ApiOperation(value="가족회원이 없는 회원 가입")
     @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> signUp(@RequestBody UserJoinDto userJoinDto){
-        return userService.isUserNicknameDuplicated(userJoinDto.getUserNickname())
-                ? ResponseEntity.badRequest().build()
-                : ResponseEntity.ok(TokenUtils.generateJwtToken(userService.signUp(userJoinDto)));
+        if(userService.isUserNicknameDuplicated(userJoinDto.getUserNickname())) {
+            throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
+        }
+        else return ResponseEntity.ok(TokenUtils.generateJwtToken(userService.signUp(userJoinDto)));
     }
 
     @ApiOperation(value="가족회원이 있는 회원 가입")
     @PostMapping(value="/accounts/joined", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> signUpJoined(@RequestBody UserJoinedDto userJoinedDto){
-        User user=userService.signUpJoined(userJoinedDto);
-        return ResponseEntity.ok(TokenUtils.generateJwtToken(user));
+        if(userService.isUserNicknameDuplicated(userJoinedDto.getUserNickname())) {
+            throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
+        }
+        else return ResponseEntity.ok(TokenUtils.generateJwtToken(userService.signUpJoined(userJoinedDto)));
     }
 
     @ApiOperation(value="로그인")
@@ -89,7 +94,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "토큰 재발급", notes = "토큰을 재발급한다")
+    @ApiOperation(value = "Access Token 재발급", notes = "Access Token을 재발급한다")
     @PostMapping(value = "/refresh")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "AuthorizationAccess", value = "AuthorizationAccess", required = true, dataType = "String", paramType = "header"),
@@ -100,12 +105,8 @@ public class UserController {
             @RequestHeader(value="AuthorizationRefresh") String refreshToken
             ) {
         String accessToken= userService.refreshToken(token, refreshToken);
-        if(accessToken == null) return ResponseEntity.ok("true");
-        else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
-            return ResponseEntity.ok().headers(headers).body("New Access Token 발급");
-        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
+        return ResponseEntity.ok().headers(headers).body("New Access Token 발급");
     }
-
 }

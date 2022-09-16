@@ -66,13 +66,13 @@ public class TokenUtils {
 
     private static Date createExpireHourForOneYear() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.HOUR, 2);
+        c.add(Calendar.MINUTE, 1);
         return c.getTime();
     }
 
     private static Date createExpireDateForOneYear() {
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 14);
+        c.add(Calendar.MINUTE, 3);
         return c.getTime();
     }
 
