@@ -1,5 +1,7 @@
 package com.example.onjeong.user.Auth;
 
+import com.example.onjeong.error.ErrorCode;
+import com.example.onjeong.user.exception.UserUnauthorizedException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -22,5 +24,6 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
         }
         response.sendRedirect("/error/unauthorized"); //예외 API
         return false;
+        //throw new UserUnauthorizedException("User Unauthorized",ErrorCode.USER_UNAUTHORIZED);
     }
 }

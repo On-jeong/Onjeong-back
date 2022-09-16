@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserNickname(String userNickname);
-    User findByUserNicknameAndUserPassword(String userNickname, String userPassword);
     boolean existsByUserNickname(String userNickname);
+    Optional<User> findByRefreshToken(String refreshToken);
 
     @Modifying
     @Query(nativeQuery = true,

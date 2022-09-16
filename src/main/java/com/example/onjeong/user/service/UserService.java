@@ -24,18 +24,17 @@ import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
 import com.example.onjeong.family.repository.FamilyRepository;
-import com.example.onjeong.user.exception.UserNotExistException;
+import com.example.onjeong.user.exception.*;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -217,32 +216,21 @@ public class UserService {
                 .build();
     }
 
-
+    //Access Token 재발급
     @Transactional
     public String refreshToken(String token, String refreshToken) {
         String accessToken= null;
-        try {
-            User user = userRepository.findByUserNickname(TokenUtils.getUserNicknameFromToken(token)).orElseThrow();
-            if(user.getRefreshToken().equals(refreshToken)&&jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){   //만료기간 안지남-> access만
-                if(!jwtTokenProvider.validateTokenExceptExpiration(token)){
-                    accessToken = TokenUtils.generateJwtToken(user);
-                }
-                else{
-                    System.out.println("access 토큰이 만료되지 않았습니다.");
-                }
-            }
-            else if(user.getRefreshToken().equals(refreshToken)&&!jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)){ //만료기간 지남->다시 로그인
-                //로그인페이지로 이동
-            }
-            else{
-                System.out.println("refresh token이 다릅니다.");
-            }
-
-        }catch (Exception e) {
-            System.out.println(e);
+        Optional<User> user= userRepository.findByRefreshToken(refreshToken);
+        if(user.isPresent()){
+            if(jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)) accessToken = TokenUtils.generateJwtToken(user.get());
+            else throw new RefreshTokenExpiredException("refresh token expired",ErrorCode.REFRESH_TOKEN_EXPIRED);
+        }
+        else{
+            throw new RefreshTokenNotSameException("refresh token not same",ErrorCode.REFRESH_TOKEN_NOT_SAME);
         }
         return accessToken;
     }
+
 
     public User findUser(String userNickname) {
         return userRepository.findByUserNickname(userNickname)
