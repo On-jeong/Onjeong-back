@@ -1,7 +1,11 @@
 package com.example.onjeong.Config;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
+import com.example.onjeong.user.exception.TokenExpiredJwtException;
+import com.example.onjeong.user.exception.UserNotExistException;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,8 +40,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 securityContext.setAuthentication(authentication);
                 SecurityContextHolder.setContext(securityContext);
             }
+        } catch (ExpiredJwtException ex) {
+            if(!req.getRequestURI().equals("/refresh")){
+                res.sendError(401,"Token Expired Error");
+                return;
+            }
         } catch (Exception ex) {
-            log.error("Could not set user authentication in security context", ex);
+             log.error("Could not set user authentication in security context", ex);
         }
         chain.doFilter(req, res);
     }

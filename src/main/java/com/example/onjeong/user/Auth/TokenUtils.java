@@ -1,7 +1,9 @@
 package com.example.onjeong.user.Auth;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.domain.UserRole;
+import com.example.onjeong.user.exception.TokenExpiredJwtException;
 import io.jsonwebtoken.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
