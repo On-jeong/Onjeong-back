@@ -1,5 +1,6 @@
 package com.example.onjeong.Config;
 
+import com.example.onjeong.error.CustomAuthenticationEntryPoint;
 import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
 import com.example.onjeong.user.repository.UserRepository;
@@ -13,6 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
@@ -65,8 +68,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and()
+                .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
 
         http.csrf().disable();
 
@@ -82,11 +89,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     response.sendRedirect("/home");
                 })
                 .deleteCookies("remember-me");
-
+/*
         http.addFilterAfter(
                 jwtAuthenticationFilter,
                 CorsFilter.class
         );
+
+ */
     }
 
     //필터추가

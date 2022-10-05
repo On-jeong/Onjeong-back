@@ -16,4 +16,6 @@ public class UserDto {
     private String userName;
     private String userStatus;
     private String userBirth;
+    private String userNickname;
+    private Long familyId;
 }

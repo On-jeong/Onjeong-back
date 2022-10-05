@@ -1,6 +1,8 @@
 package com.example.onjeong.user.controller;
 
 import com.example.onjeong.error.ErrorCode;
+import com.example.onjeong.result.ResultCode;
+import com.example.onjeong.result.ResultResponse;
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.User;
@@ -31,20 +33,22 @@ public class UserController {
 
     @ApiOperation(value="가족회원이 없는 회원 가입")
     @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> signUp(@RequestBody UserJoinDto userJoinDto){
+    public ResponseEntity<ResultResponse> signUp(@RequestBody UserJoinDto userJoinDto){
         if(userService.isUserNicknameDuplicated(userJoinDto.getUserNickname())) {
             throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
         }
-        else return ResponseEntity.ok(TokenUtils.generateJwtToken(userService.signUp(userJoinDto)));
+        userService.signUp(userJoinDto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_SUCCESS));
     }
 
     @ApiOperation(value="가족회원이 있는 회원 가입")
     @PostMapping(value="/accounts/joined", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> signUpJoined(@RequestBody UserJoinedDto userJoinedDto){
+    public ResponseEntity<ResultResponse> signUpJoined(@RequestBody UserJoinedDto userJoinedDto){
         if(userService.isUserNicknameDuplicated(userJoinedDto.getUserNickname())) {
             throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
         }
-        else return ResponseEntity.ok(TokenUtils.generateJwtToken(userService.signUpJoined(userJoinedDto)));
+        userService.signUpJoined(userJoinedDto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_SUCCESS));
     }
 
     @ApiOperation(value="로그인")
@@ -59,38 +63,36 @@ public class UserController {
 
     @ApiOperation(value = "로그아웃")
     @PostMapping(value = "/logout")
-    public ResponseEntity<HttpStatus> logout(HttpServletRequest request, HttpServletResponse response){
-        return ResponseEntity.ok(HttpStatus.OK);
+    public ResponseEntity<ResultResponse> logout(HttpServletRequest request, HttpServletResponse response){
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.LOGOUT_SUCCESS));
     }
 
 
     @ApiOperation(value="회원정보 수정")
     @PutMapping(value="/accounts/user", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> userInformationModify (@Validated  @RequestBody UserAccountsDto userAccountsDto){
-        String result= userService.userInformationModify(userAccountsDto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultResponse> userInformationModify (@Validated  @RequestBody UserAccountsDto userAccountsDto){
+        userService.userInformationModify(userAccountsDto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_USER_INFORMATION_SUCCESS));
     }
 
     @ApiOperation(value = "회원탈퇴")
     @DeleteMapping(value = "/accounts")
-    public ResponseEntity<HttpStatus> userDelete(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
-        if(userService.userDelete(userDeleteDto, httpServletRequest)) {
-            return ResponseEntity.ok(HttpStatus.OK);
-        }
-        else return ResponseEntity.ok(HttpStatus.BAD_GATEWAY);
+    public ResponseEntity<ResultResponse> userDelete(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
+        userService.userDelete(userDeleteDto, httpServletRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_USER_SUCCESS));
     }
 
     @ApiOperation(value="유저 기본정보 알기")
     @GetMapping(value="/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDto> userGet (){
-        UserDto userDto= userService.userGet();
-        return ResponseEntity.ok(userDto);
+    public ResponseEntity<ResultResponse> userGet (){
+        UserDto data= userService.userGet();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_USER_SUCCESS,data));
     }
 
     @ApiOperation(value="기본 홈")
     @GetMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> homeGet (){
-        return ResponseEntity.ok("home");
+    public ResponseEntity<ResultResponse> homeGet (){
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.LOGOUT_SUCCESS));
     }
 
 
@@ -100,13 +102,13 @@ public class UserController {
             @ApiImplicitParam(name = "AuthorizationAccess", value = "AuthorizationAccess", required = true, dataType = "String", paramType = "header"),
             @ApiImplicitParam(name = "AuthorizationRefresh", value = "AuthorizationRefresh", required = true, dataType = "String", paramType = "header")
     })
-    public ResponseEntity<String> refreshToken(
+    public ResponseEntity<ResultResponse> refreshToken(
             @RequestHeader(value="AuthorizationAccess") String token,
             @RequestHeader(value="AuthorizationRefresh") String refreshToken
             ) {
         String accessToken= userService.refreshToken(token, refreshToken);
         HttpHeaders headers = new HttpHeaders();
         headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
-        return ResponseEntity.ok().headers(headers).body("New Access Token 발급");
+        return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.NEW_TOKEN_SUCCESS));
     }
 }

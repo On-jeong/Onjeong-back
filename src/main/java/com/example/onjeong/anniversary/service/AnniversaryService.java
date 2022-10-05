@@ -3,6 +3,7 @@ package com.example.onjeong.anniversary.service;
 import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.anniversary.domain.AnniversaryType;
 import com.example.onjeong.anniversary.dto.AnniversaryDto;
+import com.example.onjeong.anniversary.exception.AnniversaryNotExistException;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.user.domain.User;
@@ -41,7 +42,7 @@ public class AnniversaryService {
         List<AnniversaryDto> result= new ArrayList<>();
         while(!start.isAfter(end)){
             for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())
-                    .orElseThrow(()-> new UserNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST))){ //해당 패밀리만 가져오는지 체크
+                    .orElseThrow(()-> new AnniversaryNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST))){ //해당 패밀리만 가져오는지 체크
                 final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                         .anniversaryId(a.getAnniversaryId())
                         .anniversaryContent(a.getAnniversaryContent())
@@ -79,7 +80,7 @@ public class AnniversaryService {
 
     //해당 일의 특수일정 등록하기
     @Transactional
-    public String anniversaryRegister(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
+    public void anniversaryRegister(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user=userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
@@ -102,35 +103,32 @@ public class AnniversaryService {
                     .build();
         }
         anniversaryRepository.save(anniversary);
-        return "true";
     }
 
     //해당 일의 특수일정 수정하기
     @Transactional
-    public String anniversaryModify(final Long anniversaryId, final AnniversaryModifyDto anniversaryModifyDto){
+    public void anniversaryModify(final Long anniversaryId, final AnniversaryModifyDto anniversaryModifyDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user=userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         Family family=user.getFamily();
 
         Anniversary anniversary= anniversaryRepository.findByAnniversaryIdAndFamily(anniversaryId,family)
-                .orElseThrow(()-> new UserNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST));
+                .orElseThrow(()-> new AnniversaryNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST));
         anniversary.updateAnniversaryContent(anniversaryModifyDto.getAnniversaryContent());
         if(anniversaryModifyDto.getAnniversaryType().equals("ANNIVERSARY")) anniversary.updateAnniversaryType(AnniversaryType.ANNIVERSARY);
         else anniversary.updateAnniversaryType(AnniversaryType.SPECIAL_SCHEDULE);
-        anniversary.updateAnniversaryDate(anniversaryModifyDto.getAnniversaryDate());       //변경 x
-        return "true";
+        anniversary.updateAnniversaryDate(anniversaryModifyDto.getAnniversaryDate());
     }
 
     //해당 일의 특수일정 삭제하기
     @Transactional
-    public String anniversaryRemove(final Long anniversaryId){
+    public void anniversaryRemove(final Long anniversaryId){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user=userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         Family family=user.getFamily();
 
-        if(anniversaryRepository.deleteByAnniversaryIdAndFamily(anniversaryId,family).equals("1")) return "true";
-        else return "false";
+        anniversaryRepository.deleteByAnniversaryIdAndFamily(anniversaryId, family);
     }
 }
