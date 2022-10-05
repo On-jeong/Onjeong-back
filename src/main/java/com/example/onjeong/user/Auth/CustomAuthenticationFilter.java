@@ -1,7 +1,8 @@
 package com.example.onjeong.user.Auth;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.error.InputNotFoundException;
+import com.example.onjeong.user.exception.InputNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             final User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             authRequest = new UsernamePasswordAuthenticationToken(user.getUserNickname(), user.getUserPassword());
         } catch (IOException exception){
-            throw new InputNotFoundException();
+            throw new InputNotFoundException("input not found error", ErrorCode.INPUT_NOT_FOUND);
         }
         setDetails(request, authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);

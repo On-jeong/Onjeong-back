@@ -1,7 +1,8 @@
 package com.example.onjeong.user.service;
 
-import com.example.onjeong.user.error.UserNotFoundException;
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.MyUserDetails;
+import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,13 +18,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public MyUserDetails loadUserByUsername(String userNickname) {
-        /*
-        User user = userRepository.findByUserNickname(userNickname);
-        if (user == null) throw new UsernameNotFoundException(userNickname);
-        return new MyUserDetails(user, Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString())));
-        */
         return userRepository.findByUserNickname(userNickname)
                 .map(u -> new MyUserDetails(u, Collections.singleton(new SimpleGrantedAuthority(u.getRole().getValue()))))
-                .orElseThrow(() -> new UserNotFoundException(userNickname));
+                .orElseThrow(() -> new UserNotExistException("user not exist", ErrorCode.USER_NOTEXIST));
     }
 }

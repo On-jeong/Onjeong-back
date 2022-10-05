@@ -5,7 +5,10 @@ import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.exception.TokenExpiredJwtException;
 import com.example.onjeong.user.exception.UserNotExistException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +23,14 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void doFilterInternal(final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain) throws IOException, ServletException {
         try {
@@ -42,11 +49,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException ex) {
             if(!req.getRequestURI().equals("/refresh")){
-                res.sendError(401,"Token Expired Error");
+                Map<String, String> map = new HashMap<>();
+                res.setContentType("application/json");
+                res.setCharacterEncoding("utf-8");
+                map.put("status", "401");
+                map.put("message", "ACCESS TOKEN EXPIRED");
+                map.put("code", "A004");
+                res.getWriter().write(objectMapper.writeValueAsString(map));
+                res.setStatus(401);
                 return;
             }
-        } catch (Exception ex) {
-             log.error("Could not set user authentication in security context", ex);
+        } catch (MalformedJwtException | SignatureException e){
+            Map<String, String> map = new HashMap<>();
+            res.setContentType("application/json");
+            res.setCharacterEncoding("utf-8");
+            map.put("status", "401");
+            map.put("message", "ACCESS TOKEN NOT SAME");
+            map.put("code", "A005");
+            res.getWriter().write(objectMapper.writeValueAsString(map));
+            res.setStatus(401);
+            return;
         }
         chain.doFilter(req, res);
     }

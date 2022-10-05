@@ -7,6 +7,8 @@ import com.example.onjeong.board.service.BoardService;
 import com.example.onjeong.fcm.FCMService;
 import com.example.onjeong.home.domain.CoinHistoryType;
 import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.result.ResultCode;
+import com.example.onjeong.result.ResultResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,10 +17,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,38 +39,38 @@ public class BoardController {
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
     @GetMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BoardDto>> allBoardGet(@PathVariable("boardDate") String boardDate){
-        List<BoardDto> result= boardService.allBoardGet(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultResponse> allBoardGet(@PathVariable("boardDate") String boardDate, HttpServletRequest req){
+        List<BoardDto> data= boardService.allBoardGet(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_BOARD_SUCCESS,data));
     }
 
     @ApiOperation(value="오늘의 기록 작성하기")
-    @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> boardRegister(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(value = "boardContent") String boardContent)throws IOException, FirebaseMessagingException {
+    @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResultResponse> boardRegister(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(value = "boardContent") String boardContent)throws FirebaseMessagingException {
         Board board= boardService.boardRegister(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), multipartFile, boardContent);
         fcmService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_BOARD_SUCCESS));
     }
 
     @ApiOperation(value="오늘의 기록 한개 가져오기")
     @GetMapping(value = "/boards/{boardId}/one", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BoardDto> boardGet(@PathVariable("boardId") Long boardId){
-        BoardDto result= boardService.boardGet(boardId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultResponse> boardGet(@PathVariable("boardId") Long boardId){
+        BoardDto data= boardService.boardGet(boardId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_BOARD_SUCCESS,data));
     }
 
     @ApiOperation(value="오늘의 기록 수정하기")
     @PatchMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> boardModify(@PathVariable("boardId") Long boardId, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestParam("boardContent") String boardContent, @RequestParam("boardDate") String boardDate){
-        String result= boardService.boardModify(boardId, multipartFile, boardContent, LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultResponse> boardModify(@PathVariable("boardId") Long boardId, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestParam("boardContent") String boardContent, @RequestParam("boardDate") String boardDate){
+        boardService.boardModify(boardId, multipartFile, boardContent, LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_BOARD_SUCCESS));
     }
 
     @ApiOperation(value="오늘의 기록 삭제하기")
     @DeleteMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> boardRemove(@PathVariable("boardId") Long boardId){
-        String result= boardService.boardRemove(boardId);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ResultResponse> boardRemove(@PathVariable("boardId") Long boardId){
+        boardService.boardRemove(boardId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_BOARD_SUCCESS));
     }
 }
