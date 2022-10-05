@@ -1,5 +1,7 @@
 package com.example.onjeong.user.Auth;
 
+import com.example.onjeong.result.ResultCode;
+import com.example.onjeong.result.ResultResponse;
 import com.example.onjeong.user.domain.MyUserDetails;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.UserDto;
@@ -37,10 +39,12 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 .userName(getUser.getUserName())
                 .userStatus(getUser.getUserStatus())
                 .userBirth(getUser.getUserBirth().toString())
+                .userNickname(getUser.getUserNickname())
+                .familyId(getUser.getFamily().getFamilyId())
                 .build();
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        String data = objectMapper.writeValueAsString(userDto);
+        String data = objectMapper.writeValueAsString(ResultResponse.of(ResultCode.LOGIN_SUCCESS,userDto));
         response.getWriter().write(data);
         response.addHeader(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
         response.addHeader(AuthConstants.AUTH_HEADER_REFRESH, refreshToken);

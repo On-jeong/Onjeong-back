@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -31,44 +32,20 @@ import java.util.List;
 public class FCMController {
 
     private final UserService userService;
+    private final FCMService fcmService;
     private final UserRepository userRepository;
 
     @ApiOperation(value="로그인 시 FCM 토큰 저장")
     @PostMapping(value = "/token/generate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> FCMRegister(@RequestBody DeviceTokenRequest deviceTokenRequest) throws FirebaseMessagingException {
-
-        User user = userService.findUser(deviceTokenRequest.getUserNickname());
-        user.updateDeviceToken(deviceTokenRequest.getToken());
-
-        Family family = user.getFamily();
-        String topic = family.getFamilyId().toString();
-
-        List<String> registrationTokens = new ArrayList<>();
-        registrationTokens.add(topic);
-
-        TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(
-                registrationTokens, topic);
-
-        System.out.println(response.getSuccessCount() + " tokens were subscribed successfully");
-
+    public ResponseEntity<HttpStatus> FCMRegister(@RequestParam String token) throws FirebaseMessagingException {
+        fcmService.registerToken(token);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ApiOperation(value="로그아웃 시 FCM 토큰 해제")
     @PostMapping(value = "/token/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> FCMCancel(@RequestBody DeviceTokenRequest deviceTokenRequest) throws FirebaseMessagingException {
-
-        User user = userService.findUser(deviceTokenRequest.getUserNickname());
-        List<String> registrationTokens = new ArrayList<>();
-        registrationTokens.add(deviceTokenRequest.getToken());
-
-        Family family = user.getFamily();
-        String topic = family.getFamilyId().toString();
-
-        TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(
-                registrationTokens, topic);
-        System.out.println(response.getSuccessCount() + " tokens were unsubscribed successfully");
-
+    public ResponseEntity<HttpStatus> FCMCancel() throws FirebaseMessagingException {
+        fcmService.deleteToken();
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

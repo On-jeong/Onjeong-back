@@ -1,8 +1,13 @@
 package com.example.onjeong.error;
 
+import com.example.onjeong.S3.FileUploadException;
+import com.example.onjeong.S3.UploadFileNotExistException;
+import com.example.onjeong.anniversary.exception.AnniversaryNotExistException;
 import com.example.onjeong.anniversary.exception.EmailDuplicateException;
+import com.example.onjeong.family.exception.FamilyNotExistException;
 import com.example.onjeong.mail.exception.MailNotExistException;
 import com.example.onjeong.mail.exception.ReceiveUserNotExistException;
+import com.example.onjeong.profile.exception.ProfileNotExistException;
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.exception.*;
@@ -114,6 +119,48 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleTokenExpiredJwtException(TokenExpiredJwtException ex){
         log.error("handleTokenExpiredJwtException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(JoinedUserNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleJoinedUserNotExistException(JoinedUserNotExistException ex){
+        log.error("handleJoinedUserNotExistException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(FamilyNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleFamilyNotExistException(FamilyNotExistException ex){
+        log.error("handleFamilyNotExistException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(ProfileNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleProfileNotExistException(ProfileNotExistException ex){
+        log.error("handleProfileNotExistException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(AnniversaryNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleAnniversaryNotExistException(AnniversaryNotExistException ex){
+        log.error("handleAnniversaryNotExistException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(UploadFileNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleUploadFileNotExistException(UploadFileNotExistException ex){
+        log.error("handleUploadFileNotExistException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex){
+        log.error("handleFileUploadException",ex);
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }

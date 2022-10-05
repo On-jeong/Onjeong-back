@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.onjeong.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,10 +25,14 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
 
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        File uploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-        return upload(uploadFile, dirName);
+    public String upload(MultipartFile multipartFile, String dirName){
+        try{
+            File uploadFile = convert(multipartFile)
+                    .orElseThrow(() -> new UploadFileNotExistException("upload file not exist", ErrorCode.UPLOAD_FILE_NOTEXIST));
+            return upload(uploadFile, dirName);
+        }catch (Exception e){
+            throw new FileUploadException("file upload error",ErrorCode.FILE_UPLOAD_ERROR);
+        }
     }
 
     private String upload(File uploadFile, String dirName) {

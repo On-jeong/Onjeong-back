@@ -6,9 +6,11 @@ import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 
+import com.example.onjeong.family.exception.FamilyNotExistException;
 import com.example.onjeong.home.repository.CoinHistoryRepository;
 import com.example.onjeong.mail.repository.MailRepository;
 import com.example.onjeong.profile.domain.Profile;
+import com.example.onjeong.profile.exception.ProfileNotExistException;
 import com.example.onjeong.profile.repository.*;
 
 import com.example.onjeong.home.domain.Flower;
@@ -27,7 +29,6 @@ import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.exception.*;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -75,7 +76,7 @@ public class UserService {
 
     //가족회원이 없는 회원 가입
     @Transactional
-    public User signUp(final UserJoinDto userJoinDto){
+    public void signUp(final UserJoinDto userJoinDto){
         final Family family= Family.builder()
                 .familyCoin(0)
                 .build();
@@ -99,33 +100,26 @@ public class UserService {
                 .family(family)
                 .build();
         flowerRepository.save(newFlower);
-        return savedUser;
     }
 
     //가족회원이 있는 회원 가입
     @Transactional
-    public User signUpJoined(final UserJoinedDto userJoinedDto){
-        String joinedNickname=userJoinedDto.getJoinedNickname();
-        Optional<User> joinedUser=userRepository.findByUserNickname(joinedNickname);
-
-        if(joinedUser.isPresent()){
-            final User user= User.builder()
-                    .userName(userJoinedDto.getUserName())
-                    .userNickname(userJoinedDto.getUserNickname())
-                    .userPassword(passwordEncoder.encode(userJoinedDto.getUserPassword()))
-                    .userStatus(userJoinedDto.getUserStatus())
-                    .userBirth(userJoinedDto.getUserBirth())
-                    .role(UserRole.ROLE_USER)
-                    .family(joinedUser.get().getFamily())
-                    .build();
-            User savedUser= userRepository.save(user);
-            profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false)
-                    .family(joinedUser.get().getFamily()).build());
-            return savedUser;
-        }
-        else{
-            return null;
-        }
+    public void signUpJoined(final UserJoinedDto userJoinedDto){
+        String joinedNickname= userJoinedDto.getJoinedNickname();
+        User joinedUser= userRepository.findByUserNickname(joinedNickname)
+                .orElseThrow(()-> new JoinedUserNotExistException("joined user not exist", ErrorCode.JOINED_USER_NOTEXIST));
+        final User user= User.builder()
+                .userName(userJoinedDto.getUserName())
+                .userNickname(userJoinedDto.getUserNickname())
+                .userPassword(passwordEncoder.encode(userJoinedDto.getUserPassword()))
+                .userStatus(userJoinedDto.getUserStatus())
+                .userBirth(userJoinedDto.getUserBirth())
+                .role(UserRole.ROLE_USER)
+                .family(joinedUser.getFamily())
+                .build();
+        User savedUser= userRepository.save(user);
+        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false)
+                .family(joinedUser.getFamily()).build());
     }
 
     //로그인
@@ -143,39 +137,37 @@ public class UserService {
 
     //회원정보 수정
     @Transactional
-    public String userInformationModify(final UserAccountsDto userAccountsDto){
+    public void userInformationModify(final UserAccountsDto userAccountsDto){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
         user.updateUserName(userAccountsDto.getUserName());
-        user.updateUserNickname(user.getUserNickname());    //변경 x
+        user.updateUserNickname(user.getUserNickname());
         user.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
         user.updateUserStatus(userAccountsDto.getUserStatus());
-        user.updateUserBirth(userAccountsDto.getUserBirth());      //변경 x
+        user.updateUserBirth(userAccountsDto.getUserBirth());
         user.updateRole(UserRole.ROLE_USER);
-        user.updateFamily(user.getFamily());            //변경 x
-        return "true";
+        user.updateFamily(user.getFamily());
     }
 
     //회원탈퇴
     @Transactional
-    public boolean userDelete(final UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
+    public void userDelete(final UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
         HttpSession httpSession = httpServletRequest.getSession();
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         Family family= familyRepository.findById(user.getFamily().getFamilyId())
-                .orElseThrow(()-> new UserNotExistException("family not exist", ErrorCode.USER_NOTEXIST));
+                .orElseThrow(()-> new FamilyNotExistException("family not exist", ErrorCode.FAMILY_NOTEXIST));
         Long profileId= profileRepository.findByUser(user)
-                .orElseThrow(()-> new UserNotExistException("profileId not exist", ErrorCode.USER_NOTEXIST)).getProfileId();
+                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST)).getProfileId();
         if(passwordEncoder.matches(userDeleteDto.getUserPassword(),user.getUserPassword())){
             expressionRepository.deleteInBatch(expressionRepository.findAllById(Collections.singleton(profileId)));
             favoriteRepository.deleteInBatch(favoriteRepository.findAllById(Collections.singleton(profileId)));
             hateRepository.deleteInBatch(hateRepository.findAllById(Collections.singleton(profileId)));
             interestRepository.deleteInBatch(interestRepository.findAllById(Collections.singleton(profileId)));
             String profileImgUrl= profileRepository.findByUser(user)
-                    .orElseThrow(()-> new UserNotExistException("profileImgUrl not exist", ErrorCode.USER_NOTEXIST)).getProfileImageUrl();
+                    .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST)).getProfileImageUrl();
             if(profileImgUrl!=null) s3Uploader.deleteFile(profileImgUrl.substring(AWS_S3_BUCKET_URL.length()));
             profileRepository.deleteByUser(user);
             boardRepository.deleteByUser(user);
@@ -193,9 +185,7 @@ public class UserService {
             httpSession.invalidate();
             SecurityContextHolder.getContext().setAuthentication(null);
             SecurityContextHolder.clearContext();
-            return true;
         }
-        else return false;
     }
 
     public boolean isUserNicknameDuplicated(final String userNickname) {
@@ -213,6 +203,8 @@ public class UserService {
                 .userName(user.getUserName())
                 .userStatus(user.getUserStatus())
                 .userBirth(user.getUserBirth().toString())
+                .userNickname(user.getUserNickname())
+                .familyId(user.getFamily().getFamilyId())
                 .build();
     }
 
