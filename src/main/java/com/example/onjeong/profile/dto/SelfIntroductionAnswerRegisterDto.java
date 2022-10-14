@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class HateDto {
-    private String hateContent;
+public class SelfIntroductionAnswerRegisterDto {
+    private String selfIntroductionAnswerContent;
 }

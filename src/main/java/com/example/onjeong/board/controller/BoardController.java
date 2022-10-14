@@ -62,8 +62,8 @@ public class BoardController {
 
     @ApiOperation(value="오늘의 기록 수정하기")
     @PatchMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> boardModify(@PathVariable("boardId") Long boardId, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestParam("boardContent") String boardContent, @RequestParam("boardDate") String boardDate){
-        boardService.boardModify(boardId, multipartFile, boardContent, LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
+    public ResponseEntity<ResultResponse> boardModify(@PathVariable("boardId") Long boardId, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(value = "boardContent") String boardContent){
+        boardService.boardModify(boardId, multipartFile, boardContent);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_BOARD_SUCCESS));
     }
 
