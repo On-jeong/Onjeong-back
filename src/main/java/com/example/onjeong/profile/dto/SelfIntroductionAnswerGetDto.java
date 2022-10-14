@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InterestGetDto {
-    private Long interestId;
-    private String interestContent;
+public class SelfIntroductionAnswerGetDto {
+    private Long selfIntroductionAnswerId;
+    private String selfIntroductionAnswerContent;
 }

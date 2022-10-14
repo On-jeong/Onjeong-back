@@ -4,6 +4,7 @@ import com.example.onjeong.S3.FileUploadException;
 import com.example.onjeong.S3.UploadFileNotExistException;
 import com.example.onjeong.anniversary.exception.AnniversaryNotExistException;
 import com.example.onjeong.anniversary.exception.EmailDuplicateException;
+import com.example.onjeong.board.exception.BoardWriterNotSameException;
 import com.example.onjeong.family.exception.FamilyNotExistException;
 import com.example.onjeong.mail.exception.MailNotExistException;
 import com.example.onjeong.mail.exception.ReceiveUserNotExistException;
@@ -161,6 +162,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileUploadException.class)
     public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex){
         log.error("handleFileUploadException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(BoardWriterNotSameException.class)
+    public ResponseEntity<ErrorResponse> handleBoardWriterNotSameException(BoardWriterNotSameException ex){
+        log.error("handleBoardWriterNotSameException",ex);
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }

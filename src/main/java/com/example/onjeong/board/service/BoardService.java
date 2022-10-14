@@ -4,6 +4,8 @@ package com.example.onjeong.board.service;
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.dto.BoardDto;
+import com.example.onjeong.board.exception.BoardNotExistException;
+import com.example.onjeong.board.exception.BoardWriterNotSameException;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.board.repository.BoardRepository;
@@ -39,7 +41,7 @@ public class BoardService {
         User user= userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,user.getFamily())
-                .orElseThrow(()-> new UserNotExistException("boards not exist", ErrorCode.USER_NOTEXIST));
+                .orElseThrow(()-> new BoardNotExistException("boards not exist", ErrorCode.BOARD_NOTEXIST));
         final List<BoardDto> result= new ArrayList<>();
         for(Board b: boards){
             final BoardDto boardDto= BoardDto.builder()
@@ -85,7 +87,7 @@ public class BoardService {
     @Transactional
     public BoardDto boardGet(final Long boardId){
         Board board= boardRepository.findByBoardId(boardId)
-                .orElseThrow(()-> new UserNotExistException("board not exist", ErrorCode.USER_NOTEXIST));
+                .orElseThrow(()-> new BoardNotExistException("board not exist", ErrorCode.BOARD_NOTEXIST));
         return BoardDto.builder()
                 .boardId(board.getBoardId())
                 .boardContent(board.getBoardContent())
@@ -96,12 +98,12 @@ public class BoardService {
 
     //오늘의 기록 수정하기
     @Transactional
-    public void boardModify(final Long boardId, final MultipartFile multipartFile, final String boardContent, final LocalDate boardDate){
+    public void boardModify(final Long boardId, final MultipartFile multipartFile, final String boardContent){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         Board board= boardRepository.findByBoardId(boardId)
-                .orElseThrow(()-> new UserNotExistException("board not exist", ErrorCode.USER_NOTEXIST));
+                .orElseThrow(()-> new BoardNotExistException("board not exist", ErrorCode.BOARD_NOTEXIST));
         if(user==board.getUser()){
             board.updateBoardContent(boardContent);
             if(multipartFile==null && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
@@ -116,8 +118,8 @@ public class BoardService {
                 s3Uploader.deleteFile(board.getBoardImageUrl().substring(AWS_S3_BUCKET_URL.length()));
                 board.updateBoardImageUrl(s3Uploader.upload(multipartFile, "board"));
             }
-            board.updateBoardDate(boardDate);
         }
+        else throw new BoardWriterNotSameException("board writer not same",ErrorCode.BOARD_WRITER_NOT_SAME);
     }
 
     //오늘의 기록 삭제하기
@@ -127,7 +129,7 @@ public class BoardService {
         User user=userRepository.findByUserNickname(authentication.getName())
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         String deletedImage= boardRepository.findByBoardId(boardId)
-                .orElseThrow(()-> new UserNotExistException("deletedImage not exist", ErrorCode.USER_NOTEXIST)).getBoardImageUrl();
+                .orElseThrow(()-> new BoardNotExistException("deletedImage not exist", ErrorCode.BOARD_NOTEXIST)).getBoardImageUrl();
         if(boardRepository.deleteByBoardIdAndUser(boardId,user).equals("1")) {
             if(deletedImage!=null) s3Uploader.deleteFile(deletedImage.substring(AWS_S3_BUCKET_URL.length()));
         }
