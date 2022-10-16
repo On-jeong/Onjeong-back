@@ -11,7 +11,7 @@ import java.util.Calendar;
 
 @Getter
 @NoArgsConstructor
-public class UserProfileGetDto {
+public class UserInformationAndProfileMessageDto {
     private String profileImageUrl;
     private boolean checkProfileImage;
     private String name;
@@ -20,7 +20,7 @@ public class UserProfileGetDto {
     private String message;
 
     @Builder
-    public UserProfileGetDto(User user, String profileImageUrl, boolean checkProfileImage, String message) {
+    public UserInformationAndProfileMessageDto(User user, String profileImageUrl, boolean checkProfileImage, String message) {
         this.profileImageUrl= profileImageUrl;
         this.checkProfileImage= checkProfileImage;
         this.name = user.getUserName();

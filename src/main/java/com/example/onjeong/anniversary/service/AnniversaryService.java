@@ -7,14 +7,11 @@ import com.example.onjeong.anniversary.exception.AnniversaryNotExistException;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.anniversary.dto.AnniversaryModifyDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;
 import com.example.onjeong.anniversary.repository.AnniversaryRepository;
-import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,19 +24,16 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class AnniversaryService {
     private final AnniversaryRepository anniversaryRepository;
-    private final UserRepository userRepository;
+    private final AuthUtil authUtil;
 
     //월별 모든 특수일정 가져오기
     @Transactional
-    public List<AnniversaryDto> allAnniversaryGet(final LocalDate anniversaryDate){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Family family= user.getFamily();
-
+    public List<AnniversaryDto> getAllAnniversaryOfMonth(final LocalDate anniversaryDate){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Family family= loginUser.getFamily();
         LocalDate start= anniversaryDate.withDayOfMonth(1);
-        LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
-        List<AnniversaryDto> result= new ArrayList<>();
+        final LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
+        final List<AnniversaryDto> result= new ArrayList<>();
         while(!start.isAfter(end)){
             for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())
                     .orElseThrow(()-> new AnniversaryNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST))){ //해당 패밀리만 가져오는지 체크
@@ -58,12 +52,9 @@ public class AnniversaryService {
 
     //해당 일의 특수일정 가져오기
     @Transactional
-    public List<AnniversaryDto> anniversaryGet(final LocalDate anniversaryDate){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Family family=user.getFamily();
-
+    public List<AnniversaryDto> getAnniversaryOfDay(final LocalDate anniversaryDate){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Family family=loginUser.getFamily();
         final List<AnniversaryDto> result= new ArrayList<>();
         final List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
         for(Anniversary a: anniversaries){
@@ -80,18 +71,15 @@ public class AnniversaryService {
 
     //해당 일의 특수일정 등록하기
     @Transactional
-    public void anniversaryRegister(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+    public void registerAnniversary(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
+        final User loginUser= authUtil.getUserByAuthentication();
         final Anniversary anniversary;
         if(anniversaryRegisterDto.getAnniversaryType().equals("ANNIVERSARY")) {
             anniversary = Anniversary.builder()
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.ANNIVERSARY)
-                    .family(user.getFamily())
+                    .family(loginUser.getFamily())
                     .build();
         }
         else {
@@ -99,36 +87,17 @@ public class AnniversaryService {
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.SPECIAL_SCHEDULE)
-                    .family(user.getFamily())
+                    .family(loginUser.getFamily())
                     .build();
         }
         anniversaryRepository.save(anniversary);
     }
 
-    //해당 일의 특수일정 수정하기
-    @Transactional
-    public void anniversaryModify(final Long anniversaryId, final AnniversaryModifyDto anniversaryModifyDto){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Family family=user.getFamily();
-
-        Anniversary anniversary= anniversaryRepository.findByAnniversaryIdAndFamily(anniversaryId,family)
-                .orElseThrow(()-> new AnniversaryNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST));
-        anniversary.updateAnniversaryContent(anniversaryModifyDto.getAnniversaryContent());
-        if(anniversaryModifyDto.getAnniversaryType().equals("ANNIVERSARY")) anniversary.updateAnniversaryType(AnniversaryType.ANNIVERSARY);
-        else anniversary.updateAnniversaryType(AnniversaryType.SPECIAL_SCHEDULE);
-        anniversary.updateAnniversaryDate(anniversaryModifyDto.getAnniversaryDate());
-    }
-
     //해당 일의 특수일정 삭제하기
     @Transactional
-    public void anniversaryRemove(final Long anniversaryId){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user=userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Family family=user.getFamily();
-
+    public void deleteAnniversary(final Long anniversaryId){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Family family=loginUser.getFamily();
         anniversaryRepository.deleteByAnniversaryIdAndFamily(anniversaryId, family);
     }
 }

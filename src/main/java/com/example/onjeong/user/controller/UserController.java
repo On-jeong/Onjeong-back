@@ -5,7 +5,6 @@ import com.example.onjeong.result.ResultCode;
 import com.example.onjeong.result.ResultResponse;
 import com.example.onjeong.user.Auth.AuthConstants;
 import com.example.onjeong.user.Auth.TokenUtils;
-import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.*;
 import com.example.onjeong.user.exception.UserNicknameDuplicationException;
 import io.swagger.annotations.*;
@@ -13,7 +12,6 @@ import com.example.onjeong.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -70,28 +68,28 @@ public class UserController {
 
     @ApiOperation(value="회원정보 수정")
     @PutMapping(value="/accounts/user", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> userInformationModify (@Validated  @RequestBody UserAccountsDto userAccountsDto){
-        userService.userInformationModify(userAccountsDto);
+    public ResponseEntity<ResultResponse> modifyUserInformation (@Validated  @RequestBody UserAccountDto userAccountsDto){
+        userService.modifyUserInformation(userAccountsDto);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_USER_INFORMATION_SUCCESS));
     }
 
     @ApiOperation(value = "회원탈퇴")
     @DeleteMapping(value = "/accounts")
-    public ResponseEntity<ResultResponse> userDelete(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
-        userService.userDelete(userDeleteDto, httpServletRequest);
+    public ResponseEntity<ResultResponse> deleteUser(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
+        userService.deleteUser(userDeleteDto, httpServletRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_USER_SUCCESS));
     }
 
     @ApiOperation(value="유저 기본정보 알기")
     @GetMapping(value="/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> userGet (){
-        UserDto data= userService.userGet();
+    public ResponseEntity<ResultResponse> getUser (){
+        UserDto data= userService.getUser();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_USER_SUCCESS,data));
     }
 
     @ApiOperation(value="기본 홈")
     @GetMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> homeGet (){
+    public ResponseEntity<ResultResponse> getHome (){
         return ResponseEntity.ok(ResultResponse.of(ResultCode.LOGOUT_SUCCESS));
     }
 
@@ -106,7 +104,7 @@ public class UserController {
             @RequestHeader(value="AuthorizationAccess") String token,
             @RequestHeader(value="AuthorizationRefresh") String refreshToken
             ) {
-        String accessToken= userService.refreshToken(token, refreshToken);
+        String accessToken= userService.refreshToken(refreshToken);
         HttpHeaders headers = new HttpHeaders();
         headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
         return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.NEW_TOKEN_SUCCESS));

@@ -1,8 +1,10 @@
 package com.example.onjeong.user.domain;
 
+import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.question.domain.Answer;
+import com.example.onjeong.user.exception.UserNotExistException;
 import lombok.*;
 
 
@@ -62,10 +64,6 @@ public class User extends Common implements Serializable {
 
     public void updateUserName(String userName){ this.userName=userName; }
 
-    public void updateUserNickname(String userNickname){
-        this.userNickname=userNickname;
-    }
-
     public void setEncryptedPassword(String encryptedPassword) {
         this.userPassword = encryptedPassword;
     }
@@ -76,14 +74,6 @@ public class User extends Common implements Serializable {
 
     public void updateUserBirth(LocalDate userBirth){
         this.userBirth=userBirth;
-    }
-
-    public void updateRole(UserRole role){
-        this.role=role;
-    }
-
-    public void updateFamily(Family family){
-        this.family=family;
     }
 
     public void updateRefreshToken(String refreshToken){

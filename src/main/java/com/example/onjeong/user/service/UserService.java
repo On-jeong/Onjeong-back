@@ -29,6 +29,7 @@ import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.exception.*;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
+import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,13 +71,14 @@ public class UserService {
     private final HateRepository hateRepository;
     private final InterestRepository interestRepository;
     private final MailRepository mailRepository;
+    private final AuthUtil authUtil;
 
     @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
     private String AWS_S3_BUCKET_URL;
 
     //가족회원이 없는 회원 가입
     @Transactional
-    public void signUp(final UserJoinDto userJoinDto){
+    public void signUp(UserJoinDto userJoinDto){
         final Family family= Family.builder()
                 .familyCoin(0)
                 .build();
@@ -88,11 +90,11 @@ public class UserService {
                 .userBirth(userJoinDto.getUserBirth())
                 .role(UserRole.ROLE_USER)
                 .family(familyRepository.save(family))
-                .build();               
-        User savedUser= userRepository.save(user);
+                .build();
+        final User savedUser= userRepository.save(user);
         profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(family).build());
-        
-        Flower newFlower = Flower.builder()
+
+        final Flower newFlower = Flower.builder()
                 .flowerBloom(false)
                 .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
                 .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
@@ -104,9 +106,9 @@ public class UserService {
 
     //가족회원이 있는 회원 가입
     @Transactional
-    public void signUpJoined(final UserJoinedDto userJoinedDto){
-        String joinedNickname= userJoinedDto.getJoinedNickname();
-        User joinedUser= userRepository.findByUserNickname(joinedNickname)
+    public void signUpJoined(UserJoinedDto userJoinedDto){
+        final String joinedNickname= userJoinedDto.getJoinedNickname();
+        final User joinedUser= userRepository.findByUserNickname(joinedNickname)
                 .orElseThrow(()-> new JoinedUserNotExistException("joined user not exist", ErrorCode.JOINED_USER_NOTEXIST));
         final User user= User.builder()
                 .userName(userJoinedDto.getUserName())
@@ -117,14 +119,14 @@ public class UserService {
                 .role(UserRole.ROLE_USER)
                 .family(joinedUser.getFamily())
                 .build();
-        User savedUser= userRepository.save(user);
+        final User savedUser= userRepository.save(user);
         profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false)
                 .family(joinedUser.getFamily()).build());
     }
 
     //로그인
     @Transactional
-    public User login(final UserLoginDto userLoginDto, @ApiIgnore HttpSession session) throws Exception{
+    public User login(UserLoginDto userLoginDto, @ApiIgnore HttpSession session) throws Exception{
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginDto.getUserNickname(), userLoginDto.getUserPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -137,22 +139,17 @@ public class UserService {
 
     //회원정보 수정
     @Transactional
-    public void userInformationModify(final UserAccountsDto userAccountsDto){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        user.updateUserName(userAccountsDto.getUserName());
-        user.updateUserNickname(user.getUserNickname());
-        user.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
-        user.updateUserStatus(userAccountsDto.getUserStatus());
-        user.updateUserBirth(userAccountsDto.getUserBirth());
-        user.updateRole(UserRole.ROLE_USER);
-        user.updateFamily(user.getFamily());
+    public void modifyUserInformation(UserAccountDto userAccountsDto){
+        final User loginUser= authUtil.getUserByAuthentication();
+        loginUser.updateUserName(userAccountsDto.getUserName());
+        loginUser.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
+        loginUser.updateUserStatus(userAccountsDto.getUserStatus());
+        loginUser.updateUserBirth(userAccountsDto.getUserBirth());
     }
 
     //회원탈퇴
     @Transactional
-    public void userDelete(final UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
+    public void deleteUser(UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
         HttpSession httpSession = httpServletRequest.getSession();
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         User user= userRepository.findByUserNickname(authentication.getName())
@@ -188,29 +185,23 @@ public class UserService {
         }
     }
 
-    public boolean isUserNicknameDuplicated(final String userNickname) {
-        return userRepository.existsByUserNickname(userNickname);
-    }
-
     //유저 기본정보 알기
     @Transactional
-    public UserDto userGet(){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+    public UserDto getUser(){
+        final User loginUser= authUtil.getUserByAuthentication();
         return UserDto.builder()
-                .userId(user.getUserId())
-                .userName(user.getUserName())
-                .userStatus(user.getUserStatus())
-                .userBirth(user.getUserBirth().toString())
-                .userNickname(user.getUserNickname())
-                .familyId(user.getFamily().getFamilyId())
+                .userId(loginUser.getUserId())
+                .userName(loginUser.getUserName())
+                .userStatus(loginUser.getUserStatus())
+                .userBirth(loginUser.getUserBirth().toString())
+                .userNickname(loginUser.getUserNickname())
+                .familyId(loginUser.getFamily().getFamilyId())
                 .build();
     }
 
     //Access Token 재발급
     @Transactional
-    public String refreshToken(String token, String refreshToken) {
+    public String refreshToken(String refreshToken) {
         String accessToken= null;
         Optional<User> user= userRepository.findByRefreshToken(refreshToken);
         if(user.isPresent()){
@@ -224,8 +215,7 @@ public class UserService {
     }
 
 
-    public User findUser(String userNickname) {
-        return userRepository.findByUserNickname(userNickname)
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+    public boolean isUserNicknameDuplicated(String userNickname) {
+        return userRepository.existsByUserNickname(userNickname);
     }
 }
