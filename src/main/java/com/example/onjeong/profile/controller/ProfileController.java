@@ -30,24 +30,24 @@ public class ProfileController {
 
     @ApiOperation(value="가족 프로필 중 구성원 보여주기")
     @GetMapping(value = "/families", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> allUserGet(){
-        List<FamilyGetDto> data= profileService.allUserGet();
+    public ResponseEntity<ResultResponse> getAllUserOfFamily(){
+        List<AllUserOfFamilyDto> data= profileService.getAllUserOfFamily();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_USER_SUCCESS,data));
     }
 
     @ApiOperation(value="프로필 상단에 개인 정보 보여주기")
     @GetMapping(value = "/profiles/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> userInformationGet(@PathVariable("userId") Long userId) {
-        UserInformationDto data= profileService.userInformationGet(userId);
+    public ResponseEntity<ResultResponse> getUserInformation(@PathVariable("userId") Long userId) {
+        UserInformationDto data= profileService.getUserInformation(userId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_USER_INFORMATION_SUCCESS,data));
     }
 
     @ApiOperation(value="프로필 사진 등록하기")
     @PostMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileImageRegister(@RequestPart(value = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileImageRegister(multipartFile));
+    public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(value = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
         else{
-            fcmService.sendProfileModify(profileService.profileImageRegister(multipartFile));
+            fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS));
@@ -55,25 +55,24 @@ public class ProfileController {
 
     @ApiOperation(value="프로필 사진 삭제하기")
     @DeleteMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileImageDelete() {
-        profileService.profileImageDelete();
+    public ResponseEntity<ResultResponse> deleteProfileImage() {
+        profileService.deleteProfileImage();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_PROFILE_IMAGE_SUCCESS));
     }
 
-
     @ApiOperation(value="상태메시지 보여주기")
     @GetMapping(value = "/profiles/messages/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileMessageGet(@PathVariable("userId") Long userId) {
-        ProfileMessageDto data= profileService.profileMessageGet(userId);
+    public ResponseEntity<ResultResponse> getProfileMessage(@PathVariable("userId") Long userId) {
+        ProfileMessageDto data= profileService.getProfileMessage(userId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_PROFILE_MESSAGE_SUCCESS,data));
     }
 
     @ApiOperation(value="상태메시지 작성하기")
     @PostMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileMessageRegister(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.profileMessageRegister(profileMessageDto));
+    public ResponseEntity<ResultResponse> registerProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
         else{
-            fcmService.sendProfileModify(profileService.profileMessageRegister(profileMessageDto));
+            fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_MESSAGE_SUCCESS));
@@ -81,15 +80,28 @@ public class ProfileController {
 
     @ApiOperation(value="상태메시지 수정하기")
     @PatchMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileMessageModify(@RequestBody ProfileMessageDto profileMessageDto) {
-        profileService.profileMessageModify(profileMessageDto);
+    public ResponseEntity<ResultResponse> modifyProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) {
+        profileService.modifyProfileMessage(profileMessageDto);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_PROFILE_MESSAGE_SUCCESS));
     }
 
+    @ApiOperation(value="유저 개인정보+상태메시지 보여주기")
+    @GetMapping(value = "/profiles/{userId}/user-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> getUserInformationAndProfileMessage(@PathVariable("userId") Long userId) {
+        UserInformationAndProfileMessageDto data= profileService.getUserInformationAndProfileMessage(userId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_PROFILE_SUCCESS,data));
+    }
+
+    @ApiOperation(value="자기소개 답변 목록 보여주기")
+    @GetMapping(value = "/profiles/{userId}/self-introduction", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> getSelfIntroductionAnswer(@PathVariable("userId") Long userId) {
+        SelfIntroductionAnswerListGetDto data= profileService.getSelfIntroductionAnswer(userId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_INFORMATIONS_SUCCESS,data));
+    }
 
     @ApiOperation(value="좋아하는 것 작성하기")
     @PostMapping(value = "/profiles/favorites/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileFavoriteRegister(@PathVariable("userId") Long userId
+    public ResponseEntity<ResultResponse> registerProfileFavorite(@PathVariable("userId") Long userId
             , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
@@ -101,14 +113,14 @@ public class ProfileController {
 
     @ApiOperation(value="좋아하는 것 삭제하기")
     @DeleteMapping(value = "/profiles/favorites/{userId}/{selfIntroductionAnswerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileFavoriteRemove(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
-        profileService.removeSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "favorite");
+    public ResponseEntity<ResultResponse> deleteProfileFavorite(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
+        profileService.deleteSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "favorite");
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_FAVORITE_SUCCESS));
     }
 
     @ApiOperation(value="싫어하는 것 작성하기")
     @PostMapping(value = "/profiles/hates/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileHateRegister(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
+    public ResponseEntity<ResultResponse> registerProfileHate(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
@@ -119,14 +131,14 @@ public class ProfileController {
 
     @ApiOperation(value="싫어하는 것 삭제하기")
     @DeleteMapping(value = "/profiles/hates/{userId}/{selfIntroductionAnswerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileHateRemove(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
-        profileService.removeSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "hate");
+    public ResponseEntity<ResultResponse> deleteProfileHate(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
+        profileService.deleteSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "hate");
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_HATE_SUCCESS));
     }
 
     @ApiOperation(value="한단어로 표현하는 것 작성하기")
     @PostMapping(value = "/profiles/expressions/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileExpressionRegister(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
+    public ResponseEntity<ResultResponse> registerProfileExpression(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
@@ -137,14 +149,14 @@ public class ProfileController {
 
     @ApiOperation(value="한단어로 표현하는 것 삭제하기")
     @DeleteMapping(value = "/profiles/expressions/{userId}/{selfIntroductionAnswerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileExpressionRemove(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
-        profileService.removeSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "expression");
+    public ResponseEntity<ResultResponse> deleteProfileExpression(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
+        profileService.deleteSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "expression");
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_EXPRESSION_SUCCESS));
     }
 
     @ApiOperation(value="관심사 작성하기")
     @PostMapping(value = "/profiles/interests/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileInterestRegister(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
+    public ResponseEntity<ResultResponse> registerProfileInterest(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
@@ -155,22 +167,8 @@ public class ProfileController {
 
     @ApiOperation(value="관심사 삭제하기")
     @DeleteMapping(value = "/profiles/interests/{userId}/{selfIntroductionAnswerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> profileInterestRemove(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
-        profileService.removeSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "interest");
+    public ResponseEntity<ResultResponse> deleteProfileInterest(@PathVariable("userId") Long userId, @PathVariable("selfIntroductionAnswerId") Long selfIntroductionAnswerId) {
+        profileService.deleteSelfIntroductionAnswer(userId, selfIntroductionAnswerId, "interest");
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_INTEREST_SUCCESS));
-    }
-
-    @ApiOperation(value="유저 프로필(개인정보+상태메시지) 보여주기")
-    @GetMapping(value = "/profiles/{userId}/user-profile", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> userProfileGet(@PathVariable("userId") Long userId) {
-        UserProfileGetDto data= profileService.userProfileGet(userId);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_PROFILE_SUCCESS,data));
-    }
-
-    @ApiOperation(value="유저 개인정보(좋아하는것, 싫어하는것..등) 리스트 보여주기")
-    @GetMapping(value = "/profiles/{userId}/self-introduction", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> getSelfIntroductionAnswer(@PathVariable("userId") Long userId) {
-        SelfIntroductionAnswerListGetDto data= profileService.getSelfIntroductionAnswer(userId);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_INFORMATIONS_SUCCESS,data));
     }
 }

@@ -1,18 +1,14 @@
 package com.example.onjeong.profile.service;
 
 import com.example.onjeong.S3.S3Uploader;
-import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.profile.domain.*;
 import com.example.onjeong.profile.dto.*;
-import com.example.onjeong.profile.exception.ProfileNotExistException;
 import com.example.onjeong.profile.repository.*;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.exception.UserNotExistException;
-import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
+import com.example.onjeong.util.ProfileUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProfileService {
-    private final ProfileRepository profileRepository;
-    private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
     private final HateRepository hateRepository;
     private final ExpressionRepository expressionRepository;
     private final InterestRepository interestRepository;
     private final S3Uploader s3Uploader;
+    private final AuthUtil authUtil;
+    private final ProfileUtil profileUtil;
 
     @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
     private String AWS_S3_BUCKET_URL;
@@ -38,43 +34,36 @@ public class ProfileService {
 
     //가족 프로필 중 구성원 보여주기
     @Transactional
-    public List<FamilyGetDto> allUserGet(){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        List<User> users= user.getFamily().getUsers();
-        final List<FamilyGetDto> result= new ArrayList<>();
-        for(User u:users){
-            final FamilyGetDto familyGetDto= FamilyGetDto.builder()
+    public List<AllUserOfFamilyDto> getAllUserOfFamily(){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final List<User> usersOfFamily= loginUser.getFamily().getUsers();
+        final List<AllUserOfFamilyDto> result= new ArrayList<>();
+        for(User u:usersOfFamily){
+            final AllUserOfFamilyDto allUserOfFamilyDto = AllUserOfFamilyDto.builder()
                     .userId(u.getUserId())
                     .userStatus(u.getUserStatus())
                     .build();
-            result.add(familyGetDto);
+            result.add(allUserOfFamilyDto);
         }
         return result;
     }
 
     //프로필 상단에 개인 정보 보여주기
     @Transactional
-    public UserInformationDto userInformationGet(final Long userId){
-        User user= userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+    public UserInformationDto getUserInformation(final Long userId){
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
         return UserInformationDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
                 .checkProfileImage(profile.isCheckProfileImage()).build();
     }
 
     //프로필 사진 등록하기
     @Transactional
-    public Profile profileImageRegister(final MultipartFile multipartFile){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+    public Profile registerProfileImage(final MultipartFile multipartFile){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Profile profile= profileUtil.getProfileByUser(loginUser);
         if(profile.isCheckProfileImage()) s3Uploader.deleteFile(profile.getProfileImageUrl().substring(AWS_S3_BUCKET_URL.length()));
-        String imageUrl= s3Uploader.upload(multipartFile, "profile");
+        final String imageUrl= s3Uploader.upload(multipartFile, "profile");
         profile.updateProfileImageUrl(imageUrl);
         profile.updateCheckProfileImage(true);
         profile.updateCheckProfileUpload(true);
@@ -83,27 +72,21 @@ public class ProfileService {
 
     //프로필 사진 삭제하기
     @Transactional
-    public void profileImageDelete(){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
-        String deletedImage= profile.getProfileImageUrl();
-        String fileName = deletedImage.substring(AWS_S3_BUCKET_URL.length());
+    public void deleteProfileImage(){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Profile profile= profileUtil.getProfileByUser(loginUser);
+        final String deletedImageUrl= profile.getProfileImageUrl();
+        final String fileName = deletedImageUrl.substring(AWS_S3_BUCKET_URL.length());
         s3Uploader.deleteFile(fileName);
-
         profile.updateProfileImageUrl("");
         profile.updateCheckProfileImage(false);
     }
 
     //상태메시지 보여주기
     @Transactional
-    public ProfileMessageDto profileMessageGet(final Long userId){
-        User user= userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+    public ProfileMessageDto getProfileMessage(final Long userId){
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
         return ProfileMessageDto.builder()
                 .message(profile.getMessage())
                 .build();
@@ -111,12 +94,9 @@ public class ProfileService {
 
     //상태메시지 작성하기
     @Transactional
-    public Profile profileMessageRegister(final ProfileMessageDto profileMessageDto){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+    public Profile registerProfileMessage(final ProfileMessageDto profileMessageDto){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Profile profile= profileUtil.getProfileByUser(loginUser);
         profile.updateMessage(profileMessageDto.getMessage());
         profile.updateCheckProfileUpload(true);
         return profile;
@@ -124,36 +104,31 @@ public class ProfileService {
 
     //상태메시지 수정하기
     @Transactional
-    public void profileMessageModify(final ProfileMessageDto profileMessageDto){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+    public void modifyProfileMessage(final ProfileMessageDto profileMessageDto){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Profile profile= profileUtil.getProfileByUser(loginUser);
         profile.updateMessage(profileMessageDto.getMessage());
     }
 
 
-    //유저 프로필(개인정보+상태메시지) 보여주기
+    //유저 개인정보+상태메시지 보여주기
     @Transactional
-    public UserProfileGetDto userProfileGet(final Long userId){
-        User user= userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
-        return UserProfileGetDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
+    public UserInformationAndProfileMessageDto getUserInformationAndProfileMessage(final Long userId){
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
+        return UserInformationAndProfileMessageDto.builder().user(user).profileImageUrl(profile.getProfileImageUrl())
                 .checkProfileImage(profile.isCheckProfileImage()).message(profile.getMessage()).build();
     }
 
     //자기소개 답변 목록 보여주기
     @Transactional
     public SelfIntroductionAnswerListGetDto getSelfIntroductionAnswer(final Long userId){
-        User user= getUserByUserId(userId);
-        Profile profile= getProfileByUser(user);
-        List<SelfIntroductionAnswerGetDto> favorites= getFavorites(profile);
-        List<SelfIntroductionAnswerGetDto> hates= getHates(profile);
-        List<SelfIntroductionAnswerGetDto> expressions= getExpressions(profile);
-        List<SelfIntroductionAnswerGetDto> interests= getInterests(profile);
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
+        final List<SelfIntroductionAnswerGetDto> favorites= getFavorites(profile);
+        final List<SelfIntroductionAnswerGetDto> hates= getHates(profile);
+        final List<SelfIntroductionAnswerGetDto> expressions= getExpressions(profile);
+        final List<SelfIntroductionAnswerGetDto> interests= getInterests(profile);
         return SelfIntroductionAnswerListGetDto.builder().favorites(favorites).hates(hates)
                 .expressions(expressions).interests(interests).build();
     }
@@ -161,8 +136,8 @@ public class ProfileService {
     //자기소개 답변 작성하기
     @Transactional
     public Profile registerSelfIntroductionAnswer(final Long userId, final SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto, final String category){
-        User user= getUserByUserId(userId);
-        Profile profile= getProfileByUser(user);
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
         switch(category){
             case "favorite":
                 final Favorite favorite= Favorite.builder()
@@ -199,9 +174,9 @@ public class ProfileService {
 
     //자기소개 답변 삭제하기
     @Transactional
-    public void removeSelfIntroductionAnswer(final Long userId, final Long selfIntroductionAnswerId, final String category){
-        User user= getUserByUserId(userId);
-        Profile profile= getProfileByUser(user);
+    public void deleteSelfIntroductionAnswer(final Long userId, final Long selfIntroductionAnswerId, final String category){
+        final User user= authUtil.getUserByUserId(userId);
+        final Profile profile= profileUtil.getProfileByUser(user);
         switch(category){
             case "favorite":
                 favoriteRepository.deleteByFavoriteIdAndProfile(selfIntroductionAnswerId, profile);
@@ -219,20 +194,15 @@ public class ProfileService {
     }
 
 
-    @Transactional
     public boolean checkProfileUpload(){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Profile profile= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Profile profile= profileUtil.getProfileByUser(loginUser);
         return profile.isCheckProfileUpload();
     }
 
-    @Transactional
-    public List<SelfIntroductionAnswerGetDto> getFavorites(final Profile profile){
+    private List<SelfIntroductionAnswerGetDto> getFavorites(final Profile profile){
         final List<SelfIntroductionAnswerGetDto> result= new ArrayList<>();
-        List<Favorite> favorites= profile.getFavorites();
+        final List<Favorite> favorites= profile.getFavorites();
         for(Favorite f:favorites){
             final SelfIntroductionAnswerGetDto selfIntroductionAnswerGetDto= SelfIntroductionAnswerGetDto.builder()
                     .selfIntroductionAnswerId(f.getFavoriteId())
@@ -243,10 +213,9 @@ public class ProfileService {
         return result;
     }
 
-    @Transactional
-    public List<SelfIntroductionAnswerGetDto> getHates(final Profile profile){
+    private List<SelfIntroductionAnswerGetDto> getHates(final Profile profile){
         final List<SelfIntroductionAnswerGetDto> result= new ArrayList<>();
-        List<Hate> hates= profile.getHates();
+        final List<Hate> hates= profile.getHates();
         for(Hate f:hates){
             final SelfIntroductionAnswerGetDto selfIntroductionAnswerGetDto= SelfIntroductionAnswerGetDto.builder()
                     .selfIntroductionAnswerId(f.getHateId())
@@ -257,10 +226,9 @@ public class ProfileService {
         return result;
     }
 
-    @Transactional
-    public List<SelfIntroductionAnswerGetDto> getExpressions(final Profile profile){
+    private List<SelfIntroductionAnswerGetDto> getExpressions(final Profile profile){
         final List<SelfIntroductionAnswerGetDto> result= new ArrayList<>();
-        List<Expression> expressions= profile.getExpressions();
+        final List<Expression> expressions= profile.getExpressions();
         for(Expression e:expressions){
             final SelfIntroductionAnswerGetDto selfIntroductionAnswerGetDto= SelfIntroductionAnswerGetDto.builder()
                     .selfIntroductionAnswerId(e.getExpressionId())
@@ -271,10 +239,9 @@ public class ProfileService {
         return result;
     }
 
-    @Transactional
-    public List<SelfIntroductionAnswerGetDto> getInterests(final Profile profile){
+    private List<SelfIntroductionAnswerGetDto> getInterests(final Profile profile){
         final List<SelfIntroductionAnswerGetDto> result= new ArrayList<>();
-        List<Interest> interests= profile.getInterests();
+        final List<Interest> interests= profile.getInterests();
         for(Interest i:interests){
             final SelfIntroductionAnswerGetDto selfIntroductionAnswerGetDto= SelfIntroductionAnswerGetDto.builder()
                     .selfIntroductionAnswerId(i.getInterestId())
@@ -283,17 +250,5 @@ public class ProfileService {
             result.add(selfIntroductionAnswerGetDto);
         }
         return result;
-    }
-
-    @Transactional
-    public User getUserByUserId(final Long userId){
-        return userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-    }
-
-    @Transactional
-    public Profile getProfileByUser(final User user){
-        return profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
     }
 }

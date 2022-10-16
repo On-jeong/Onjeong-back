@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FamilyGetDto {
+public class AllUserOfFamilyDto {
     private  Long userId;
     private String userStatus;
 }
