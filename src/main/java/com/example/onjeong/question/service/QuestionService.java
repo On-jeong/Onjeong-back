@@ -69,6 +69,7 @@ public class QuestionService {
 
         for(Answer a : answers){
             AnswerDto answer = AnswerDto.builder()
+                    .answerId(a.getAnswerId())
                     .userName(a.getUser().getUserName())
                     .answerContent(a.getAnswerContent())
                     .answerTime(a.getAnswerTime())
