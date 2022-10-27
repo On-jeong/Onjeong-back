@@ -73,24 +73,25 @@ public class AnniversaryService {
     @Transactional
     public void registerAnniversary(final LocalDate anniversaryDate, final AnniversaryRegisterDto anniversaryRegisterDto){
         final User loginUser= authUtil.getUserByAuthentication();
-        final Anniversary anniversary;
-        if(anniversaryRegisterDto.getAnniversaryType().equals("ANNIVERSARY")) {
-            anniversary = Anniversary.builder()
+        final String getAnniversaryType= anniversaryRegisterDto.getAnniversaryType();
+        if(getAnniversaryType.equals("ANNIVERSARY")) {
+            final Anniversary anniversary = Anniversary.builder()
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.ANNIVERSARY)
                     .family(loginUser.getFamily())
                     .build();
+            anniversaryRepository.save(anniversary);
         }
-        else {
-            anniversary = Anniversary.builder()
+        if(getAnniversaryType.equals("SPECIAL_SCHEDULE")) {
+            final Anniversary anniversary = Anniversary.builder()
                     .anniversaryDate(anniversaryDate)
                     .anniversaryContent(anniversaryRegisterDto.getAnniversaryContent())
                     .anniversaryType(AnniversaryType.SPECIAL_SCHEDULE)
                     .family(loginUser.getFamily())
                     .build();
+            anniversaryRepository.save(anniversary);
         }
-        anniversaryRepository.save(anniversary);
     }
 
     //해당 일의 특수일정 삭제하기

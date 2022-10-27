@@ -104,9 +104,9 @@ public class UserController {
             @RequestHeader(value="AuthorizationAccess") String token,
             @RequestHeader(value="AuthorizationRefresh") String refreshToken
             ) {
-        String accessToken= userService.refreshToken(refreshToken);
+        String newAccessToken= userService.refreshToken(refreshToken);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(AuthConstants.AUTH_HEADER_ACCESS, accessToken);
+        headers.add(AuthConstants.AUTH_HEADER_ACCESS, newAccessToken);
         return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.NEW_TOKEN_SUCCESS));
     }
 }
