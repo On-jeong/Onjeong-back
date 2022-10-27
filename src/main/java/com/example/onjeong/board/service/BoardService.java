@@ -9,13 +9,10 @@ import com.example.onjeong.board.exception.BoardWriterNotSameException;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.board.repository.BoardRepository;
-import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +26,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
     private final AuthUtil authUtil;
 
@@ -59,7 +55,7 @@ public class BoardService {
     @Transactional
     public Board registerBoard(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent){
         final User loginUser= authUtil.getUserByAuthentication();
-        if(multipartFile == null) {
+        if(multipartFile.isEmpty()) {
             final Board board=Board.builder()
                     .boardContent(boardContent)
                     .boardImageUrl(null)
@@ -102,8 +98,8 @@ public class BoardService {
                 .orElseThrow(()-> new BoardNotExistException("board not exist", ErrorCode.BOARD_NOTEXIST));
         if(loginUser==board.getUser()){
             board.updateBoardContent(boardContent);
-            if(multipartFile==null && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
-            else if(multipartFile==null) {
+            if(multipartFile.isEmpty() && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
+            else if(multipartFile.isEmpty()) {
                 s3Uploader.deleteFile(board.getBoardImageUrl().substring(AWS_S3_BUCKET_URL.length()));
                 board.updateBoardImageUrl(null);
             }

@@ -199,19 +199,17 @@ public class UserService {
                 .build();
     }
 
-    //Access Token 재발급
+    //New Access Token 재발급
     @Transactional
     public String refreshToken(String refreshToken) {
-        String accessToken= null;
         Optional<User> user= userRepository.findByRefreshToken(refreshToken);
         if(user.isPresent()){
-            if(jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)) accessToken = TokenUtils.generateJwtToken(user.get());
+            if(jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)) return TokenUtils.generateJwtToken(user.get());
             else throw new RefreshTokenExpiredException("refresh token expired",ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
         else{
             throw new RefreshTokenNotSameException("refresh token not same",ErrorCode.REFRESH_TOKEN_NOT_SAME);
         }
-        return accessToken;
     }
 
 
