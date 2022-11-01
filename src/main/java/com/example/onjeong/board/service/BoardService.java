@@ -58,6 +58,7 @@ public class BoardService {
         final User loginUser= authUtil.getUserByAuthentication();
         System.out.println("content-type: "+req.getContentType());
         System.out.println("boardContent: "+boardContent);
+        System.out.println("multipartFile-isEmpty: "+multipartFile.isEmpty());
         System.out.println("multipartFile-OriginalFilename: "+multipartFile.getOriginalFilename());
         System.out.println("multipartFile-ContentType: "+multipartFile.getContentType());
         System.out.println("multipartFile-Name: "+multipartFile.getName());
