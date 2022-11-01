@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +54,13 @@ public class BoardService {
 
     //오늘의 기록 작성하기
     @Transactional
-    public Board registerBoard(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent){
+    public Board registerBoard(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent, HttpServletRequest req){
         final User loginUser= authUtil.getUserByAuthentication();
+        System.out.println("content-type: "+req.getContentType());
+        System.out.println("boardContent: "+boardContent);
+        System.out.println("multipartFile-OriginalFilename: "+multipartFile.getOriginalFilename());
+        System.out.println("multipartFile-ContentType: "+multipartFile.getContentType());
+        System.out.println("multipartFile-Name: "+multipartFile.getName());
         if(multipartFile.isEmpty()) {
             final Board board=Board.builder()
                     .boardContent(boardContent)
