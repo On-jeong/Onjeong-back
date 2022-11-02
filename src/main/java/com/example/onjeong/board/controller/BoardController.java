@@ -46,7 +46,7 @@ public class BoardController {
 
     @ApiOperation(value="오늘의 기록 작성하기")
     @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile images, @RequestPart(value = "boardContent") String boardContent,HttpServletRequest req)throws FirebaseMessagingException {
+    public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile images, @RequestPart(name = "boardContent") String boardContent,HttpServletRequest req)throws FirebaseMessagingException {
         Board board= boardService.registerBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), images, boardContent, req);
         //fcmService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
