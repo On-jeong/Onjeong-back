@@ -45,6 +45,10 @@ dependencies {
 
 	implementation 'com.google.firebase:firebase-admin:6.8.1'
 
+	implementation 'commons-io:commons-io:2.8.0'
+	implementation 'commons-fileupload:commons-fileupload:1.4'
+	implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+
 }
 
 tasks.named('test') {
