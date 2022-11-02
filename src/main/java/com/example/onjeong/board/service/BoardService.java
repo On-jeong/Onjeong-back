@@ -54,15 +54,15 @@ public class BoardService {
 
     //오늘의 기록 작성하기
     @Transactional
-    public Board registerBoard(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent, HttpServletRequest req){
+    public Board registerBoard(final LocalDate boardDate, final MultipartFile images, final String boardContent, HttpServletRequest req){
         final User loginUser= authUtil.getUserByAuthentication();
         System.out.println("content-type: "+req.getContentType());
         System.out.println("boardContent: "+boardContent);
-        System.out.println("multipartFile-isEmpty: "+multipartFile.isEmpty());
-        System.out.println("multipartFile-OriginalFilename: "+multipartFile.getOriginalFilename());
-        System.out.println("multipartFile-ContentType: "+multipartFile.getContentType());
-        System.out.println("multipartFile-Name: "+multipartFile.getName());
-        if(multipartFile.isEmpty()) {
+        System.out.println("multipartFile-isEmpty: "+images.isEmpty());
+        System.out.println("multipartFile-OriginalFilename: "+images.getOriginalFilename());
+        System.out.println("multipartFile-ContentType: "+images.getContentType());
+        System.out.println("multipartFile-Name: "+images.getName());
+        if(images.isEmpty()) {
             final Board board=Board.builder()
                     .boardContent(boardContent)
                     .boardImageUrl(null)
@@ -75,7 +75,7 @@ public class BoardService {
         else {
             final Board board=Board.builder()
                     .boardContent(boardContent)
-                    .boardImageUrl(s3Uploader.upload(multipartFile, "board"))
+                    .boardImageUrl(s3Uploader.upload(images, "board"))
                     .boardDate(boardDate)
                     .user(loginUser)
                     .family(loginUser.getFamily())
