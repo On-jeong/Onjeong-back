@@ -48,7 +48,7 @@ public class BoardController {
     @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile images, @RequestPart(value = "boardContent") String boardContent,HttpServletRequest req)throws FirebaseMessagingException {
         Board board= boardService.registerBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), images, boardContent, req);
-        fcmService.sendBoard(board);
+        //fcmService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_BOARD_SUCCESS));
     }

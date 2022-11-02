@@ -31,7 +31,7 @@ public class MailController {
     @PostMapping("/mails")
     public ResponseEntity<HttpStatus> sendMail(@RequestBody MailRequestDto mailSendDto) throws FirebaseMessagingException {
         Mail mail = mailService.sendMail(mailSendDto);
-        fcmService.sendMail(mail);
+        //fcmService.sendMail(mail);
         coinService.coinSave(CoinHistoryType.MAIL, 10);
         return ResponseEntity.ok(HttpStatus.OK);
     }
