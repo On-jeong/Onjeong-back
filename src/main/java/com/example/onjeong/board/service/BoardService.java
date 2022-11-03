@@ -54,15 +54,9 @@ public class BoardService {
 
     //오늘의 기록 작성하기
     @Transactional
-    public Board registerBoard(final LocalDate boardDate, final MultipartFile images, final String boardContent, HttpServletRequest req){
+    public Board registerBoard(final LocalDate boardDate, final MultipartFile multipartFile, final String boardContent){
         final User loginUser= authUtil.getUserByAuthentication();
-        System.out.println("content-type: "+req.getContentType());
-        System.out.println("boardContent: "+boardContent);
-        System.out.println("multipartFile-isEmpty: "+images.isEmpty());
-        System.out.println("multipartFile-OriginalFilename: "+images.getOriginalFilename());
-        System.out.println("multipartFile-ContentType: "+images.getContentType());
-        System.out.println("multipartFile-Name: "+images.getName());
-        if(images.isEmpty()) {
+        if(multipartFile==null) {
             final Board board=Board.builder()
                     .boardContent(boardContent)
                     .boardImageUrl(null)
@@ -75,7 +69,7 @@ public class BoardService {
         else {
             final Board board=Board.builder()
                     .boardContent(boardContent)
-                    .boardImageUrl(s3Uploader.upload(images, "board"))
+                    .boardImageUrl(s3Uploader.upload(multipartFile, "board"))
                     .boardDate(boardDate)
                     .user(loginUser)
                     .family(loginUser.getFamily())
@@ -105,8 +99,8 @@ public class BoardService {
                 .orElseThrow(()-> new BoardNotExistException("board not exist", ErrorCode.BOARD_NOTEXIST));
         if(loginUser==board.getUser()){
             board.updateBoardContent(boardContent);
-            if(multipartFile.isEmpty() && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
-            else if(multipartFile.isEmpty()) {
+            if(multipartFile==null && board.getBoardImageUrl()==null) board.updateBoardImageUrl(null);
+            else if(multipartFile==null) {
                 s3Uploader.deleteFile(board.getBoardImageUrl().substring(AWS_S3_BUCKET_URL.length()));
                 board.updateBoardImageUrl(null);
             }
