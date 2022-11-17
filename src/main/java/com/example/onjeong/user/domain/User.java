@@ -3,6 +3,7 @@ package com.example.onjeong.user.domain;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
+import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.user.exception.UserNotExistException;
 import lombok.*;
@@ -52,6 +53,9 @@ public class User extends Common implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="family_id")
     private Family family;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private Profile profile;
 
     @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Mail> sendMailList;

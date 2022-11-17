@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public class ResultResponse {
 
-    private int status;
-    private String code;
-    private String message;
-    private Object data;
+    private final int status;
+    private final String code;
+    private final String message;
+    private final Object data;
     
     public ResultResponse(ResultCode resultCode, Object data) {
         this.status = resultCode.getStatus();

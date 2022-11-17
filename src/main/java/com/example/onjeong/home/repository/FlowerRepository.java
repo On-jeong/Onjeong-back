@@ -3,6 +3,7 @@ package com.example.onjeong.home.repository;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -20,5 +21,6 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
                     "AND f.flower_bloom = true")
     List<Flower> findFullBloom(@Param("id") Long id);
 
-    void deleteByFamily(Family family);
+    void deleteAllByFamily(Family family);
+    List<Flower> findAllByFamily(Family family);
 }

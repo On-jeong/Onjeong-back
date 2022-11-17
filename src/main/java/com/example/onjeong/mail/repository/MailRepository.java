@@ -29,13 +29,8 @@ public interface MailRepository extends JpaRepository<Mail, Long> {
     @Query("SELECT m FROM Mail m WHERE m.receiverWantDelete = true AND m.senderWantDelete = true")
     List<Mail> findDeleteMail();
 
-    @Modifying
-    @Query(nativeQuery = true,
-            value="DELETE FROM mail m WHERE m.receiver_id = :receiverId")
-    void deleteByReceiver(@Param("receiverId") Long userId);
-
-    @Modifying
-    @Query(nativeQuery = true,
-            value="DELETE FROM mail m WHERE m.sender_id = :senderId")
-    void deleteBySender(@Param("senderId") Long userId);
+    void deleteAllBySendUser(User sendUser);
+    void deleteAllByReceiveUser(User receiveUser);
+    List<Mail> findAllBySendUser(User sendUser);
+    List<Mail> findAllByReceiveUser(User receiveUser);
 }

@@ -1,9 +1,9 @@
 package com.example.onjeong.user.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
+@AllArgsConstructor
 @Getter
 @NoArgsConstructor
 public class UserDeleteDto {
