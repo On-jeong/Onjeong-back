@@ -14,10 +14,6 @@ import java.util.Optional;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestion(Question question);
-
-    @Modifying
-    @Query(nativeQuery = true,
-            value="DELETE FROM answer a WHERE a.user_id = :userId")
-    void deleteByUser(@Param("userId") Long userId);
-
+    void deleteAllByUser(User user);
+    List<Answer> findAllByUser(User user);
 }

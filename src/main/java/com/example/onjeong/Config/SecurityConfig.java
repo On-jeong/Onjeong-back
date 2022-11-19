@@ -2,6 +2,7 @@ package com.example.onjeong.Config;
 
 import com.example.onjeong.error.CustomAuthenticationEntryPoint;
 import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
+import com.example.onjeong.user.Auth.CustomLoginFailureHandler;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
 import com.example.onjeong.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,10 +99,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     //필터추가
     @Bean
-    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {   //
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
         customAuthenticationFilter.setFilterProcessesUrl("/login");
         customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+        customAuthenticationFilter.setAuthenticationFailureHandler(customLoginFailureHandler());
         customAuthenticationFilter.afterPropertiesSet();
         return customAuthenticationFilter;
     }
@@ -109,6 +111,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CustomLoginSuccessHandler customLoginSuccessHandler(){
         return new CustomLoginSuccessHandler(userRepository);
+    }
+
+    @Bean
+    public CustomLoginFailureHandler customLoginFailureHandler(){
+        return new CustomLoginFailureHandler();
     }
 
     @Bean

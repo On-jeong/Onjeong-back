@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -51,12 +52,7 @@ public class UserController {
 
     @ApiOperation(value="로그인")
     @PostMapping(value="/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto, @ApiIgnore HttpSession session){
-        try{
-            return ResponseEntity.ok(TokenUtils.generateJwtToken(userService.login(userLoginDto, session)));
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public void login(@RequestBody UserLoginDto userLoginDto){
     }
 
     @ApiOperation(value = "로그아웃")
@@ -75,8 +71,9 @@ public class UserController {
 
     @ApiOperation(value = "회원탈퇴")
     @DeleteMapping(value = "/accounts")
-    public ResponseEntity<ResultResponse> deleteUser(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest) throws Exception{
-        userService.deleteUser(userDeleteDto, httpServletRequest);
+    public ResponseEntity<ResultResponse> deleteUser(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
+        userService.deleteUser(userDeleteDto);
+        httpServletRequest.getSession().invalidate();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_USER_SUCCESS));
     }
 

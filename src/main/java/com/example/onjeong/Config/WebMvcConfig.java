@@ -54,14 +54,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean public JwtTokenInterceptor jwtTokenInterceptor() {
         return new JwtTokenInterceptor();
     }
-
-/*
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setDefaultEncoding("UTF-8");
-        multipartResolver.setMaxUploadSizePerFile(5 * 1024 * 1024);
-        return multipartResolver;
-    }
-*/
 }

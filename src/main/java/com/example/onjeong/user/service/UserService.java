@@ -22,9 +22,7 @@ import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.Auth.JwtTokenProvider;
 import com.example.onjeong.user.Auth.TokenUtils;
-import com.example.onjeong.user.domain.MyUserDetails;
-import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.domain.UserRole;
+import com.example.onjeong.user.domain.*;
 import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.exception.*;
 import com.example.onjeong.user.repository.UserRepository;
@@ -44,7 +42,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
 import java.util.Optional;
 
 import java.util.Random;
@@ -126,15 +123,10 @@ public class UserService {
 
     //로그인
     @Transactional
-    public User login(UserLoginDto userLoginDto, @ApiIgnore HttpSession session) throws Exception{
+    public void login(UserLoginDto userLoginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginDto.getUserNickname(), userLoginDto.getUserPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
-
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,SecurityContextHolder.getContext());
-        return principal.getUser();
     }
 
     //회원정보 수정
@@ -149,41 +141,56 @@ public class UserService {
 
     //회원탈퇴
     @Transactional
-    public void deleteUser(UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
-        HttpSession httpSession = httpServletRequest.getSession();
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        Family family= familyRepository.findById(user.getFamily().getFamilyId())
+    public void deleteUser(UserDeleteDto userDeleteDto){
+        final User loginUser= authUtil.getUserByAuthentication();
+        final Family family= familyRepository.findById(loginUser.getFamily().getFamilyId())
                 .orElseThrow(()-> new FamilyNotExistException("family not exist", ErrorCode.FAMILY_NOTEXIST));
-        Long profileId= profileRepository.findByUser(user)
-                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST)).getProfileId();
-        if(passwordEncoder.matches(userDeleteDto.getUserPassword(),user.getUserPassword())){
-            expressionRepository.deleteInBatch(expressionRepository.findAllById(Collections.singleton(profileId)));
-            favoriteRepository.deleteInBatch(favoriteRepository.findAllById(Collections.singleton(profileId)));
-            hateRepository.deleteInBatch(hateRepository.findAllById(Collections.singleton(profileId)));
-            interestRepository.deleteInBatch(interestRepository.findAllById(Collections.singleton(profileId)));
-            String profileImgUrl= profileRepository.findByUser(user)
-                    .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST)).getProfileImageUrl();
-            if(profileImgUrl!=null) s3Uploader.deleteFile(profileImgUrl.substring(AWS_S3_BUCKET_URL.length()));
-            profileRepository.deleteByUser(user);
-            boardRepository.deleteByUser(user);
-            answerRepository.deleteByUser(user.getUserId());
-            mailRepository.deleteByReceiver(user.getUserId());
-            mailRepository.deleteBySender(user.getUserId());
-            userRepository.deleteUser(user.getUserId());
-            if(family.getUsers().size()==0) {
-                anniversaryRepository.deleteByFamily(family);
-                questionRepository.deleteByFamily(family);
-                coinHistoryRepository.deleteByFamily(family);
-                flowerRepository.deleteByFamily(family);
-                familyRepository.delete(family);
-            }
-            httpSession.invalidate();
+        final Profile profile= profileRepository.findByUser(loginUser)
+                .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
+
+        if(passwordEncoder.matches(userDeleteDto.getUserPassword(),loginUser.getUserPassword())){
+            deleteAllTableRelatedToProfile(profile);
+            deleteAllTableRelatedToUser(loginUser, profile.getProfileImageUrl());
+
             SecurityContextHolder.getContext().setAuthentication(null);
             SecurityContextHolder.clearContext();
+
+            if(family.getUsers().size()==0) {
+                deleteAllTableRelatedToFamily(family);
+            }
         }
+
     }
+
+    private void deleteAllTableRelatedToProfile(Profile profile){
+        expressionRepository.deleteAllByProfile(profile);
+        favoriteRepository.deleteAllByProfile(profile);
+        hateRepository.deleteAllByProfile(profile);
+        interestRepository.deleteAllByProfile(profile);
+    }
+
+    private void deleteAllTableRelatedToUser(User loginUser, String profileImageUrl){
+        deleteProfileImage(profileImageUrl);
+        profileRepository.deleteByUser(loginUser);
+        boardRepository.deleteAllByUser(loginUser);
+        answerRepository.deleteAllByUser(loginUser);
+        mailRepository.deleteAllByReceiveUser(loginUser);
+        mailRepository.deleteAllBySendUser(loginUser);
+        userRepository.delete(loginUser);
+    }
+
+    private void deleteProfileImage(String profileImageUrl){
+        if(profileImageUrl!=null) s3Uploader.deleteFile(profileImageUrl.substring(AWS_S3_BUCKET_URL.length()));
+    }
+
+    private void deleteAllTableRelatedToFamily(Family family){
+        anniversaryRepository.deleteAllByFamily(family);
+        questionRepository.deleteAllByFamily(family);
+        coinHistoryRepository.deleteAllByFamily(family);
+        flowerRepository.deleteAllByFamily(family);
+        familyRepository.delete(family);
+    }
+
 
     //유저 기본정보 알기
     @Transactional

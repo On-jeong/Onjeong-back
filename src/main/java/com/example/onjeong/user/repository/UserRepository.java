@@ -14,9 +14,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserNickname(String userNickname);
     boolean existsByUserNickname(String userNickname);
     Optional<User> findByRefreshToken(String refreshToken);
+    void deleteByUserId(Long userId);
 
-    @Modifying
+    /*
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(nativeQuery = true,
             value="DELETE FROM users u WHERE u.user_id = :userId")
-    void deleteUser(@Param("userId") Long userId);
+    void deleteByUser(@Param("userId") Long userId);
+
+     */
+
 }

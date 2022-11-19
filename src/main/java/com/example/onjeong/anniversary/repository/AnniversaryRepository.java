@@ -4,6 +4,7 @@ import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,6 @@ public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
     Optional<List<Anniversary>> findAllByAnniversaryDateAndFamily(LocalDate anniversaryDate, Family family);
     Optional<Anniversary> findByAnniversaryIdAndFamily(Long anniversaryId, Family family);
     String deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
-    void deleteByFamily(Family family);
 
     Optional<List<Anniversary>> findAllByAnniversaryDate(LocalDate anniversaryDate);
 
@@ -27,4 +27,6 @@ public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
                     " ORDER BY a.anniversary_id ASC LIMIT 3")
     Optional<List<Anniversary>> findByAnniversaryDate(@Param("anniversaryDate") LocalDate anniversaryDate, @Param("familyId") Long familyId);
 
+    void deleteAllByFamily(Family family);
+    List<Anniversary> findAllByFamily(Family family);
 }
