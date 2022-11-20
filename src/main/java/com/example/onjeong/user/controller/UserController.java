@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "회원탈퇴")
-    @DeleteMapping(value = "/accounts")
+    @DeleteMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> deleteUser(@RequestBody UserDeleteDto userDeleteDto, HttpServletRequest httpServletRequest){
         userService.deleteUser(userDeleteDto);
         httpServletRequest.getSession().invalidate();
