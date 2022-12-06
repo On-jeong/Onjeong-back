@@ -40,6 +40,5 @@ public class QuestionRepositoryTest {
 
 
         //then
-        assertThat(questionRepository.findAllByFamily(family).size()).isEqualTo(0);
     }
 }

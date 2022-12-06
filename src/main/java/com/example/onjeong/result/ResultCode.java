@@ -20,8 +20,7 @@ public enum ResultCode {
     GET_ALL_ANNIVERSARY_SUCCESS(200, "A001", "월별 모든 특수일정을 조회했습니다."),
     GET_ANNIVERSARY_SUCCESS(200, "A002", "해당 일의 특수일정을 조회했습니다."),
     REGISTER_ANNIVERSARY_SUCCESS(200, "A003", "해당 일의 특수일정을 등록했습니다."),
-    MODIFY_ANNIVERSARY_SUCCESS(200, "A004", "해당 일의 특수일정을 수정했습니다."),
-    DELETE_ANNIVERSARY_SUCCESS(200, "A005", "해당 일의 특수일정을 삭제했습니다."),
+    DELETE_ANNIVERSARY_SUCCESS(200, "A004", "해당 일의 특수일정을 삭제했습니다."),
 
     // Board
     GET_ALL_BOARD_SUCCESS(200, "B001", "모든 오늘의 기록을 조회했습니다."),

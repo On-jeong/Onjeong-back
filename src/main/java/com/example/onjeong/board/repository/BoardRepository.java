@@ -16,9 +16,8 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board,Long>  {
-    Optional<List<Board>> findAllByBoardDateAndFamily(LocalDate boardDate, Family family);
+    List<Board> findAllByBoardDateAndFamily(LocalDate boardDate, Family family);
     Optional<Board> findByBoardId(Long boardId);
-    String deleteByBoardIdAndUser(Long boardId, User user);
+    void deleteByBoardIdAndUser(Long boardId, User user);
     void deleteAllByUser(User user);
-    List<Board> findAllByUser(User user);
 }

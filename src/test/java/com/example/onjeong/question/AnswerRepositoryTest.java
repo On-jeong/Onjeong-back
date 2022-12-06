@@ -47,6 +47,5 @@ public class AnswerRepositoryTest {
 
 
         //then
-        assertThat(answerRepository.findAllByUser(user).size()).isEqualTo(0);
     }
 }

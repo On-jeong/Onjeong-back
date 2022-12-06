@@ -37,8 +37,7 @@ public class BoardService {
     @Transactional
     public List<BoardDto> getAllBoard(final LocalDate boardDate){
         final User loginUser= authUtil.getUserByAuthentication();
-        final List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,loginUser.getFamily())
-                .orElseThrow(()-> new BoardNotExistException("boards not exist", ErrorCode.BOARD_NOTEXIST));
+        final List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,loginUser.getFamily());
         final List<BoardDto> result= new ArrayList<>();
         for(Board b: boards){
             final BoardDto boardDto= BoardDto.builder()
@@ -121,8 +120,8 @@ public class BoardService {
         final User loginUser= authUtil.getUserByAuthentication();
         final String deletedImage= boardRepository.findByBoardId(boardId)
                 .orElseThrow(()-> new BoardNotExistException("deletedImage not exist", ErrorCode.BOARD_NOTEXIST)).getBoardImageUrl();
-        if(boardRepository.deleteByBoardIdAndUser(boardId,loginUser).equals("1")) {
-            if(deletedImage!=null) s3Uploader.deleteFile(deletedImage.substring(AWS_S3_BUCKET_URL.length()));
-        }
+
+        boardRepository.deleteByBoardIdAndUser(boardId,loginUser);
+        if(deletedImage!=null) s3Uploader.deleteFile(deletedImage.substring(AWS_S3_BUCKET_URL.length()));
     }
 }

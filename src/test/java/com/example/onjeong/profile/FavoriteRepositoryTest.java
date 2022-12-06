@@ -41,7 +41,6 @@ public class FavoriteRepositoryTest {
 
 
         //then
-        assertThat(favoriteRepository.findAllByProfile(profile).size()).isEqualTo(0);
     }
 
 

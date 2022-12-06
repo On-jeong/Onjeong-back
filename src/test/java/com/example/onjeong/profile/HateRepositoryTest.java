@@ -43,7 +43,6 @@ public class HateRepositoryTest {
 
 
         //then
-        assertThat(hateRepository.findAllByProfile(profile).size()).isEqualTo(0);
     }
 
 
