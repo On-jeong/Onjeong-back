@@ -151,7 +151,7 @@ public class FCMService {
         // 기념일 전날 가족들에게 알림
         // 배치 추가 예정
         LocalDate date = LocalDate.now().plusDays(1);
-        List<Anniversary> anniversaryList = anniversaryRepository.findAllByAnniversaryDate(date).get();
+        List<Anniversary> anniversaryList = anniversaryRepository.findAllByAnniversaryDate(date);
 
         for (Anniversary a : anniversaryList) {
             String topic = a.getFamily().getFamilyId().toString();

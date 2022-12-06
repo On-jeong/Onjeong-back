@@ -27,6 +27,5 @@ public class FamilyRepositoryTest {
         familyRepository.delete(family);
 
         //then
-        assertThat(familyRepository.findById(family.getFamilyId()).isPresent()).isEqualTo(false);
     }
 }

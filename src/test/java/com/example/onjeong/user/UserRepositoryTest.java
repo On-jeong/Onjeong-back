@@ -6,16 +6,15 @@ import static org.mockito.Mockito.*;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.domain.UserRole;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.FamilyUtils;
 import com.example.onjeong.util.UserUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.time.LocalDate;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -24,11 +23,20 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FamilyRepository familyRepository;
+
+    public final Long userId= 1L;
+    public final String userNickname= "gildong";
+    public final String refreshToken= "eyJyZWdEYXRlIjoxNjY4MzI4OTMxMDQ0LCJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJoajI1MjUiLCJleHAiOjE2Njk1Mzg1MzF9.UhC2bkAssDkIS8qNMDu8b9uIyH-5-_9F52WfjJi8ttD";
+
+
     @Test
     void 유저등록() {
         // given
         final Family family= FamilyUtils.getRandomFamily();
-        final User user = UserUtils.getRandomUser(family);
+        final Family savedFamily= familyRepository.save(family);
+        final User user = UserUtils.getRandomUser(savedFamily);
 
         // when
         final User savedUser = userRepository.save(user);
@@ -43,14 +51,59 @@ public class UserRepositoryTest {
     @Test
     void 유저삭제() {
         // given
-        final Family family= FamilyUtils.getRandomFamily();
-        final User user = UserUtils.getRandomUser(family);
-        final User getUser= userRepository.save(user);
+        final User user= userRepository.findById(userId).get();
 
         // when
-        userRepository.delete(getUser);
+        userRepository.delete(user);
 
         // then
-        assertThat(userRepository.findById(getUser.getUserId()).isPresent()).isEqualTo(false);
+    }
+
+    @Test
+    void 닉네임으로유저한명조회(){
+        //given
+
+
+        //when
+        final User getUser= userRepository.findByUserNickname(userNickname).get();
+
+        //then
+        assertThat(userRepository.findById(getUser.getUserId()).isPresent()).isEqualTo(true);
+    }
+
+    @Test
+    void 닉네임중복체크_중복된경우(){
+        //given
+        final String randomUserNickname= RandomStringUtils.random(10, true, true);
+
+        //when
+        final boolean isExisted= userRepository.existsByUserNickname(randomUserNickname);
+
+        //then
+        assertThat(isExisted).isEqualTo(false);
+    }
+
+    @Test
+    void 닉네임중복체크_중복안된경우(){
+        //given
+
+
+        //when
+        final boolean isExisted= userRepository.existsByUserNickname(userNickname);
+
+        //then
+        assertThat(isExisted).isEqualTo(true);
+    }
+
+    @Test
+    void 리프레시토큰으로유저조회(){
+        //given
+
+
+        //when
+        final User getUser= userRepository.findByRefreshToken(refreshToken).get();
+
+        //then
+        assertThat(userRepository.findById(getUser.getUserId()).isPresent()).isEqualTo(true);
     }
 }

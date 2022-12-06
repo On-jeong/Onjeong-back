@@ -43,7 +43,6 @@ public class InterestRepositoryTest {
 
 
         //then
-        assertThat(interestRepository.findAllByProfile(profile).size()).isEqualTo(0);
     }
 
 

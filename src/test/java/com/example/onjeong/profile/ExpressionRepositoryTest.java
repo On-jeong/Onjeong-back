@@ -45,7 +45,6 @@ public class ExpressionRepositoryTest {
 
 
         //then
-        assertThat(expressionRepository.findAllByProfile(profile).size()).isEqualTo(0);
     }
 
 

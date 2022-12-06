@@ -43,7 +43,6 @@ public class MailRepositoryTest {
 
 
         //then
-        assertThat(mailRepository.findAllBySendUser(sendUser).size()).isEqualTo(0);
     }
 
 
@@ -66,7 +65,6 @@ public class MailRepositoryTest {
 
 
         //then
-        assertThat(mailRepository.findAllByReceiveUser(receiveUser).size()).isEqualTo(0);
     }
 
 

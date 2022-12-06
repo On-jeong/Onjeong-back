@@ -35,8 +35,7 @@ public class AnniversaryService {
         final LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
         final List<AnniversaryDto> result= new ArrayList<>();
         while(!start.isAfter(end)){
-            for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())
-                    .orElseThrow(()-> new AnniversaryNotExistException("anniversary not exist", ErrorCode.USER_NOTEXIST))){ //해당 패밀리만 가져오는지 체크
+            for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())){ //해당 패밀리만 가져오는지 체크
                 final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                         .anniversaryId(a.getAnniversaryId())
                         .anniversaryContent(a.getAnniversaryContent())
@@ -56,7 +55,7 @@ public class AnniversaryService {
         final User loginUser= authUtil.getUserByAuthentication();
         final Family family=loginUser.getFamily();
         final List<AnniversaryDto> result= new ArrayList<>();
-        final List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family).get();
+        final List<Anniversary> anniversaries= anniversaryRepository.findAllByAnniversaryDateAndFamily(anniversaryDate,family);
         for(Anniversary a: anniversaries){
             final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                     .anniversaryId(a.getAnniversaryId())

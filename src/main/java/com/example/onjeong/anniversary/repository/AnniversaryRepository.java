@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,18 +16,17 @@ import java.util.Optional;
 
 @Repository
 public interface AnniversaryRepository extends JpaRepository<Anniversary,Long> {
-    Optional<List<Anniversary>> findAllByAnniversaryDateBetweenAndFamily(LocalDate start, LocalDate end, Family family);
-    Optional<List<Anniversary>> findAllByAnniversaryDateAndFamily(LocalDate anniversaryDate, Family family);
-    Optional<Anniversary> findByAnniversaryIdAndFamily(Long anniversaryId, Family family);
-    String deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
+    List<Anniversary> findAllByAnniversaryDateAndFamily(LocalDate anniversaryDate, Family family);
+    void deleteByAnniversaryIdAndFamily(Long anniversaryId, Family family);
 
-    Optional<List<Anniversary>> findAllByAnniversaryDate(LocalDate anniversaryDate);
+    List<Anniversary> findAllByAnniversaryDate(LocalDate anniversaryDate);
 
     @Query(nativeQuery = true,
             value="SELECT * FROM anniversaries a WHERE a.anniversary_date = :anniversaryDate AND a.family_id = :familyId" +
                     " ORDER BY a.anniversary_id ASC LIMIT 3")
-    Optional<List<Anniversary>> findByAnniversaryDate(@Param("anniversaryDate") LocalDate anniversaryDate, @Param("familyId") Long familyId);
+    List<Anniversary> findByAnniversaryDate(@Param("anniversaryDate") LocalDate anniversaryDate, @Param("familyId") Long familyId);
+
 
     void deleteAllByFamily(Family family);
-    List<Anniversary> findAllByFamily(Family family);
+
 }

@@ -42,6 +42,5 @@ public class CoinHistoryRepositoryTest {
 
 
         //then
-        assertThat(coinHistoryRepository.findAllByFamily(family).size()).isEqualTo(0);
     }
 }

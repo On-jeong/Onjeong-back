@@ -49,7 +49,6 @@ public class ProfileRepositoryTest {
 
 
         //then
-        assertThat(profileRepository.findByUser(profile.getUser()).isPresent()).isEqualTo(false);
     }
 
 

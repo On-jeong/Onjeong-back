@@ -10,7 +10,7 @@ import java.util.Random;
 public class FamilyUtils {
 
     public static Family getRandomFamily(){
-        final Long familyId= 50L;
+        final Long familyId= new Random().nextLong();
         final Integer familyCoin= new Random().nextInt(1000);
         return getFamily(familyId, familyCoin);
     }

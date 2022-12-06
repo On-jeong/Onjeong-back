@@ -42,6 +42,5 @@ public class FlowerRepositoryTest {
 
 
         //then
-        assertThat(flowerRepository.findAllByFamily(family).size()).isEqualTo(0);
     }
 }
