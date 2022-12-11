@@ -24,7 +24,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class BoardService {
     private final BoardRepository boardRepository;
     private final S3Uploader s3Uploader;

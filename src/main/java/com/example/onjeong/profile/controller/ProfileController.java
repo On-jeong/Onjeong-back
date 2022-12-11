@@ -44,7 +44,7 @@ public class ProfileController {
 
     @ApiOperation(value="프로필 사진 등록하기")
     @PostMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(value = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
+    public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(name = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) profileService.registerProfileImage(multipartFile);
         else{
             profileService.registerProfileImage(multipartFile);

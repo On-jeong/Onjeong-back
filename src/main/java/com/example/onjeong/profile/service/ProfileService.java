@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ProfileService {
     private final FavoriteRepository favoriteRepository;
     private final HateRepository hateRepository;
@@ -78,7 +77,7 @@ public class ProfileService {
         final String deletedImageUrl= profile.getProfileImageUrl();
         final String fileName = deletedImageUrl.substring(AWS_S3_BUCKET_URL.length());
         s3Uploader.deleteFile(fileName);
-        profile.updateProfileImageUrl("");
+        profile.updateProfileImageUrl(null);
         profile.updateCheckProfileImage(false);
     }
 

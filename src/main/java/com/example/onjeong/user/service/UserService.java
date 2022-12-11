@@ -48,7 +48,6 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;

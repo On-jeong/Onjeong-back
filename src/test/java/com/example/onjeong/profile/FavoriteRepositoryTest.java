@@ -24,6 +24,23 @@ public class FavoriteRepositoryTest {
     @Autowired
     private FavoriteRepository favoriteRepository;
 
+
+    @Test
+    void deleteByFavoriteIdAndProfile테스트(){
+        //given
+        final Long favoriteId= 1L;
+        final Profile profile= favoriteRepository.findById(favoriteId).get().getProfile();
+
+
+        //when
+        favoriteRepository.deleteByFavoriteIdAndProfile(favoriteId, profile);
+
+
+        //then
+
+    }
+
+
     @Test
     void Favorite여러개_삭제(){
         //given

@@ -39,14 +39,14 @@ public class BoardController {
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
     @GetMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> getAllBoard(@PathVariable("boardDate") String boardDate, HttpServletRequest req){
+    public ResponseEntity<ResultResponse> getAllBoard(@PathVariable("boardDate") String boardDate){
         List<BoardDto> data= boardService.getAllBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_BOARD_SUCCESS,data));
     }
 
     @ApiOperation(value="오늘의 기록 작성하기")
     @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(name = "boardContent") String boardContent)throws FirebaseMessagingException {
+    public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(name = "images", required = false) MultipartFile multipartFile, @RequestPart("boardContent") String boardContent)throws FirebaseMessagingException {
         Board board= boardService.registerBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), multipartFile, boardContent);
         //fcmService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
@@ -61,8 +61,8 @@ public class BoardController {
     }
 
     @ApiOperation(value="오늘의 기록 수정하기")
-    @PatchMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> modifyBoard(@PathVariable("boardId") Long boardId, @RequestPart(value = "images", required = false) MultipartFile multipartFile, @RequestPart(value = "boardContent") String boardContent){
+    @PostMapping(value = "/boards/idx/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> modifyBoard(@PathVariable("boardId") Long boardId, @RequestPart(name = "images", required = false) MultipartFile multipartFile, @RequestPart("boardContent") String boardContent){
         boardService.modifyBoard(boardId, multipartFile, boardContent);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_BOARD_SUCCESS));
     }

@@ -21,7 +21,6 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AnniversaryService {
     private final AnniversaryRepository anniversaryRepository;
     private final AuthUtil authUtil;

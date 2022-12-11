@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite,Long> {
-    String deleteByFavoriteIdAndProfile(Long favoriteId, Profile profile);
+    void deleteByFavoriteIdAndProfile(Long favoriteId, Profile profile);
     void deleteAllByProfile(Profile profile);
-    List<Favorite> findAllByProfile(Profile profile);
 }
