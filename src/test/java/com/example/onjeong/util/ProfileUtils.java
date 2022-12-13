@@ -11,10 +11,10 @@ public class ProfileUtils {
     public static Profile getRandomProfile(Family family, User user){
         final Long profileId= 50L;
         final String message= RandomStringUtils.random(8, true, true);
-        final String profileImageUrl= null;
+        final String profileImageUrl= RandomStringUtils.random(8, true, true);
         final boolean checkProfileImage= true;
-        final boolean checkProfileUpload= true;
-        return getProfile(profileId, message, null, checkProfileImage, checkProfileUpload, family, user);
+        boolean checkProfileUpload= true;
+        return getProfile(profileId, message, profileImageUrl, checkProfileImage, checkProfileUpload, family, user);
     }
 
 
@@ -29,5 +29,10 @@ public class ProfileUtils {
                 .family(family)
                 .user(user)
                 .build();
+    }
+
+
+    public static void updateCheckProfileUploadToFalse(Profile profile){
+        profile.updateCheckProfileUpload(false);
     }
 }

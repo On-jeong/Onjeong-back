@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface HateRepository extends JpaRepository<Hate,Long> {
-    String deleteByHateIdAndProfile(Long hateId, Profile profile);
+    void deleteByHateIdAndProfile(Long hateId, Profile profile);
     void deleteAllByProfile(Profile profile);
-    List<Hate> findAllByProfile(Profile profile);
 }

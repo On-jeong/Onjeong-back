@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Repository
 public interface ExpressionRepository extends JpaRepository<Expression,Long> {
-    String deleteByExpressionIdAndProfile(Long expressionId, Profile profile);
+    void deleteByExpressionIdAndProfile(Long expressionId, Profile profile);
     void deleteAllByProfile(Profile profile);
-    List<Expression> findAllByProfile(Profile profile);
 }

@@ -29,6 +29,22 @@ public class ExpressionRepositoryTest {
 
 
     @Test
+    void deleteByExpressionIdAndProfile테스트(){
+        //given
+        final Long expressionId= 1L;
+        final Profile profile= expressionRepository.findById(expressionId).get().getProfile();
+
+
+        //when
+        expressionRepository.deleteByExpressionIdAndProfile(expressionId, profile);
+
+
+        //then
+
+    }
+
+
+    @Test
     void Expression여러개_삭제(){
         //given
         final Profile profile= profile();

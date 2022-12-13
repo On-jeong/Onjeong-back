@@ -13,7 +13,6 @@ import java.util.List;
 
 @Repository
 public interface InterestRepository extends JpaRepository<Interest,Long> {
-    String deleteByInterestIdAndProfile(Long interestId, Profile profile);
+    void deleteByInterestIdAndProfile(Long interestId, Profile profile);
     void deleteAllByProfile(Profile profile);
-    List<Interest> findAllByProfile(Profile profile);
 }

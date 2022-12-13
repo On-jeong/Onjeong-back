@@ -27,6 +27,22 @@ public class HateRepositoryTest {
 
 
     @Test
+    void deleteByHateIdAndProfile테스트(){
+        //given
+        final Long hateId= 1L;
+        final Profile profile= hateRepository.findById(hateId).get().getProfile();
+
+
+        //when
+        hateRepository.deleteByHateIdAndProfile(hateId, profile);
+
+
+        //then
+
+    }
+
+
+    @Test
     void Hate여러개_삭제(){
         //given
         final Profile profile= profile();

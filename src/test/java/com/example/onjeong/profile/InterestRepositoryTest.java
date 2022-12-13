@@ -27,6 +27,22 @@ public class InterestRepositoryTest {
 
 
     @Test
+    void deleteByInterestIdAndProfile테스트(){
+        //given
+        final Long interestId= 1L;
+        final Profile profile= interestRepository.findById(interestId).get().getProfile();
+
+
+        //when
+        interestRepository.deleteByInterestIdAndProfile(interestId, profile);
+
+
+        //then
+
+    }
+
+
+    @Test
     void Interest여러개_삭제(){
         //given
         final Profile profile= profile();
