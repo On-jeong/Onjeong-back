@@ -3,6 +3,7 @@ package com.example.onjeong.profile.controller;
 import com.example.onjeong.fcm.FCMService;
 import com.example.onjeong.home.domain.CoinHistoryType;
 import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.service.ProfileService;
 import com.example.onjeong.result.ResultCode;
@@ -45,10 +46,20 @@ public class ProfileController {
     @ApiOperation(value="프로필 사진 등록하기")
     @PostMapping(value = "/profiles/image", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(name = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) profileService.registerProfileImage(multipartFile);
+        if(profileService.checkProfileUpload()) {
+            Profile profile= profileService.registerProfileImage(multipartFile);
+            ProfileImageUrlDto data= ProfileImageUrlDto.builder()
+                    .profileImageUrl(profile.getProfileImageUrl())
+                    .build();
+            return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
+        }
         else{
-            profileService.registerProfileImage(multipartFile);
+            Profile profile= profileService.registerProfileImage(multipartFile);
+            ProfileImageUrlDto data= ProfileImageUrlDto.builder()
+                    .profileImageUrl(profile.getProfileImageUrl())
+                    .build();
             coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
         }
 
 //        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
@@ -56,7 +67,6 @@ public class ProfileController {
 //            fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
 //            coinService.coinSave(CoinHistoryType.PROFILE, 100);
 //        }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS));
     }
 
     @ApiOperation(value="프로필 사진 삭제하기")
