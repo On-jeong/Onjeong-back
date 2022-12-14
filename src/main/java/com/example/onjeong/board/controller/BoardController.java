@@ -38,7 +38,7 @@ public class BoardController {
     private final FCMService fcmService;
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
-    @GetMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/boards/all/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getAllBoard(@PathVariable("boardDate") String boardDate){
         List<BoardDto> data= boardService.getAllBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_BOARD_SUCCESS,data));
@@ -54,14 +54,14 @@ public class BoardController {
     }
 
     @ApiOperation(value="오늘의 기록 한개 가져오기")
-    @GetMapping(value = "/boards/{boardId}/one", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getOneBoard(@PathVariable("boardId") Long boardId){
         BoardDto data= boardService.getOneBoard(boardId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_BOARD_SUCCESS,data));
     }
 
     @ApiOperation(value="오늘의 기록 수정하기")
-    @PostMapping(value = "/boards/idx/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyBoard(@PathVariable("boardId") Long boardId, @RequestPart(name = "images", required = false) MultipartFile multipartFile, @RequestPart("boardContent") String boardContent){
         boardService.modifyBoard(boardId, multipartFile, boardContent);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_BOARD_SUCCESS));
