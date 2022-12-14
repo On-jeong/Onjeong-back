@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +48,10 @@ public class CoinService {
 
         // 코인 사용 내역 저장
         CoinHistory coinHistory = CoinHistory.builder()
-                .amount(amount)
-                .type(coinHistoryType)
+                .coinAmount(amount)
+                .coinHistoryType(coinHistoryType)
+                .coinHistoryDate(LocalDateTime.now())
+                .user(user)
                 .family(family)
                 .build();
         coinHistoryRepository.save(coinHistory);
@@ -62,8 +65,10 @@ public class CoinService {
                 // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
                 family.updateCoin(-2000);
                 CoinHistory coinHistory2 = CoinHistory.builder()
-                        .amount(-2000)
-                        .type(CoinHistoryType.USED)
+                        .coinAmount(-2000)
+                        .coinHistoryType(CoinHistoryType.USED)
+                        .coinHistoryDate(LocalDateTime.now())
+                        .user(user)
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
@@ -75,8 +80,10 @@ public class CoinService {
                 // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
                 family.updateCoin(-1000);
                 CoinHistory coinHistory2 = CoinHistory.builder()
-                        .amount(-1000)
-                        .type(CoinHistoryType.USED)
+                        .coinAmount(-1000)
+                        .coinHistoryType(CoinHistoryType.USED)
+                        .coinHistoryDate(LocalDateTime.now())
+                        .user(user)
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
@@ -115,10 +122,14 @@ public class CoinService {
         List<CoinHistoryDto> coinHistoryDtoList = new ArrayList<>();
 
         for(CoinHistory c : coinHistoryList){
-            CoinHistoryDto coinHistoryDto = CoinHistoryDto.builder()
-                    .amount(c.getAmount())
-                    .type(c.getType())
-                    .build();
+            CoinHistoryDto.CoinHistoryDtoBuilder builder = CoinHistoryDto.builder()
+                    .amount(c.getCoinAmount())
+                    .type(c.getCoinHistoryType());
+
+            if (c.getUser() != null) builder.user(c.getUser().getUserStatus());
+            if (c.getCoinHistoryDate() != null) builder.date(c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+
+            CoinHistoryDto coinHistoryDto = builder.build();
             coinHistoryDtoList.add(coinHistoryDto);
         }
 
