@@ -227,8 +227,8 @@ public class UserServiceTest {
 
     private UserJoinDto userJoinDto(){
         return UserJoinDto.builder()
-                .userName("honggildong")
-                .userNickname("gilgong")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
                 .userStatus("son")
                 .userBirth(LocalDate.now())
@@ -237,8 +237,8 @@ public class UserServiceTest {
 
     private UserJoinedDto userJoinedDto(){
         return UserJoinedDto.builder()
-                .userName("honggildong")
-                .userNickname("gilgong")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
                 .userStatus("son")
                 .userBirth(LocalDate.now())
@@ -248,7 +248,7 @@ public class UserServiceTest {
 
     private UserAccountDto userAccountDto(){
         return UserAccountDto.builder()
-                .userName("name to modify")
+                .userName("HongGilDong")
                 .userPassword("pw123")
                 .userStatus("son")
                 .userBirth(LocalDate.now())

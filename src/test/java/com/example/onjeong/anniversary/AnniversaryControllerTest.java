@@ -126,7 +126,7 @@ public class AnniversaryControllerTest {
     @WithMockUser
     void 해당_일의_특수일정_삭제하기() throws Exception {
         //given
-        final Long anniversaryId= new Random().nextLong();
+        final Long anniversaryId= 1L;
         final String uri = "/days/anniversaries/" + anniversaryId;
         final AnniversaryRegisterDto anniversaryRegisterDto= anniversaryRegisterDto("birthday","ANNIVERSARY");
 

@@ -212,36 +212,36 @@ public class UserControllerTest {
 
     private UserDeleteDto userDeleteDto(){
         return UserDeleteDto.builder()
-                .userPassword("test")
+                .userPassword("pw123")
                 .build();
     }
 
     private UserJoinDto userJoinDto(){
         return UserJoinDto.builder()
-                .userName("ParkJunHui")
-                .userNickname("jun")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
                 .build();
     }
 
     private UserJoinedDto userJoinedDto(){
         return UserJoinedDto.builder()
-                .userName("user1")
-                .userNickname("user")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
-                .joinedNickname("user2")
+                .joinedNickname("joinedNickname")
                 .build();
     }
 
     private UserAccountDto userAccountDto(){
         return UserAccountDto.builder()
-                .userName("ParkJunHui")
+                .userName("HongGilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
                 .build();
     }
