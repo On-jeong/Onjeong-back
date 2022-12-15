@@ -80,7 +80,7 @@ public class BoardControllerTest {
     void 오늘의_기록_모두_가져오기() throws Exception {
         //given
         final String boardDate= "2022-12-03";
-        final String uri = "/boards/" + boardDate;
+        final String uri = "/boards/all/" + boardDate;
 
 
         //when
@@ -159,7 +159,7 @@ public class BoardControllerTest {
     void 오늘의_기록_한개_가져오기() throws Exception {
         //given
         final Long boardId= 1L;
-        final String uri = "/boards/"+ boardId + "/one";
+        final String uri = "/boards/"+ boardId;
 
 
         //when
@@ -172,33 +172,6 @@ public class BoardControllerTest {
         //then
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", equalTo("B002")));
-    }
-
-
-    @Test
-    @WithMockUser
-    void 오늘의_기록_수정하기() throws Exception {
-        //given
-        final Long boardId= 1L;
-        final String uri = "/boards/idx/"+ boardId;
-        final String boardContent= "hi";
-        final MockMultipartFile imgFile= new MockMultipartFile("images", "",
-                "image/png", FileInputStream.nullInputStream());
-        final MockMultipartFile textFile = new MockMultipartFile("boardContent", "",
-                "text/plain", boardContent.getBytes(StandardCharsets.UTF_8));
-
-        //when
-        ResultActions resultActions = mockMvc.perform(
-                multipart(uri)
-                        .file(textFile)
-                        .file(imgFile)
-                        .accept(MediaType.APPLICATION_JSON)
-        );
-
-
-        //then
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.code", equalTo("B004")));
     }
 
 
@@ -222,8 +195,4 @@ public class BoardControllerTest {
                 .andExpect(jsonPath("$.code", equalTo("B005")));
     }
 
-
-    private MockMultipartFile getMockMultipartFile() throws IOException {
-        return new MockMultipartFile("images", "", "image/png", FileInputStream.nullInputStream());
-    }
 }
