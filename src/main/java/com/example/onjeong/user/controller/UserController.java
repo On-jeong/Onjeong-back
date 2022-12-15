@@ -63,7 +63,7 @@ public class UserController {
 
 
     @ApiOperation(value="회원정보 수정")
-    @PutMapping(value="/accounts/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value="/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyUserInformation (@Validated  @RequestBody UserAccountDto userAccountsDto){
         userService.modifyUserInformation(userAccountsDto);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_USER_INFORMATION_SUCCESS));
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @ApiOperation(value="유저 기본정보 알기")
-    @GetMapping(value="/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/user-information", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getUser (){
         UserDto data= userService.getUser();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_USER_SUCCESS,data));
