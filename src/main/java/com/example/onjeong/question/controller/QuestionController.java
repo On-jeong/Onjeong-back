@@ -52,7 +52,7 @@ public class QuestionController {
     public ResponseEntity<HttpStatus> registerAnswer(String answerContent) throws FirebaseMessagingException {
         Answer answer = questionService.registerAnswer(answerContent);
 
-        if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.MAIL, 210);
+        if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.ANSWER, 210);
         else coinService.coinSave(CoinHistoryType.MAIL, 10);
 
         fcmService.sendAnswer(answer);
