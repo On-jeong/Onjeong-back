@@ -68,6 +68,7 @@ public class CoinService {
                         .coinAmount(-2000)
                         .coinHistoryType(CoinHistoryType.USED)
                         .coinHistoryDate(LocalDateTime.now())
+                        .coinFlower(flower.getFlowerLevel()+1)
                         .user(user)
                         .family(family)
                         .build();
@@ -83,6 +84,7 @@ public class CoinService {
                         .coinAmount(-1000)
                         .coinHistoryType(CoinHistoryType.USED)
                         .coinHistoryDate(LocalDateTime.now())
+                        .coinFlower(flower.getFlowerLevel()+1)
                         .user(user)
                         .family(family)
                         .build();
@@ -128,6 +130,10 @@ public class CoinService {
 
             if (c.getUser() != null) builder.user(c.getUser().getUserStatus());
             if (c.getCoinHistoryDate() != null) builder.date(c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
+            if (c.getCoinFlower() != null) {
+                builder.before(c.getCoinFlower()-1);
+                builder.after(c.getCoinFlower());
+            }
 
             CoinHistoryDto coinHistoryDto = builder.build();
             coinHistoryDtoList.add(coinHistoryDto);

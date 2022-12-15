@@ -20,4 +20,7 @@ public class CoinHistoryDto {
     private String date;
     private String user;
 
+    private Integer before;
+    private Integer after;
+
 }

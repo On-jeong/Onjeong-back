@@ -28,6 +28,9 @@ public class CoinHistory {
     @Column(name="coin_history_date")
     private LocalDateTime coinHistoryDate;
 
+    @Column(name="coin_flower")
+    private Integer coinFlower; // 꽃 레벨이 바뀐 경우
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "family_id", nullable = false)
     private Family family;
