@@ -118,7 +118,7 @@ public class CoinService {
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
         Family family = user.getFamily();
 
-        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family);
+        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family.getFamilyId());
         List<CoinHistoryDto> coinHistoryDtoList = new ArrayList<>();
 
         for(CoinHistory c : coinHistoryList){
