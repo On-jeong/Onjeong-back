@@ -10,7 +10,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> {
-    List<CoinHistory> findByFamily(Family family);
+
+    @Query(nativeQuery = true,
+            value="SELECT * FROM coin_history c WHERE c.family_id = :familyId" +
+                    " ORDER BY c.coin_history_date DESC")
+    List<CoinHistory> findByFamily(@Param("familyId") Long familyId);
     void deleteAllByFamily(Family family);
-    List<CoinHistory> findAllByFamily(Family family);
 }
