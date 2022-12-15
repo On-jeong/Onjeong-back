@@ -50,8 +50,16 @@ public enum ResultCode {
     REGISTER_INTEREST_SUCCESS(200,"P018","관심사를 등록했습니다."),
     DELETE_INTEREST_SUCCESS(200,"P019","관심사를 삭제했습니다."),
     GET_PROFILE_SUCCESS(200,"P020","유저 프로필(개인정보+상태메시지)을 조회했습니다."),
-    GET_INFORMATIONS_SUCCESS(200,"P021","유저 개인정보(좋아하는것, 싫어하는것..등)를 조회했습니다.")
+    GET_INFORMATIONS_SUCCESS(200,"P021","유저 개인정보(좋아하는것, 싫어하는것..등)를 조회했습니다."),
+
+    //Home
+    GET_FLOWER_SUCCESS(200, "H001", "패밀리 레벨에 따른 현재 꽃 종류를 조회했습니다."),
+    GET_BLOOM_SUCCESS(200, "H002", "만개한 꽃들의 목록을 조회했습니다."),
+    GET_HISTORY_SUCCESS(200, "H003", "패밀리 코인 적립내역을 조회했습니다."),
+    GET_COIN_SUCCESS(200, "H004", "패밀리 코인 수를 조회했습니다."),
+    POST_COIN_SUCCESS(200, "H005", "랜덤 코인을 적립했습니다.");
     ;
+
 
 
     private final int status;
