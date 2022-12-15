@@ -64,7 +64,7 @@ public class AnniversaryControllerTest {
     void 월별_모든_특수일정_가져오기() throws Exception {
         //given
         final String anniversaryDate= "2022-12-03";
-        final String uri = "/anniversaries/" + anniversaryDate;
+        final String uri = "/months/anniversaries/" + anniversaryDate;
 
 
         //when
@@ -85,7 +85,7 @@ public class AnniversaryControllerTest {
     void 해당_일의_특수일정_가져오기() throws Exception {
         //given
         final String anniversaryDate= "2022-12-03";
-        final String uri = "/anniversaries/days/" + anniversaryDate;
+        final String uri = "/days/anniversaries/" + anniversaryDate;
 
 
         //when
@@ -105,7 +105,7 @@ public class AnniversaryControllerTest {
     void 해당_일의_특수일정_등록하기() throws Exception {
         //given
         final String anniversaryDate= "2022-12-03";
-        final String uri = "/anniversaries/days/" + anniversaryDate;
+        final String uri = "/days/anniversaries/" + anniversaryDate;
         final AnniversaryRegisterDto anniversaryRegisterDto= anniversaryRegisterDto("birthday","ANNIVERSARY");
 
         //when
@@ -127,7 +127,7 @@ public class AnniversaryControllerTest {
     void 해당_일의_특수일정_삭제하기() throws Exception {
         //given
         final Long anniversaryId= new Random().nextLong();
-        final String uri = "/anniversaries/days/" + anniversaryId;
+        final String uri = "/days/anniversaries/" + anniversaryId;
         final AnniversaryRegisterDto anniversaryRegisterDto= anniversaryRegisterDto("birthday","ANNIVERSARY");
 
         //when

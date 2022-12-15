@@ -158,7 +158,7 @@ public class UserControllerTest {
     @WithMockUser
     void 회원정보수정_성공() throws Exception{
         //given
-        final String url = "/accounts/user";
+        final String url = "/accounts";
         final UserAccountDto userAccountDto= userAccountDto();
 
         //when
@@ -196,7 +196,7 @@ public class UserControllerTest {
     @WithMockUser
     void 유저기본정보조회_성공() throws Exception{
         //given
-        final String url = "/users";
+        final String url = "/user-information";
 
         //when
         ResultActions resultActions = mockMvc.perform(
