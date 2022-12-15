@@ -58,7 +58,7 @@ public class ProfileController {
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEIMAGE, 100);
             return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
         }
 
@@ -89,7 +89,7 @@ public class ProfileController {
         if(profileService.checkProfileUpload()) profileService.registerProfileMessage(profileMessageDto);
         else{
             profileService.registerProfileMessage(profileMessageDto);
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEMESSAGE, 100);
         }
 
 //        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
@@ -129,7 +129,7 @@ public class ProfileController {
         if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite");
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
         }
 
 
@@ -154,7 +154,7 @@ public class ProfileController {
         if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
         else{
             profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
 
@@ -179,7 +179,7 @@ public class ProfileController {
         if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
         else{
             profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
         }
 
 //        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
@@ -203,7 +203,7 @@ public class ProfileController {
         if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
         else{
             profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
-            coinService.coinSave(CoinHistoryType.PROFILE, 100);
+            coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
         }
 
 //        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
