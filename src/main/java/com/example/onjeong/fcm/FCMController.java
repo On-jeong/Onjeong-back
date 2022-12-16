@@ -2,6 +2,8 @@ package com.example.onjeong.fcm;
 
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.fcm.dto.DeviceTokenRequest;
+import com.example.onjeong.result.ResultCode;
+import com.example.onjeong.result.ResultResponse;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.UserDto;
 import com.example.onjeong.user.repository.UserRepository;
@@ -37,15 +39,15 @@ public class FCMController {
 
     @ApiOperation(value="로그인 시 FCM 토큰 저장")
     @PostMapping(value = "/token/generate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> FCMRegister(@RequestParam String token) throws FirebaseMessagingException {
+    public ResponseEntity<ResultResponse> FCMRegister(@RequestParam String token) throws FirebaseMessagingException {
         fcmService.registerToken(token);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_TOKEN_SUCCESS));
     }
 
     @ApiOperation(value="로그아웃 시 FCM 토큰 해제")
     @PostMapping(value = "/token/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HttpStatus> FCMCancel() throws FirebaseMessagingException {
+    public ResponseEntity<ResultResponse> FCMCancel() throws FirebaseMessagingException {
         fcmService.deleteToken();
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_TOKEN_SUCCESS));
     }
 }
