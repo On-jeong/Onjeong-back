@@ -52,12 +52,32 @@ public enum ResultCode {
     GET_PROFILE_SUCCESS(200,"P020","유저 프로필(개인정보+상태메시지)을 조회했습니다."),
     GET_INFORMATIONS_SUCCESS(200,"P021","유저 개인정보(좋아하는것, 싫어하는것..등)를 조회했습니다."),
 
-    //Home
+    // FCM
+    POST_TOKEN_SUCCESS(200, "F001", "디바이스 토큰을 등록했습니다."),
+    DELETE_TOKEN_SUCCESS(200, "F002", "디바이스 토큰을 삭제했습니다."),
+
+    // Home
     GET_FLOWER_SUCCESS(200, "H001", "패밀리 레벨에 따른 현재 꽃 종류를 조회했습니다."),
     GET_BLOOM_SUCCESS(200, "H002", "만개한 꽃들의 목록을 조회했습니다."),
     GET_HISTORY_SUCCESS(200, "H003", "패밀리 코인 적립내역을 조회했습니다."),
     GET_COIN_SUCCESS(200, "H004", "패밀리 코인 수를 조회했습니다."),
-    POST_COIN_SUCCESS(200, "H005", "랜덤 코인을 적립했습니다.");
+    POST_COIN_SUCCESS(200, "H005", "랜덤 코인을 적립했습니다."),
+
+    // Mail
+    POST_MAIL_SUCCESS(200, "M001", "메일을 전송했습니다."),
+    GET_RECEIVE_MAIL_SUCCESS(200, "M002", "받은 메일함을 조회했습니다."),
+    GET_SEND_MAIL_SUCCESS(200, "M003", "보낸 메일함을 조회했습니다."),
+    GET_ONE_MAIL_SUCCESS(200, "M004", "선택한 메일을 조회했습니다."),
+    DELETE_SEND_MAIL_SUCCESS(200, "M003", "선택한 보낸 메일을 삭제했습니다."),
+    DELETE_RECEIVE_MAIL_SUCCESS(200, "M002", "선택한 받은 메일을 삭제했습니다."),
+
+    // Question
+    GET_QUESTION_SUCCESS(200, "Q001", "이 주의 문답 질문을 조회했습니다."),
+    GET_ANSWERS_SUCCESS(200, "Q002", "이 주의 문답에 대한 답변들을 조회했습니다."),
+    GET_ANSWERED_FAMILY_SUCCESS(200, "Q003", "이 주의 문답에 참여한 가족들을 조회했습니다."),
+    POST_ANSWER_SUCCESS(200, "Q004", "이 주의 문답에 참여한 가족들을 조회했습니다."),
+    PUT_ANSWER_SUCCESS(200, "Q005", "이 주의 문답 답변을 수정했습니다."),
+    DELETE_ANSWER_SUCCESS(200, "Q006", "이 주의 문답 답변을 삭제했습니다.")
     ;
 
 
