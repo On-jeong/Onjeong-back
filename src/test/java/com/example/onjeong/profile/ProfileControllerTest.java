@@ -196,7 +196,7 @@ public class ProfileControllerTest {
         void 조회() throws Exception {
             //given
             final Long userId= 1L;
-            final String uri = "/profiles/messages/" + userId;
+            final String uri = "/profiles/message/" + userId;
 
 
             //when
@@ -215,7 +215,7 @@ public class ProfileControllerTest {
         @WithMockUser
         void 작성_처음등록하지않은경우() throws Exception {
             //given
-            final String uri = "/profiles/messages/";
+            final String uri = "/profiles/message/";
             final ProfileMessageDto profileMessageDto= profileMessageDto("profile message to register");
 
             doReturn(true).when(profileService).checkProfileUpload();
@@ -238,7 +238,7 @@ public class ProfileControllerTest {
         @WithMockUser
         void 작성_처음등록하는경우() throws Exception {
             //given
-            final String uri = "/profiles/messages/";
+            final String uri = "/profiles/message/";
             final ProfileMessageDto profileMessageDto= profileMessageDto("profile message to register");
 
             doReturn(false).when(profileService).checkProfileUpload();
@@ -262,7 +262,7 @@ public class ProfileControllerTest {
         @WithMockUser
         void 수정() throws Exception {
             //given
-            final String uri = "/profiles/messages/";
+            final String uri = "/profiles/message/";
             final ProfileMessageDto profileMessageDto= profileMessageDto("profile message to modify");
 
 

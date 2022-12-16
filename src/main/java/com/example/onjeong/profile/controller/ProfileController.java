@@ -77,14 +77,14 @@ public class ProfileController {
     }
 
     @ApiOperation(value="상태메시지 보여주기")
-    @GetMapping(value = "/profiles/messages/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/profiles/message/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getProfileMessage(@PathVariable("userId") Long userId) {
         ProfileMessageDto data= profileService.getProfileMessage(userId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_PROFILE_MESSAGE_SUCCESS,data));
     }
 
     @ApiOperation(value="상태메시지 작성하기")
-    @PostMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/profiles/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) profileService.registerProfileMessage(profileMessageDto);
         else{
@@ -101,7 +101,7 @@ public class ProfileController {
     }
 
     @ApiOperation(value="상태메시지 수정하기")
-    @PatchMapping(value = "/profiles/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/profiles/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) {
         profileService.modifyProfileMessage(profileMessageDto);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_PROFILE_MESSAGE_SUCCESS));

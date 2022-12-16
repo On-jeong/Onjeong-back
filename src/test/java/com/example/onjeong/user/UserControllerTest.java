@@ -158,7 +158,7 @@ public class UserControllerTest {
     @WithMockUser
     void 회원정보수정_성공() throws Exception{
         //given
-        final String url = "/accounts/user";
+        final String url = "/accounts";
         final UserAccountDto userAccountDto= userAccountDto();
 
         //when
@@ -196,7 +196,7 @@ public class UserControllerTest {
     @WithMockUser
     void 유저기본정보조회_성공() throws Exception{
         //given
-        final String url = "/users";
+        final String url = "/user-information";
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -212,36 +212,36 @@ public class UserControllerTest {
 
     private UserDeleteDto userDeleteDto(){
         return UserDeleteDto.builder()
-                .userPassword("test")
+                .userPassword("pw123")
                 .build();
     }
 
     private UserJoinDto userJoinDto(){
         return UserJoinDto.builder()
-                .userName("ParkJunHui")
-                .userNickname("jun")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
                 .build();
     }
 
     private UserJoinedDto userJoinedDto(){
         return UserJoinedDto.builder()
-                .userName("user1")
-                .userNickname("user")
+                .userName("HongGilDong")
+                .userNickname("GilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
-                .joinedNickname("user2")
+                .joinedNickname("joinedNickname")
                 .build();
     }
 
     private UserAccountDto userAccountDto(){
         return UserAccountDto.builder()
-                .userName("ParkJunHui")
+                .userName("HongGilDong")
                 .userPassword("pw123")
-                .userStatus("daughter")
+                .userStatus("son")
                 .userBirth(LocalDate.now())
                 .build();
     }
