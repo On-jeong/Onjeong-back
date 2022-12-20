@@ -54,21 +54,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
-    private final AnniversaryRepository anniversaryRepository;
-    private final BoardRepository boardRepository;
     private final FlowerRepository flowerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Uploader s3Uploader;
-    private final AnswerRepository answerRepository;
-    private final QuestionRepository questionRepository;
-    private final CoinHistoryRepository coinHistoryRepository;
-    private final ExpressionRepository expressionRepository;
-    private final FavoriteRepository favoriteRepository;
-    private final HateRepository hateRepository;
-    private final InterestRepository interestRepository;
-    private final MailRepository mailRepository;
     private final AuthUtil authUtil;
 
     @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
@@ -176,7 +166,7 @@ public class UserService {
 
 
     //유저 기본정보 알기
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto getUser(){
         final User loginUser= authUtil.getUserByAuthentication();
         return UserDto.builder()

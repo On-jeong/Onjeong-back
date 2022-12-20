@@ -32,7 +32,7 @@ public class ProfileService {
 
 
     //가족 프로필 중 구성원 보여주기
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AllUserOfFamilyDto> getAllUserOfFamily(){
         final User loginUser= authUtil.getUserByAuthentication();
         final List<User> usersOfFamily= loginUser.getFamily().getUsers();
@@ -48,7 +48,7 @@ public class ProfileService {
     }
 
     //프로필 상단에 개인 정보 보여주기
-    @Transactional
+    @Transactional(readOnly = true)
     public UserInformationDto getUserInformation(final Long userId){
         final User user= authUtil.getUserByUserId(userId);
         final Profile profile= profileUtil.getProfileByUser(user);
@@ -82,7 +82,7 @@ public class ProfileService {
     }
 
     //상태메시지 보여주기
-    @Transactional
+    @Transactional(readOnly = true)
     public ProfileMessageDto getProfileMessage(final Long userId){
         final User user= authUtil.getUserByUserId(userId);
         final Profile profile= profileUtil.getProfileByUser(user);
@@ -111,7 +111,7 @@ public class ProfileService {
 
 
     //유저 개인정보+상태메시지 보여주기
-    @Transactional
+    @Transactional(readOnly = true)
     public UserInformationAndProfileMessageDto getUserInformationAndProfileMessage(final Long userId){
         final User user= authUtil.getUserByUserId(userId);
         final Profile profile= profileUtil.getProfileByUser(user);
@@ -120,7 +120,7 @@ public class ProfileService {
     }
 
     //자기소개 답변 목록 보여주기
-    @Transactional
+    @Transactional(readOnly = true)
     public SelfIntroductionAnswerListGetDto getSelfIntroductionAnswer(final Long userId){
         final User user= authUtil.getUserByUserId(userId);
         final Profile profile= profileUtil.getProfileByUser(user);
