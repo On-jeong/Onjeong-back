@@ -30,19 +30,19 @@ public class Family {
     @Column(name = "family_coin", nullable = false)
     private Integer familyCoin;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Question> questionList;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Flower> flowerList;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CoinHistory> coinHistoryList;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<Anniversary> anniversaryList = new ArrayList<>();
 
 

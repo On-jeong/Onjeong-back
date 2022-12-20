@@ -70,6 +70,7 @@ public class UserService {
         final Family family= Family.builder()
                 .familyCoin(0)
                 .build();
+        final Family savedFamily= familyRepository.save(family);
         final User user= User.builder()
                 .userName(userJoinDto.getUserName())
                 .userNickname(userJoinDto.getUserNickname())
@@ -77,17 +78,17 @@ public class UserService {
                 .userStatus(userJoinDto.getUserStatus())
                 .userBirth(userJoinDto.getUserBirth())
                 .role(UserRole.ROLE_USER)
-                .family(familyRepository.save(family))
+                .family(savedFamily)
                 .build();
         final User savedUser= userRepository.save(user);
-        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(family).build());
+        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(savedFamily).build());
 
         final Flower newFlower = Flower.builder()
                 .flowerBloom(false)
                 .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
                 .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
                 .flowerLevel(1)
-                .family(family)
+                .family(savedFamily)
                 .build();
         flowerRepository.save(newFlower);
     }

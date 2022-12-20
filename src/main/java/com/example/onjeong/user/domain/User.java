@@ -60,16 +60,16 @@ public class User extends Common implements Serializable {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
-    @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Mail> sendMailList;
 
-    @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Mail> receiveMailList;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<Board> boardList = new ArrayList<>();
 
     public void updateUserName(String userName){ this.userName=userName; }
