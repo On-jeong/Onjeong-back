@@ -2,6 +2,7 @@ package com.example.onjeong.user.service;
 
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.anniversary.repository.AnniversaryRepository;
+import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
@@ -42,6 +43,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 import java.util.Random;
@@ -148,46 +150,28 @@ public class UserService {
                 .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
 
         if(passwordEncoder.matches(userDeleteDto.getUserPassword(),loginUser.getUserPassword())){
-            deleteAllTableRelatedToProfile(profile);
-            deleteAllTableRelatedToUser(loginUser, profile.getProfileImageUrl());
+            deleteBoardImageList(loginUser.getBoardList());
+            deleteProfileImage(profile.getProfileImageUrl());
+
+            if(family.getUsers().size()==1) familyRepository.delete(family);
+            else userRepository.delete(loginUser);
+            profileRepository.delete(profile);
 
             SecurityContextHolder.getContext().setAuthentication(null);
             SecurityContextHolder.clearContext();
-
-            if(family.getUsers().size()==0) {
-                deleteAllTableRelatedToFamily(family);
-            }
         }
 
-    }
-
-    private void deleteAllTableRelatedToProfile(Profile profile){
-        expressionRepository.deleteAllByProfile(profile);
-        favoriteRepository.deleteAllByProfile(profile);
-        hateRepository.deleteAllByProfile(profile);
-        interestRepository.deleteAllByProfile(profile);
-    }
-
-    private void deleteAllTableRelatedToUser(User loginUser, String profileImageUrl){
-        deleteProfileImage(profileImageUrl);
-        profileRepository.deleteByUser(loginUser);
-        boardRepository.deleteAllByUser(loginUser);
-        answerRepository.deleteAllByUser(loginUser);
-        mailRepository.deleteAllByReceiveUser(loginUser);
-        mailRepository.deleteAllBySendUser(loginUser);
-        userRepository.delete(loginUser);
     }
 
     private void deleteProfileImage(String profileImageUrl){
         if(profileImageUrl!=null) s3Uploader.deleteFile(profileImageUrl.substring(AWS_S3_BUCKET_URL.length()));
     }
 
-    private void deleteAllTableRelatedToFamily(Family family){
-        anniversaryRepository.deleteAllByFamily(family);
-        questionRepository.deleteAllByFamily(family);
-        coinHistoryRepository.deleteAllByFamily(family);
-        flowerRepository.deleteAllByFamily(family);
-        familyRepository.delete(family);
+    private void deleteBoardImageList(List<Board> boardList){
+        for(Board board: boardList){
+            if(board.getBoardImageUrl()!=null)
+                s3Uploader.deleteFile(board.getBoardImageUrl().substring(AWS_S3_BUCKET_URL.length()));
+        }
     }
 
 

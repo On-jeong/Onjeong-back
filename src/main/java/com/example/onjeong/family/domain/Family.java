@@ -1,6 +1,8 @@
 package com.example.onjeong.family.domain;
 
 
+import com.example.onjeong.anniversary.domain.Anniversary;
+import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.user.domain.User;
 import java.util.ArrayList;
 import com.example.onjeong.home.domain.CoinHistory;
@@ -39,6 +41,10 @@ public class Family {
 
     @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CoinHistory> coinHistoryList;
+
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private final List<Anniversary> anniversaryList = new ArrayList<>();
+
 
     public void updateCoin(Integer amount){
         this.familyCoin += amount;
