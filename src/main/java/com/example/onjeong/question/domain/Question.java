@@ -30,4 +30,6 @@ public class Question {
     @JoinColumn(name = "family_id", nullable = false)
     private Family family;
 
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    private List<Answer> answerList = new ArrayList<>();
 }
