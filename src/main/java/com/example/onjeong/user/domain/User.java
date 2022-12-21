@@ -66,7 +66,7 @@ public class User extends Common implements Serializable {
     @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Mail> receiveMailList;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Answer> answerList;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

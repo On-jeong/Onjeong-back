@@ -55,6 +55,7 @@ public class UserService {
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
     private final FlowerRepository flowerRepository;
+    private final AnswerRepository answerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -145,7 +146,10 @@ public class UserService {
             deleteProfileImage(profile.getProfileImageUrl());
 
             if(family.getUsers().size()==1) familyRepository.delete(family);
-            else userRepository.delete(loginUser);
+            else {
+                answerRepository.deleteAllByUser(loginUser);
+                userRepository.delete(loginUser);
+            }
             profileRepository.delete(profile);
 
             SecurityContextHolder.getContext().setAuthentication(null);
