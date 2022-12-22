@@ -2,6 +2,7 @@ package com.example.onjeong.user.service;
 
 import com.example.onjeong.S3.S3Uploader;
 import com.example.onjeong.anniversary.repository.AnniversaryRepository;
+import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
@@ -42,6 +43,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 import java.util.Random;
@@ -52,21 +54,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
-    private final AnniversaryRepository anniversaryRepository;
-    private final BoardRepository boardRepository;
     private final FlowerRepository flowerRepository;
+    private final AnswerRepository answerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Uploader s3Uploader;
-    private final AnswerRepository answerRepository;
-    private final QuestionRepository questionRepository;
-    private final CoinHistoryRepository coinHistoryRepository;
-    private final ExpressionRepository expressionRepository;
-    private final FavoriteRepository favoriteRepository;
-    private final HateRepository hateRepository;
-    private final InterestRepository interestRepository;
-    private final MailRepository mailRepository;
     private final AuthUtil authUtil;
 
     @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
@@ -78,6 +71,7 @@ public class UserService {
         final Family family= Family.builder()
                 .familyCoin(0)
                 .build();
+        final Family savedFamily= familyRepository.save(family);
         final User user= User.builder()
                 .userName(userJoinDto.getUserName())
                 .userNickname(userJoinDto.getUserNickname())
@@ -85,17 +79,17 @@ public class UserService {
                 .userStatus(userJoinDto.getUserStatus())
                 .userBirth(userJoinDto.getUserBirth())
                 .role(UserRole.ROLE_USER)
-                .family(familyRepository.save(family))
+                .family(savedFamily)
                 .build();
         final User savedUser= userRepository.save(user);
-        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(family).build());
+        profileRepository.save(Profile.builder().user(savedUser).checkProfileImage(false).checkProfileUpload(false).family(savedFamily).build());
 
         final Flower newFlower = Flower.builder()
                 .flowerBloom(false)
                 .flowerKind(FlowerKind.values()[new Random().nextInt(FlowerKind.values().length)])
                 .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
                 .flowerLevel(1)
-                .family(family)
+                .family(savedFamily)
                 .build();
         flowerRepository.save(newFlower);
     }
@@ -148,51 +142,36 @@ public class UserService {
                 .orElseThrow(()-> new ProfileNotExistException("profile not exist", ErrorCode.PROFILE_NOTEXIST));
 
         if(passwordEncoder.matches(userDeleteDto.getUserPassword(),loginUser.getUserPassword())){
-            deleteAllTableRelatedToProfile(profile);
-            deleteAllTableRelatedToUser(loginUser, profile.getProfileImageUrl());
+            deleteBoardImageList(loginUser.getBoardList());
+            deleteProfileImage(profile.getProfileImageUrl());
+
+            if(family.getUsers().size()==1) familyRepository.delete(family);
+            else {
+                answerRepository.deleteAllByUser(loginUser);
+                userRepository.delete(loginUser);
+            }
+            profileRepository.delete(profile);
 
             SecurityContextHolder.getContext().setAuthentication(null);
             SecurityContextHolder.clearContext();
-
-            if(family.getUsers().size()==0) {
-                deleteAllTableRelatedToFamily(family);
-            }
         }
 
-    }
-
-    private void deleteAllTableRelatedToProfile(Profile profile){
-        expressionRepository.deleteAllByProfile(profile);
-        favoriteRepository.deleteAllByProfile(profile);
-        hateRepository.deleteAllByProfile(profile);
-        interestRepository.deleteAllByProfile(profile);
-    }
-
-    private void deleteAllTableRelatedToUser(User loginUser, String profileImageUrl){
-        deleteProfileImage(profileImageUrl);
-        profileRepository.deleteByUser(loginUser);
-        boardRepository.deleteAllByUser(loginUser);
-        answerRepository.deleteAllByUser(loginUser);
-        mailRepository.deleteAllByReceiveUser(loginUser);
-        mailRepository.deleteAllBySendUser(loginUser);
-        userRepository.delete(loginUser);
     }
 
     private void deleteProfileImage(String profileImageUrl){
         if(profileImageUrl!=null) s3Uploader.deleteFile(profileImageUrl.substring(AWS_S3_BUCKET_URL.length()));
     }
 
-    private void deleteAllTableRelatedToFamily(Family family){
-        anniversaryRepository.deleteAllByFamily(family);
-        questionRepository.deleteAllByFamily(family);
-        coinHistoryRepository.deleteAllByFamily(family);
-        flowerRepository.deleteAllByFamily(family);
-        familyRepository.delete(family);
+    private void deleteBoardImageList(List<Board> boardList){
+        for(Board board: boardList){
+            if(board.getBoardImageUrl()!=null)
+                s3Uploader.deleteFile(board.getBoardImageUrl().substring(AWS_S3_BUCKET_URL.length()));
+        }
     }
 
 
     //유저 기본정보 알기
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto getUser(){
         final User loginUser= authUtil.getUserByAuthentication();
         return UserDto.builder()

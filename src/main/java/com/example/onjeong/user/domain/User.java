@@ -1,5 +1,6 @@
 package com.example.onjeong.user.domain;
 
+import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
@@ -12,6 +13,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @ToString
@@ -58,14 +60,17 @@ public class User extends Common implements Serializable {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
-    @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sendUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Mail> sendMailList;
 
-    @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "receiveUser", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Mail> receiveMailList;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Answer> answerList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<Board> boardList = new ArrayList<>();
 
     public void updateUserName(String userName){ this.userName=userName; }
 

@@ -33,7 +33,7 @@ public class BoardService {
     private String AWS_S3_BUCKET_URL;
 
     //오늘의 기록 모두 가져오기
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardDto> getAllBoard(final LocalDate boardDate){
         final User loginUser= authUtil.getUserByAuthentication();
         final List<Board> boards= boardRepository.findAllByBoardDateAndFamily(boardDate,loginUser.getFamily());
@@ -77,7 +77,7 @@ public class BoardService {
     }
 
     //오늘의 기록 한개 가져오기
-    @Transactional
+    @Transactional(readOnly = true)
     public BoardDto getOneBoard(final Long boardId){
         final Board board= boardRepository.findByBoardId(boardId)
                 .orElseThrow(()-> new BoardNotExistException("board not exist", ErrorCode.BOARD_NOTEXIST));
