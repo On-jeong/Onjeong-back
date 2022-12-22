@@ -26,7 +26,7 @@ public class AnniversaryService {
     private final AuthUtil authUtil;
 
     //월별 모든 특수일정 가져오기
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AnniversaryDto> getAllAnniversaryOfMonth(final LocalDate anniversaryDate){
         final User loginUser= authUtil.getUserByAuthentication();
         final Family family= loginUser.getFamily();
@@ -49,7 +49,7 @@ public class AnniversaryService {
     }
 
     //해당 일의 특수일정 가져오기
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AnniversaryDto> getAnniversaryOfDay(final LocalDate anniversaryDate){
         final User loginUser= authUtil.getUserByAuthentication();
         final Family family=loginUser.getFamily();

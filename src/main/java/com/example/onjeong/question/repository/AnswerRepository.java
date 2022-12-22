@@ -15,5 +15,4 @@ import java.util.Optional;
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByQuestion(Question question);
     void deleteAllByUser(User user);
-    List<Answer> findAllByUser(User user);
 }

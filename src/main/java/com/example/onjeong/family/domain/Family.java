@@ -1,6 +1,8 @@
 package com.example.onjeong.family.domain;
 
 
+import com.example.onjeong.anniversary.domain.Anniversary;
+import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.user.domain.User;
 import java.util.ArrayList;
 import com.example.onjeong.home.domain.CoinHistory;
@@ -28,17 +30,21 @@ public class Family {
     @Column(name = "family_coin", nullable = false)
     private Integer familyCoin;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<User> users = new ArrayList<>();
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Question> questionList;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Flower> flowerList;
 
-    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<CoinHistory> coinHistoryList;
+
+    @OneToMany(mappedBy = "family", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<Anniversary> anniversaryList = new ArrayList<>();
+
 
     public void updateCoin(Integer amount){
         this.familyCoin += amount;
