@@ -1,9 +1,7 @@
 package com.example.onjeong.user.Auth;
 
-import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.domain.UserRole;
-import com.example.onjeong.user.exception.TokenExpiredJwtException;
+import com.example.onjeong.user.redis.RefreshToken;
 import io.jsonwebtoken.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -12,12 +10,8 @@ import lombok.extern.log4j.Log4j2;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-//로그인 성공시, 토큰을 생성하고 + response에 추가하여 반환
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TokenUtils {
@@ -33,13 +27,8 @@ public class TokenUtils {
         return builder.compact();
     }
 
-    public static String generateJwtRefreshToken(User user) {
-        JwtBuilder builder = Jwts.builder()
-                .setSubject(user.getUserNickname())
-                .setHeader(createHeader())
-                .setExpiration(createExpireDateForOneYear())
-                .signWith(SignatureAlgorithm.HS256, createSigningKey());
-        return builder.compact();
+    public static RefreshToken generateJwtRefreshToken(User user) {
+        return new RefreshToken(UUID.randomUUID().toString(), user.getUserId());
     }
 
     public static boolean isValidToken(String token) {
@@ -49,7 +38,6 @@ public class TokenUtils {
             log.info("userNickname :" + claims.get("userNickname"));
             log.info("role :" + claims.get("role"));
             return true;
-
         } catch (ExpiredJwtException exception) {
             log.error("Token Expired");
             return false;
@@ -69,12 +57,6 @@ public class TokenUtils {
     private static Date createExpireHourForOneYear() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR, 2);
-        return c.getTime();
-    }
-
-    private static Date createExpireDateForOneYear() {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, 14);
         return c.getTime();
     }
 

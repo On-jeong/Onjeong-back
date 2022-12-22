@@ -45,9 +45,6 @@ public class User extends Common implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    @Column(name = "refresh_token")
-    private String refreshToken;
-
     @Column(name = "device_token")
     private String deviceToken;
 
@@ -79,10 +76,6 @@ public class User extends Common implements Serializable {
 
     public void updateUserBirth(LocalDate userBirth){
         this.userBirth=userBirth;
-    }
-
-    public void updateRefreshToken(String refreshToken){
-        this.refreshToken=refreshToken;
     }
 
     public void updateDeviceToken(String deviceToken){
