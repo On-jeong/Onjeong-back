@@ -4,11 +4,9 @@ import com.example.onjeong.error.CustomAuthenticationEntryPoint;
 import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
 import com.example.onjeong.user.Auth.CustomLoginFailureHandler;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
-import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.user.redis.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,16 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserRepository userRepository;
-/*
-    @Autowired
-    protected SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserRepository userRepository) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.userRepository = userRepository;
-    }
+    private final RefreshTokenRepository refreshTokenRepository;
 
-
- */
 
     @Override
     public void configure(WebSecurity web) throws Exception{
@@ -116,7 +106,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public CustomLoginSuccessHandler customLoginSuccessHandler(){
-        return new CustomLoginSuccessHandler(userRepository);
+        return new CustomLoginSuccessHandler(refreshTokenRepository);
     }
 
     @Bean
@@ -129,11 +119,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-/*
-    @Bean
-    public UserRepository userRepository(){
-        return new UserRepository();
-    }
 
- */
 }

@@ -104,13 +104,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
 
-    @ExceptionHandler(RefreshTokenNotSameException.class)
-    public ResponseEntity<ErrorResponse> handleRefreshTokenNotSameException(RefreshTokenNotSameException ex){
-        log.error("handleRefreshTokenNotSameException",ex);
-        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
-    }
-
     @ExceptionHandler(RefreshTokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleRefreshTokenExpiredException(RefreshTokenExpiredException ex){
         log.error("handleRefreshTokenExpiredException",ex);

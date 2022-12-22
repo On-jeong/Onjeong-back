@@ -21,11 +21,12 @@ import com.example.onjeong.home.repository.FlowerRepository;
 
 import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
-import com.example.onjeong.user.Auth.JwtTokenProvider;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.*;
 import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.user.exception.*;
+import com.example.onjeong.user.redis.RefreshToken;
+import com.example.onjeong.user.redis.RefreshTokenRepository;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.dto.*;
 import com.example.onjeong.util.AuthUtil;
@@ -36,13 +37,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,9 +55,9 @@ public class UserService {
     private final AnswerRepository answerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
     private final S3Uploader s3Uploader;
     private final AuthUtil authUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
     private String AWS_S3_BUCKET_URL;
@@ -187,13 +184,14 @@ public class UserService {
     //New Access Token 재발급
     @Transactional
     public String refreshToken(String refreshToken) {
-        Optional<User> user= userRepository.findByRefreshToken(refreshToken);
-        if(user.isPresent()){
-            if(jwtTokenProvider.validateRefreshTokenExceptExpiration(refreshToken)) return TokenUtils.generateJwtToken(user.get());
-            else throw new RefreshTokenExpiredException("refresh token expired",ErrorCode.REFRESH_TOKEN_EXPIRED);
+        Optional<RefreshToken> getRefreshToken= refreshTokenRepository.findById(refreshToken);
+        if(getRefreshToken.isPresent()){
+            User user= userRepository.findById(getRefreshToken.get().getUserId())
+                    .orElseThrow(()-> new UserNotExistException("user not exist", ErrorCode.USER_NOTEXIST));
+            return TokenUtils.generateJwtToken(user);
         }
         else{
-            throw new RefreshTokenNotSameException("refresh token not same",ErrorCode.REFRESH_TOKEN_NOT_SAME);
+            throw new RefreshTokenExpiredException("refresh token expired",ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
     }
 
