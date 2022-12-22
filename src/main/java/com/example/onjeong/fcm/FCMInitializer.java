@@ -16,7 +16,7 @@ import java.io.IOException;
 public class FCMInitializer {
 
     private static final Logger logger = LoggerFactory.getLogger(FCMInitializer.class);
-    private static final String FIREBASE_CONFIG_PATH = "firebase_service_key.json";
+    private static final String FIREBASE_CONFIG_PATH = "firebase/firebase_service_key.json";
 
     @PostConstruct
     public void initialize() {
