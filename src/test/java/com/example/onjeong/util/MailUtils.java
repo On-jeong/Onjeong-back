@@ -20,12 +20,12 @@ public class MailUtils {
         return getMail(mailId, mailContent, sendTime, checkRead, senderWantDelete, receiverWantDelete, sendUser, receiveUser);
     }
 
-    public static Mail getSequntialMail(Long mailId, User sendUser, User receiveUser){
+    public static Mail getDeleteMail(Long mailId, User sendUser, User receiveUser){
         final String mailContent = RandomStringUtils.random(8, true, true);
         final LocalDateTime sendTime = LocalDateTime.now();
         final boolean checkRead = false;
-        final boolean senderWantDelete = false;
-        final boolean receiverWantDelete = false;
+        final boolean senderWantDelete = true;
+        final boolean receiverWantDelete = true;
         return getMail(mailId, mailContent, sendTime, checkRead, senderWantDelete, receiverWantDelete, sendUser, receiveUser);
     }
 
