@@ -48,6 +48,7 @@ public class ProfileController {
     public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(name = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) {
             Profile profile= profileService.registerProfileImage(multipartFile);
+            fcmService.sendProfileModify(profile);
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
@@ -55,18 +56,13 @@ public class ProfileController {
         }
         else{
             Profile profile= profileService.registerProfileImage(multipartFile);
+            fcmService.sendProfileModify(profile);
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
             coinService.coinSave(CoinHistoryType.PROFILEIMAGE, 100);
             return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
         }
-
-//        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerProfileImage(multipartFile));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
     }
 
     @ApiOperation(value="프로필 사진 삭제하기")
@@ -86,17 +82,11 @@ public class ProfileController {
     @ApiOperation(value="상태메시지 작성하기")
     @PostMapping(value = "/profiles/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) profileService.registerProfileMessage(profileMessageDto);
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
         else{
-            profileService.registerProfileMessage(profileMessageDto);
+            fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
             coinService.coinSave(CoinHistoryType.PROFILEMESSAGE, 100);
         }
-
-//        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_MESSAGE_SUCCESS));
     }
 
@@ -126,18 +116,18 @@ public class ProfileController {
     public ResponseEntity<ResultResponse> registerProfileFavorite(@PathVariable("userId") Long userId
             , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
-        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite");
+//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite");
+//        else{
+//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+//            coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
+//        }
+
+
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
         }
-
-
-        //        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_FAVORITE_SUCCESS));
     }
 
@@ -151,18 +141,20 @@ public class ProfileController {
     @ApiOperation(value="싫어하는 것 작성하기")
     @PostMapping(value = "/profiles/hates/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileHate(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
+//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
+//        else{
+//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
+//            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
+//        }
+
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
-            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
+            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
 
-//        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
+
     }
 
     @ApiOperation(value="싫어하는 것 삭제하기")
@@ -176,17 +168,17 @@ public class ProfileController {
     @PostMapping(value = "/profiles/expressions/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileExpression(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
-        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
+//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
+//        else{
+//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
+//            coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
+//        }
+
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
         else{
-            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
+            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
             coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
         }
-
-//        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_EXPRESSION_SUCCESS));
     }
 
@@ -200,17 +192,17 @@ public class ProfileController {
     @ApiOperation(value="관심사 작성하기")
     @PostMapping(value = "/profiles/interests/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileInterest(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
+//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
+//        else{
+//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
+//            coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
+//        }
+
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
         else{
-            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
+            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
             coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
         }
-
-//        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
-//        else{
-//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
-//            coinService.coinSave(CoinHistoryType.PROFILE, 100);
-//        }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_INTEREST_SUCCESS));
     }
 

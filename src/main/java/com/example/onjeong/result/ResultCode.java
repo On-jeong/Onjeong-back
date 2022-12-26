@@ -75,7 +75,7 @@ public enum ResultCode {
     GET_QUESTION_SUCCESS(200, "Q001", "이 주의 문답 질문을 조회했습니다."),
     GET_ANSWERS_SUCCESS(200, "Q002", "이 주의 문답에 대한 답변들을 조회했습니다."),
     GET_ANSWERED_FAMILY_SUCCESS(200, "Q003", "이 주의 문답에 참여한 가족들을 조회했습니다."),
-    POST_ANSWER_SUCCESS(200, "Q004", "이 주의 문답에 참여한 가족들을 조회했습니다."),
+    POST_ANSWER_SUCCESS(200, "Q004", "이 주의 문답 답변을 작성했습니다."),
     PUT_ANSWER_SUCCESS(200, "Q005", "이 주의 문답 답변을 수정했습니다."),
     DELETE_ANSWER_SUCCESS(200, "Q006", "이 주의 문답 답변을 삭제했습니다.")
     ;
