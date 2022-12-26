@@ -108,31 +108,35 @@ public class MailService {
 
     // 특정 보낸 메시지 삭제
     @Transactional
-    public boolean deleteSendMail(Long[] mailIds){
+    public List<Mail> deleteSendMail(Long[] mailIds){
+        List<Mail> deleteList = new ArrayList<>();
         for(Long mailId : mailIds){
             Mail mail = mailRepository.findById(mailId)
                     .orElseThrow(() -> new MailNotExistException("mail not exist", ErrorCode.MAIL_NOTEXIST));
             mail.deleteSend();
+            deleteList.add(mail);
 
             if(mail.isReceiverWantDelete() && mail.isSenderWantDelete()){
                 mailRepository.delete(mail);
             }
         }
-        return true;
+        return deleteList;
     }
 
     // 특정 받은 메시지 삭제
     @Transactional
-    public boolean deleteReceiveMail(Long[] mailIds){
+    public List<Mail> deleteReceiveMail(Long[] mailIds){
+        List<Mail> deleteList = new ArrayList<>();
         for(Long mailId : mailIds) {
             Mail mail = mailRepository.findById(mailId)
                     .orElseThrow(() -> new MailNotExistException("mail not exist", ErrorCode.MAIL_NOTEXIST));
             mail.deleteReceive();
+            deleteList.add(mail);
 
             if(mail.isReceiverWantDelete() && mail.isSenderWantDelete()){
                 mailRepository.delete(mail);
             }
         }
-        return true;
+        return deleteList;
     }
 }
