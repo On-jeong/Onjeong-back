@@ -19,6 +19,11 @@ public class AuthUtil {
                 .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
     }
 
+    public User getReceiveUserByUserId(final Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotExistException("receive user not exist", ErrorCode.RECEIVEUSER_NOTEXIST));
+    }
+
     public User getUserByAuthentication(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         return userRepository.findByUserNickname(authentication.getName())

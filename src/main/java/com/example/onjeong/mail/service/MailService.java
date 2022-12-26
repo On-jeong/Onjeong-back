@@ -12,6 +12,7 @@ import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.mail.repository.MailRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -30,16 +31,13 @@ public class MailService {
 
     private final UserRepository userRepository;
     private final MailRepository mailRepository;
+    private final AuthUtil authUtil;
 
     // 메시지 전송
     @Transactional
     public Mail sendMail(MailRequestDto mailSendDto) throws FirebaseMessagingException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User sendUser = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-        User receiveUser = userRepository.findById(mailSendDto.getReceiveUserId())
-                .orElseThrow(()-> new UserNotExistException("receive user not exist", ErrorCode.RECEIVEUSER_NOTEXIST));
-
+        User sendUser = authUtil.getUserByAuthentication();
+        User receiveUser = authUtil.getReceiveUserByUserId(mailSendDto.getReceiveUserId());
         Mail mail = Mail.builder()
                 .mailContent(mailSendDto.getMailContent())
                 .sendUser(sendUser)
@@ -55,10 +53,7 @@ public class MailService {
 
     // 받은 메일함 확인
     public List<MailDto> showAllReceiveMail(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+        User user = authUtil.getUserByAuthentication();
         List<Mail> mailList = mailRepository.findByReceiver(user.getUserId());
         List<MailDto> mailDtoList = new ArrayList<>();
 
@@ -77,10 +72,7 @@ public class MailService {
 
     // 보낸 메일함 확인
     public List<MailDto> showAllSendMail(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+        User user = authUtil.getUserByAuthentication();
         List<Mail> mailList = mailRepository.findBySender(user.getUserId());
         List<MailDto> mailDtoList = new ArrayList<>();
 
