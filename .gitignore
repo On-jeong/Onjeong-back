@@ -27,6 +27,7 @@ out/
 !**/src/test/**/out/
 application.properties
 aws.yml
+firebase_service_key.json
 
 ### NetBeans ###
 /nbproject/private/
