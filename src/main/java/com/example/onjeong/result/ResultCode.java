@@ -68,8 +68,8 @@ public enum ResultCode {
     GET_RECEIVE_MAIL_SUCCESS(200, "M002", "받은 메일함을 조회했습니다."),
     GET_SEND_MAIL_SUCCESS(200, "M003", "보낸 메일함을 조회했습니다."),
     GET_ONE_MAIL_SUCCESS(200, "M004", "선택한 메일을 조회했습니다."),
-    DELETE_SEND_MAIL_SUCCESS(200, "M003", "선택한 보낸 메일을 삭제했습니다."),
-    DELETE_RECEIVE_MAIL_SUCCESS(200, "M002", "선택한 받은 메일을 삭제했습니다."),
+    DELETE_SEND_MAIL_SUCCESS(200, "M005", "선택한 보낸 메일을 삭제했습니다."),
+    DELETE_RECEIVE_MAIL_SUCCESS(200, "M006", "선택한 받은 메일을 삭제했습니다."),
 
     // Question
     GET_QUESTION_SUCCESS(200, "Q001", "이 주의 문답 질문을 조회했습니다."),

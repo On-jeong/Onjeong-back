@@ -20,7 +20,6 @@ public class UserUtils {
         return getUser(userId, userName, userNickname, userPassword, userStatus, userBirth, family);
     }
 
-
     public static User getUser(Long userId, String userName, String userNickname, String userPassword,
                                String userStatus, LocalDate userBirth, Family family){
         return User.builder()

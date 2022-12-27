@@ -15,7 +15,6 @@ public class FamilyUtils {
         return getFamily(familyId, familyCoin);
     }
 
-
     public static Family getFamily(Long familyId, Integer familyCoin){
         return Family.builder()
                 .familyId(familyId)
