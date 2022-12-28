@@ -9,6 +9,7 @@ import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -34,13 +35,12 @@ public class CoinService {
     private final UserRepository userRepository;
     private final CoinHistoryRepository coinHistoryRepository;
     private final FlowerRepository flowerRepository;
+    private final AuthUtil authUtil;
 
     @Transactional
     public CoinHistoryDto coinSave(CoinHistoryType coinHistoryType, int amount){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         // 가족 코인 수 업데이트
@@ -115,9 +115,8 @@ public class CoinService {
     }
 
     public List<CoinHistoryDto> coinHistoryList(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family.getFamilyId());
@@ -144,9 +143,7 @@ public class CoinService {
 
     public int coinShow(){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         return family.getFamilyCoin();
