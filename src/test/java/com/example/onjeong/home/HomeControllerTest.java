@@ -1,7 +1,8 @@
-package com.example.onjeong.home.controller;
+package com.example.onjeong.home;
 
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
+import com.example.onjeong.home.controller.HomeController;
 import com.example.onjeong.home.domain.CoinHistoryType;
 import com.example.onjeong.home.dto.CoinHistoryDto;
 import com.example.onjeong.home.service.CoinService;
