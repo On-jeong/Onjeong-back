@@ -38,8 +38,9 @@ public class CoinService {
     private final AuthUtil authUtil;
 
     @Transactional
-    public CoinHistoryDto coinSave(CoinHistoryType coinHistoryType, int amount){
+    public List<CoinHistory> coinSave(CoinHistoryType coinHistoryType, int amount){
 
+        List<CoinHistory> coinHistoryList = new ArrayList<>();
         User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
@@ -54,6 +55,7 @@ public class CoinService {
                 .user(user)
                 .family(family)
                 .build();
+        coinHistoryList.add(coinHistory);
         coinHistoryRepository.save(coinHistory);
 
         // 변경 된 코인 수에 따라 꽃 상태 변경
@@ -73,6 +75,7 @@ public class CoinService {
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
+                coinHistoryList.add(coinHistory2);
                 flower.levelUp();
             }
         }
@@ -89,6 +92,7 @@ public class CoinService {
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
+                coinHistoryList.add(coinHistory2);
                 flower.levelUp();
             }
         }
@@ -106,12 +110,7 @@ public class CoinService {
             flowerRepository.save(newFlower);
         }
 
-        CoinHistoryDto coinHistoryDto = CoinHistoryDto.builder()
-                .type(coinHistoryType)
-                .amount(amount)
-                .build();
-
-        return coinHistoryDto;
+        return coinHistoryList;
     }
 
     public List<CoinHistoryDto> coinHistoryList(){
