@@ -152,7 +152,7 @@ public class UserService {
             SecurityContextHolder.getContext().setAuthentication(null);
             SecurityContextHolder.clearContext();
         }
-
+        else throw new UserPasswordNotCorrectException("user password not correct", ErrorCode.USER_PASSWORD_NOT_CORRECT);
     }
 
     private void deleteProfileImage(String profileImageUrl){

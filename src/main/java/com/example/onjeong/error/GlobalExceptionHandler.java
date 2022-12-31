@@ -173,4 +173,11 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
+
+    @ExceptionHandler(UserPasswordNotCorrectException.class)
+    public ResponseEntity<ErrorResponse> handleUserPasswordNotCorrectException(UserPasswordNotCorrectException ex){
+        log.error("handleUserPasswordNotCorrectException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
 }
