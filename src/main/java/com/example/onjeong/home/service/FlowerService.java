@@ -9,6 +9,7 @@ import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +27,11 @@ public class FlowerService {
 
     private final FlowerRepository flowerRepository;
     private final UserRepository userRepository;
+    private final AuthUtil authUtil;
 
     public FlowerDto showFlower(){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         Flower flower = flowerRepository.findBlooming(family.getFamilyId());
@@ -46,9 +46,7 @@ public class FlowerService {
 
     public List<FlowerDto> showFlowerBloom(){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         List<Flower> flower = flowerRepository.findFullBloom(family.getFamilyId());

@@ -9,6 +9,7 @@ import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -34,13 +35,13 @@ public class CoinService {
     private final UserRepository userRepository;
     private final CoinHistoryRepository coinHistoryRepository;
     private final FlowerRepository flowerRepository;
+    private final AuthUtil authUtil;
 
     @Transactional
-    public CoinHistoryDto coinSave(CoinHistoryType coinHistoryType, int amount){
+    public List<CoinHistory> coinSave(CoinHistoryType coinHistoryType, int amount){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        List<CoinHistory> coinHistoryList = new ArrayList<>();
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         // 가족 코인 수 업데이트
@@ -54,6 +55,7 @@ public class CoinService {
                 .user(user)
                 .family(family)
                 .build();
+        coinHistoryList.add(coinHistory);
         coinHistoryRepository.save(coinHistory);
 
         // 변경 된 코인 수에 따라 꽃 상태 변경
@@ -73,6 +75,7 @@ public class CoinService {
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
+                coinHistoryList.add(coinHistory2);
                 flower.levelUp();
             }
         }
@@ -89,6 +92,7 @@ public class CoinService {
                         .family(family)
                         .build();
                 coinHistoryRepository.save(coinHistory2);
+                coinHistoryList.add(coinHistory2);
                 flower.levelUp();
             }
         }
@@ -106,18 +110,12 @@ public class CoinService {
             flowerRepository.save(newFlower);
         }
 
-        CoinHistoryDto coinHistoryDto = CoinHistoryDto.builder()
-                .type(coinHistoryType)
-                .amount(amount)
-                .build();
-
-        return coinHistoryDto;
+        return coinHistoryList;
     }
 
     public List<CoinHistoryDto> coinHistoryList(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family.getFamilyId());
@@ -144,9 +142,7 @@ public class CoinService {
 
     public int coinShow(){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
         return family.getFamilyCoin();

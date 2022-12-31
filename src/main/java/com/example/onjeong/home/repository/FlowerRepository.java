@@ -20,7 +20,4 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
             value = "SELECT * FROM flower f WHERE f.family_id = :id " +
                     "AND f.flower_bloom = true")
     List<Flower> findFullBloom(@Param("id") Long id);
-
-    void deleteAllByFamily(Family family);
-    List<Flower> findAllByFamily(Family family);
 }

@@ -1,5 +1,6 @@
 package com.example.onjeong.home.controller;
 
+import com.example.onjeong.home.domain.CoinHistory;
 import com.example.onjeong.home.domain.CoinHistoryType;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.dto.CoinHistoryDto;
@@ -55,7 +56,7 @@ public class HomeController {
     @PostMapping("/coins-random")
     public ResponseEntity<ResultResponse> coinsRandom() throws FirebaseMessagingException {
         int randAmount = (int) (Math.random() * (100 - 10 + 1)) + 10; // 10~100 사이 랜덤
-        CoinHistoryDto coinRand = coinService.coinSave(CoinHistoryType.RAND, randAmount);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_COIN_SUCCESS,coinRand.getAmount()));
+        CoinHistory coinRand = coinService.coinSave(CoinHistoryType.RAND, randAmount).get(0);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_COIN_SUCCESS,coinRand.getCoinAmount()));
     }
 }

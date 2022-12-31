@@ -15,5 +15,4 @@ public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> 
             value="SELECT * FROM coin_history c WHERE c.family_id = :familyId" +
                     " ORDER BY c.coin_history_date DESC")
     List<CoinHistory> findByFamily(@Param("familyId") Long familyId);
-    void deleteAllByFamily(Family family);
 }
