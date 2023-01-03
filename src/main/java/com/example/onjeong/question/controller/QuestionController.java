@@ -55,7 +55,7 @@ public class QuestionController {
         Answer answer = questionService.registerAnswer(answerContent);
 
         if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.ANSWER, 210);
-        else coinService.coinSave(CoinHistoryType.MAIL, 10);
+        else coinService.coinSave(CoinHistoryType.ANSWER, 10);
 
         fcmService.sendAnswer(answer);
         fcmService.sendFamilyCheck(answer);
