@@ -3,9 +3,8 @@ package com.example.onjeong.home;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.dto.FlowerDto;
-import com.example.onjeong.home.repository.CoinHistoryRepository;
 import com.example.onjeong.home.repository.FlowerRepository;
-import com.example.onjeong.home.service.FlowerService;
+import com.example.onjeong.home.service.HomeService;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.util.AuthUtil;
 import com.example.onjeong.util.FamilyUtils;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.*;
 class FlowerServiceTest {
 
     @InjectMocks
-    private FlowerService flowerService;
+    private HomeService homeService;
 
     @Mock
     private FlowerRepository flowerRepository;
@@ -44,7 +43,7 @@ class FlowerServiceTest {
         doReturn(flower).when(flowerRepository).findBlooming(family.getFamilyId());
 
         //when
-        flowerService.showFlower();
+        homeService.showFlower();
 
         //then
         verify(flowerRepository,times(1)).findBlooming(family.getFamilyId());
@@ -66,7 +65,7 @@ class FlowerServiceTest {
         doReturn(flowerList).when(flowerRepository).findFullBloom(family.getFamilyId());
 
         //when
-        List<FlowerDto> flowerDtoList = flowerService.showFlowerBloom();
+        List<FlowerDto> flowerDtoList = homeService.showFlowerBloom();
 
         //then
         for(int i=0; i<3; i++){

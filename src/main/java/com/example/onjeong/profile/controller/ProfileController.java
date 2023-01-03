@@ -1,8 +1,8 @@
 package com.example.onjeong.profile.controller;
 
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.service.ProfileService;

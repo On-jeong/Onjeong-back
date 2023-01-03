@@ -2,10 +2,9 @@ package com.example.onjeong.mail.controller;
 
 
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.mail.domain.Mail;
-import com.example.onjeong.mail.dto.MailDto;
 import com.example.onjeong.mail.dto.MailRequestDto;
 import com.example.onjeong.mail.service.MailService;
 import com.example.onjeong.result.ResultCode;
@@ -14,11 +13,8 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags="Mail")
 @RequiredArgsConstructor
