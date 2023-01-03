@@ -1,12 +1,9 @@
 package com.example.onjeong.home;
 
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.home.domain.CoinHistory;
-import com.example.onjeong.home.domain.Flower;
-import com.example.onjeong.home.repository.CoinHistoryRepository;
-import com.example.onjeong.home.repository.FlowerRepository;
+import com.example.onjeong.coin.domain.CoinHistory;
+import com.example.onjeong.coin.repository.CoinHistoryRepository;
 import com.example.onjeong.util.FamilyUtils;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -15,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

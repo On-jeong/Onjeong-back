@@ -1,5 +1,6 @@
-package com.example.onjeong.home.domain;
+package com.example.onjeong.coin.domain;
 
+import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.user.domain.User;
 import lombok.*;

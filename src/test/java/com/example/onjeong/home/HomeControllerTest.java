@@ -3,18 +3,10 @@ package com.example.onjeong.home;
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
 import com.example.onjeong.home.controller.HomeController;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.dto.CoinHistoryDto;
-import com.example.onjeong.home.service.CoinService;
-import com.example.onjeong.home.service.FlowerService;
-import com.example.onjeong.result.ResultCode;
-import com.example.onjeong.result.ResultResponse;
+import com.example.onjeong.coin.service.CoinService;
+import com.example.onjeong.home.service.HomeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import io.swagger.annotations.ApiOperation;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -22,22 +14,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import java.util.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +42,7 @@ class HomeControllerTest {
     private CoinService coinService;
 
     @MockBean
-    private FlowerService flowerService;
+    private HomeService homeService;
 
     @Autowired
     private MockMvc mockMvc;

@@ -1,17 +1,13 @@
 package com.example.onjeong.home;
 
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.home.domain.CoinHistory;
-import com.example.onjeong.home.domain.CoinHistoryType;
+import com.example.onjeong.coin.domain.CoinHistory;
+import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.home.domain.Flower;
-import com.example.onjeong.home.dto.CoinHistoryDto;
-import com.example.onjeong.home.repository.CoinHistoryRepository;
+import com.example.onjeong.coin.dto.CoinHistoryDto;
+import com.example.onjeong.coin.repository.CoinHistoryRepository;
 import com.example.onjeong.home.repository.FlowerRepository;
-import com.example.onjeong.home.service.CoinService;
-import com.example.onjeong.mail.domain.Mail;
-import com.example.onjeong.mail.dto.MailDto;
-import com.example.onjeong.mail.dto.MailRequestDto;
-import com.example.onjeong.mail.exception.MailNotExistException;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.util.*;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

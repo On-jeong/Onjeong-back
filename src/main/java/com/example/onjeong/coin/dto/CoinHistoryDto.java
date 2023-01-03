@@ -1,13 +1,10 @@
-package com.example.onjeong.home.dto;
+package com.example.onjeong.coin.dto;
 
-import com.example.onjeong.home.domain.CoinHistoryType;
+import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Builder
 @Getter

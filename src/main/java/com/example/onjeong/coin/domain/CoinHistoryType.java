@@ -1,4 +1,4 @@
-package com.example.onjeong.home.domain;
+package com.example.onjeong.coin.domain;
 
 public enum CoinHistoryType {
     RAND, USED, MAIL, BOARD, ANSWER,
