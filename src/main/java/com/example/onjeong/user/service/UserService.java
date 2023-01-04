@@ -75,6 +75,7 @@ public class UserService {
                 .userPassword(passwordEncoder.encode(userJoinDto.getUserPassword()))
                 .userStatus(userJoinDto.getUserStatus())
                 .userBirth(userJoinDto.getUserBirth())
+                .userEmail(userJoinDto.getUserEmail())
                 .role(UserRole.ROLE_USER)
                 .family(savedFamily)
                 .build();
@@ -103,6 +104,7 @@ public class UserService {
                 .userPassword(passwordEncoder.encode(userJoinedDto.getUserPassword()))
                 .userStatus(userJoinedDto.getUserStatus())
                 .userBirth(userJoinedDto.getUserBirth())
+                .userEmail(userJoinedDto.getUserEmail())
                 .role(UserRole.ROLE_USER)
                 .family(joinedUser.getFamily())
                 .build();
@@ -127,6 +129,7 @@ public class UserService {
         loginUser.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
         loginUser.updateUserStatus(userAccountsDto.getUserStatus());
         loginUser.updateUserBirth(userAccountsDto.getUserBirth());
+        loginUser.updateUserEmail(userAccountsDto.getUserEmail());
     }
 
     //회원탈퇴
