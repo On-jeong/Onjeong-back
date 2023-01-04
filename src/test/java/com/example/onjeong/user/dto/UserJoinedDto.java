@@ -18,4 +18,5 @@ public class UserJoinedDto {
     private String userStatus;
     private LocalDate userBirth;
     private String joinedNickname;
+    private String userEmail;
 }

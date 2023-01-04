@@ -205,6 +205,7 @@ public class UserServiceTest {
                 .userPassword("pw123")
                 .userStatus("son")
                 .userBirth(LocalDate.now())
+                .userEmail("@email")
                 .build();
     }
 
@@ -216,6 +217,7 @@ public class UserServiceTest {
                 .userStatus("son")
                 .userBirth(LocalDate.now())
                 .joinedNickname("joinedNickname")
+                .userEmail("@email")
                 .build();
     }
 
@@ -225,6 +227,7 @@ public class UserServiceTest {
                 .userPassword("pw123")
                 .userStatus("son")
                 .userBirth(LocalDate.now())
+                .userEmail("@email")
                 .build();
     }
 
