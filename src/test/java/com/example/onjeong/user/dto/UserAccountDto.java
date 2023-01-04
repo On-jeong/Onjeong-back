@@ -16,4 +16,5 @@ public class UserAccountDto {
     private String userPassword;
     private String userStatus;
     private LocalDate userBirth;
+    private String userEmail;
 }
