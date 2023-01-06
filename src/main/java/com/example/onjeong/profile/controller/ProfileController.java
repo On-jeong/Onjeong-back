@@ -147,7 +147,7 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
         else{
             fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
