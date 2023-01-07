@@ -1,6 +1,6 @@
 package com.example.onjeong.profile.controller;
 
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.profile.domain.Profile;
@@ -27,7 +27,7 @@ import java.util.List;
 public class ProfileController {
     private final ProfileService profileService;
     private final CoinService coinService;
-    private final FCMService fcmService;
+    private final NotificationService notificationService;
 
     @ApiOperation(value="가족 프로필 중 구성원 보여주기")
     @GetMapping(value = "/families", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,7 +48,7 @@ public class ProfileController {
     public ResponseEntity<ResultResponse> registerProfileImage(@RequestPart(name = "images") MultipartFile multipartFile) throws FirebaseMessagingException{
         if(profileService.checkProfileUpload()) {
             Profile profile= profileService.registerProfileImage(multipartFile);
-            fcmService.sendProfileModify(profile);
+            notificationService.sendProfileModify(profile);
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
@@ -56,7 +56,7 @@ public class ProfileController {
         }
         else{
             Profile profile= profileService.registerProfileImage(multipartFile);
-            fcmService.sendProfileModify(profile);
+            notificationService.sendProfileModify(profile);
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
@@ -82,9 +82,9 @@ public class ProfileController {
     @ApiOperation(value="상태메시지 작성하기")
     @PostMapping(value = "/profiles/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) throws FirebaseMessagingException{
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
         else{
-            fcmService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
+            notificationService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
             coinService.coinSave(CoinHistoryType.PROFILEMESSAGE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_MESSAGE_SUCCESS));
@@ -123,9 +123,9 @@ public class ProfileController {
 //        }
 
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
-            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_FAVORITE_SUCCESS));
@@ -147,9 +147,9 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
-            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
@@ -174,9 +174,9 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
         else{
-            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
+            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
             coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_EXPRESSION_SUCCESS));
@@ -198,9 +198,9 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
         else{
-            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
+            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
             coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_INTEREST_SUCCESS));

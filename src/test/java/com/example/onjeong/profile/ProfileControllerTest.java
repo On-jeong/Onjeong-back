@@ -4,7 +4,7 @@ package com.example.onjeong.profile;
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.profile.controller.ProfileController;
@@ -63,7 +63,7 @@ public class ProfileControllerTest {
     private CoinService coinService;
 
     @MockBean
-    private FCMService fcmService;
+    private NotificationService notificationService;
 
     @Autowired
     private MockMvc mockMvc;

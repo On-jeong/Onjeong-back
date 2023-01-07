@@ -2,7 +2,7 @@ package com.example.onjeong.mail;
 
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.mail.controller.MailController;
@@ -51,7 +51,7 @@ class MailControllerTest {
     private CoinService coinService;
 
     @MockBean
-    private FCMService fcmService;
+    private NotificationService notificationService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -90,7 +90,7 @@ class MailControllerTest {
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.code", equalTo("M001")));
         verify(coinService,times(1)).coinSave(any(CoinHistoryType.class),any(Integer.class));
-        verify(fcmService,times(1)).sendMail(isA(Mail.class));
+        verify(notificationService,times(1)).sendMail(isA(Mail.class));
     }
 
     @Test

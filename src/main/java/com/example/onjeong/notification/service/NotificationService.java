@@ -1,4 +1,4 @@
-package com.example.onjeong.fcm;
+package com.example.onjeong.notification.service;
 
 
 import com.example.onjeong.anniversary.domain.Anniversary;
@@ -7,12 +7,15 @@ import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
+import com.example.onjeong.notification.domain.Notifications;
+import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +31,13 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class FCMService {
+public class NotificationService {
 
     // 배치 추가 및 질문 시 전체 알림 추가 필요
     private final UserRepository userRepository;
     private final AnniversaryRepository anniversaryRepository;
+    private final NotificationRepository notificationRepository;
+    private final AuthUtil authUtil;
 
     @Transactional
     public void registerToken(String token) throws FirebaseMessagingException {
@@ -53,6 +58,11 @@ public class FCMService {
         user.updateDeviceToken("");
     }
 
+    public void getNotifications(){
+        User user = authUtil.getUserByAuthentication();
+        //notificationRepository.findAllByUserId(user.getUserId());
+    }
+
 
     public void sendMail(Mail mail) throws FirebaseMessagingException {
         // 메일 전송 시 받는 사람에게 알림 전송
@@ -60,6 +70,7 @@ public class FCMService {
         String content = mail.getSendUser().getUserStatus() + "로부터 메일이 도착했습니다.";
 
         sendPersonalAlarm(content, token);
+        saveNotifications(content, mail.getReceiveUser());
     }
 
     public void sendFamilyCheck(Answer answer) throws FirebaseMessagingException {
@@ -84,6 +95,7 @@ public class FCMService {
 
             // 알림 범위 논의 필요
             sendPersonalAlarm(content, token);
+            saveNotifications(content, notAnsweredFamily.get(0));
         }
     }
 
@@ -95,7 +107,9 @@ public class FCMService {
 
         //알림 전송
         sendFamilyAlarm(content, topic);
-
+        for(User u : board.getFamily().getUsers()){
+            if(!u.equals(board.getUser())) saveNotifications(content, u);
+        }
     }
 
     public void sendAnswer(Answer answer) throws FirebaseMessagingException {
@@ -104,6 +118,9 @@ public class FCMService {
         String content = answer.getUser().getUserStatus() + "님이 이주의 문답에 대한 답변을 작성했습니다.";
 
         sendFamilyAlarm(content, topic);
+        for(User u : answer.getUser().getFamily().getUsers()){
+            if(!u.equals(answer.getUser())) saveNotifications(content, u);
+        }
     }
 
     public void sendProfileModify(Profile profile) throws FirebaseMessagingException {
@@ -112,6 +129,9 @@ public class FCMService {
         String content = profile.getUser().getUserStatus() + "의 프로필이 수정되었습니다.";
 
         sendFamilyAlarm(content, topic);
+        for(User u : profile.getFamily().getUsers()){
+            saveNotifications(content, u);
+        }
     }
 
     public void sendAnnivarsary() throws FirebaseMessagingException {
@@ -125,6 +145,9 @@ public class FCMService {
             String content = a.getAnniversaryContent() + "이 하루 전입니다.";
 
             sendFamilyAlarm(content, topic);
+            for(User u : a.getFamily().getUsers()){
+                saveNotifications(content, u);
+            }
         }
     }
 
@@ -153,5 +176,15 @@ public class FCMService {
             String response = FirebaseMessaging.getInstance().send(message);
             System.out.println("메시지 전송 알림 완료 : " + response);
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
+    }
+
+    @Transactional
+    public void saveNotifications(String content, User user){
+        Notifications notification = Notifications.builder()
+                .notificationContent(content)
+                .notificationTime(LocalDateTime.now())
+                .user(user)
+                .build();
+        notificationRepository.save(notification);
     }
 }
