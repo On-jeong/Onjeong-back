@@ -147,9 +147,9 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+        if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
         else{
-            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+            notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
