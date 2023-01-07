@@ -188,4 +188,11 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
+
+    @ExceptionHandler(TokenNullException.class)
+    public ResponseEntity<ErrorResponse> handleTokenNullException(TokenNullException ex){
+        log.error("handleTokenNullException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
 }
