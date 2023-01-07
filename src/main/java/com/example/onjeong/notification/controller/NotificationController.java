@@ -1,53 +1,44 @@
-package com.example.onjeong.fcm;
+package com.example.onjeong.notification.controller;
 
-import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.fcm.dto.DeviceTokenRequest;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.result.ResultCode;
 import com.example.onjeong.result.ResultResponse;
-import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.dto.UserDto;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.user.service.UserService;
-import com.google.api.Http;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.TopicManagementResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags="FCM")
 @RequiredArgsConstructor
 @RestController
-public class FCMController {
+public class NotificationController {
 
     private final UserService userService;
-    private final FCMService fcmService;
+    private final NotificationService notificationService;
     private final UserRepository userRepository;
 
     @ApiOperation(value="로그인 시 FCM 토큰 저장")
     @PostMapping(value = "/token/generate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> FCMRegister(@RequestParam String token) throws FirebaseMessagingException {
-        fcmService.registerToken(token);
+        notificationService.registerToken(token);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_TOKEN_SUCCESS));
     }
 
     @ApiOperation(value="로그아웃 시 FCM 토큰 해제")
     @PostMapping(value = "/token/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> FCMCancel() throws FirebaseMessagingException {
-        fcmService.deleteToken();
+        notificationService.deleteToken();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_TOKEN_SUCCESS));
+    }
+
+    @ApiOperation(value="알림 목록 조회")
+    @GetMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> notifications() {
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALARM_SUCCESS, notificationService.getNotifications()));
     }
 }

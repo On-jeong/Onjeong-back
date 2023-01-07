@@ -5,7 +5,7 @@ import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
 import com.example.onjeong.board.controller.BoardController;
 import com.example.onjeong.board.service.BoardService;
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.service.CoinService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class BoardControllerTest {
     private CoinService coinService;
 
     @MockBean
-    private FCMService fcmService;
+    private NotificationService notificationService;
 
     @Autowired
     private MockMvc mockMvc;

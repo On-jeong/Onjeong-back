@@ -1,4 +1,4 @@
-package com.example.onjeong.fcm;
+package com.example.onjeong.Config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -9,7 +9,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
 import java.io.IOException;
 
 @Service

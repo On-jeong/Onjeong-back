@@ -1,6 +1,6 @@
 package com.example.onjeong.question.controller;
 
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.question.domain.Answer;
@@ -22,7 +22,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final CoinService coinService;
-    private final FCMService fcmService;
+    private final NotificationService notificationService;
 
     @ApiOperation(value = "이주의 문답 질문 보여주기")
     @GetMapping("/questions")
@@ -50,8 +50,8 @@ public class QuestionController {
         if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.ANSWER, 210);
         else coinService.coinSave(CoinHistoryType.ANSWER, 10);
 
-        fcmService.sendAnswer(answer);
-        fcmService.sendFamilyCheck(answer);
+        notificationService.sendAnswer(answer);
+        notificationService.sendFamilyCheck(answer);
 
         return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_ANSWER_SUCCESS));
     }

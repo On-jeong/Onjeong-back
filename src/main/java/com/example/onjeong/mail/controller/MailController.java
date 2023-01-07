@@ -1,7 +1,7 @@
 package com.example.onjeong.mail.controller;
 
 
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.mail.domain.Mail;
@@ -23,13 +23,13 @@ public class MailController {
 
     private final MailService mailService;
     private final CoinService coinService;
-    private final FCMService fcmService;
+    private final NotificationService notificationService;
 
     @ApiOperation(value = "메시지 전송")
     @PostMapping("/mails")
     public ResponseEntity<ResultResponse> sendMail(@RequestBody MailRequestDto mailSendDto) throws FirebaseMessagingException {
         Mail mail = mailService.sendMail(mailSendDto);
-        fcmService.sendMail(mail);
+        notificationService.sendMail(mail);
         coinService.coinSave(CoinHistoryType.MAIL, 10);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_MAIL_SUCCESS));
     }

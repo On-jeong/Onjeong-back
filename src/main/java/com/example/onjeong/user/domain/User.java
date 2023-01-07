@@ -4,6 +4,7 @@ import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
+import com.example.onjeong.notification.domain.Notifications;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.user.exception.UserNotExistException;
@@ -71,6 +72,9 @@ public class User extends Common implements Serializable {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<Board> boardList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<Notifications> notifications = new ArrayList<>();
 
     public void updateUserName(String userName){ this.userName=userName; }
 

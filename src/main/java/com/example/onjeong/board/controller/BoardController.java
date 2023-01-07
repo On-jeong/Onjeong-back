@@ -4,7 +4,7 @@ package com.example.onjeong.board.controller;
 import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.board.dto.BoardDto;
 import com.example.onjeong.board.service.BoardService;
-import com.example.onjeong.fcm.FCMService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.result.ResultCode;
@@ -30,7 +30,7 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     private final CoinService coinService;
-    private final FCMService fcmService;
+    private final NotificationService notificationService;
 
     @ApiOperation(value="오늘의 기록 모두 가져오기")
     @GetMapping(value = "/boards/all/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +43,7 @@ public class BoardController {
     @PostMapping(value = "/boards/{boardDate}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResultResponse> registerBoard(@PathVariable("boardDate") String boardDate, @RequestPart(name = "images", required = false) MultipartFile multipartFile, @RequestPart("boardContent") String boardContent)throws FirebaseMessagingException {
         Board board= boardService.registerBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), multipartFile, boardContent);
-        fcmService.sendBoard(board);
+        notificationService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_BOARD_SUCCESS));
     }

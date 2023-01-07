@@ -1,4 +1,4 @@
-package com.example.onjeong.fcm.dto;
+package com.example.onjeong.notification.dto;
 
 import lombok.*;
 
