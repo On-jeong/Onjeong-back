@@ -7,5 +7,4 @@ import lombok.NoArgsConstructor;
 public final class AuthConstants {
     public static final String AUTH_HEADER_REFRESH = "AuthorizationRefresh";
     public static final String AUTH_HEADER_ACCESS = "AuthorizationAccess";
-    public static final String TOKEN_TYPE = "JWT";
 }
