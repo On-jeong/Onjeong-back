@@ -15,6 +15,7 @@ public enum ResultCode {
     GET_USER_SUCCESS(200,"U006","유저 기본정보를 조회했습니다."),
     NEW_TOKEN_SUCCESS(200,"U007","새로운 Access Token을 발급했습니다."),
     GET_HOME_SUCCESS(200,"U008","home을 조회했습니다."),
+    CHECK_ID_SUCCESS(200,"U009","id 체크에 성공했습니다."),
 
     // Anniversary
     GET_ALL_ANNIVERSARY_SUCCESS(200, "A001", "월별 모든 특수일정을 조회했습니다."),

@@ -106,4 +106,20 @@ public class UserController {
         headers.add(AuthConstants.AUTH_HEADER_ACCESS, newAccessToken);
         return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.NEW_TOKEN_SUCCESS));
     }
+
+    @ApiOperation(value="사용할 수 있는 아이디인지 체크")
+    @GetMapping(value="/check/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> isAvailableId(@PathVariable("id") String userNickname){
+        boolean isAvailable= true;
+        if(userService.isUserNicknameDuplicated(userNickname)) isAvailable= false;
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.CHECK_ID_SUCCESS, UserCheckDto.builder().isAvailable(isAvailable).build()));
+    }
+
+    @ApiOperation(value="초대가족 아이디 존재유무 체크")
+    @GetMapping(value="/check/joined-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultResponse> isAvailableJoinedId(@PathVariable("id") String userNickname){
+        boolean isAvailable= true;
+        if(!userService.isUserNicknameDuplicated(userNickname)) isAvailable= false;
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.CHECK_ID_SUCCESS, UserCheckDto.builder().isAvailable(isAvailable).build()));
+    }
 }
