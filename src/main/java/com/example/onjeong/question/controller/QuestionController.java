@@ -1,26 +1,19 @@
 package com.example.onjeong.question.controller;
 
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.question.domain.Answer;
-import com.example.onjeong.question.dto.AnswerDto;
 import com.example.onjeong.question.dto.AnswerModifyRequestDto;
-import com.example.onjeong.question.dto.AnswerRequestDto;
-import com.example.onjeong.question.dto.QuestionDto;
 import com.example.onjeong.question.service.QuestionService;
 import com.example.onjeong.result.ResultCode;
 import com.example.onjeong.result.ResultResponse;
-import com.google.api.Http;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Api(tags="Question")
 @RequiredArgsConstructor
@@ -55,7 +48,7 @@ public class QuestionController {
         Answer answer = questionService.registerAnswer(answerContent);
 
         if(questionService.answerFamilyCheck()) coinService.coinSave(CoinHistoryType.ANSWER, 210);
-        else coinService.coinSave(CoinHistoryType.MAIL, 10);
+        else coinService.coinSave(CoinHistoryType.ANSWER, 10);
 
         fcmService.sendAnswer(answer);
         fcmService.sendFamilyCheck(answer);

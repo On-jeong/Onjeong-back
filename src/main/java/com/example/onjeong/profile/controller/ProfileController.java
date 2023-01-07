@@ -1,8 +1,8 @@
 package com.example.onjeong.profile.controller;
 
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.dto.*;
 import com.example.onjeong.profile.service.ProfileService;
@@ -147,9 +147,9 @@ public class ProfileController {
 //            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
 //        }
 
-        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+        if(profileService.checkProfileUpload()) fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
         else{
-            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
+            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));

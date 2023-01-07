@@ -59,14 +59,7 @@ public class FCMService {
         String token = mail.getReceiveUser().getDeviceToken();
         String content = mail.getSendUser().getUserStatus() + "로부터 메일이 도착했습니다.";
 
-        Message message = Message.builder()
-                .putData("time", LocalDateTime.now().toString())
-                .setNotification(new Notification("On:Jeong", content))
-                .setToken(token)
-                .build();
-
-        String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("메시지 전송 알림 완료 : " + response);
+        sendPersonalAlarm(content, token);
     }
 
     public void sendFamilyCheck(Answer answer) throws FirebaseMessagingException {
@@ -90,14 +83,7 @@ public class FCMService {
             String content = notAnsweredFamily.get(0).getUserStatus() + "님만 답변하면 가족 전체의 답변이 완성됩니다";
 
             // 알림 범위 논의 필요
-            Message message = Message.builder()
-                    .putData("time", LocalDateTime.now().toString())
-                    .setNotification(new Notification("On:Jeong", content))
-                    .setToken(token)
-                    .build();
-
-            String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("메시지 전송 알림 완료 : " + response);
+            sendPersonalAlarm(content, token);
         }
     }
 
@@ -107,14 +93,9 @@ public class FCMService {
         String topic = board.getFamily().getFamilyId().toString();
         String content = board.getUser().getUserStatus() + "님이 오늘의 기록을 작성했습니다.";
 
-        Message message = Message.builder()
-                .putData("time", LocalDateTime.now().toString())
-                .setNotification(new Notification("OnJeong", content))
-                .setTopic(topic)
-                .build();
+        //알림 전송
+        sendFamilyAlarm(content, topic);
 
-        String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("메시지 전송 알림 완료 : " + response);
     }
 
     public void sendAnswer(Answer answer) throws FirebaseMessagingException {
@@ -122,14 +103,7 @@ public class FCMService {
         String topic = answer.getUser().getFamily().getFamilyId().toString();
         String content = answer.getUser().getUserStatus() + "님이 이주의 문답에 대한 답변을 작성했습니다.";
 
-        Message message = Message.builder()
-                .putData("time", LocalDateTime.now().toString())
-                .setNotification(new Notification("On:Jeong", content))
-                .setTopic(topic)
-                .build();
-
-        String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("메시지 전송 알림 완료 : " + response);
+        sendFamilyAlarm(content, topic);
     }
 
     public void sendProfileModify(Profile profile) throws FirebaseMessagingException {
@@ -137,14 +111,7 @@ public class FCMService {
         String topic = profile.getFamily().getFamilyId().toString();
         String content = profile.getUser().getUserStatus() + "의 프로필이 수정되었습니다.";
 
-        Message message = Message.builder()
-                .putData("time", LocalDateTime.now().toString())
-                .setNotification(new Notification("On:Jeong", content))
-                .setTopic(topic)
-                .build();
-
-        String response = FirebaseMessaging.getInstance().send(message);
-        System.out.println("메시지 전송 알림 완료 : " + response);
+        sendFamilyAlarm(content, topic);
     }
 
     public void sendAnnivarsary() throws FirebaseMessagingException {
@@ -157,14 +124,34 @@ public class FCMService {
             String topic = a.getFamily().getFamilyId().toString();
             String content = a.getAnniversaryContent() + "이 하루 전입니다.";
 
+            sendFamilyAlarm(content, topic);
+        }
+    }
+
+
+    public void sendPersonalAlarm(String content, String token) throws FirebaseMessagingException {
+        try{
             Message message = Message.builder()
                     .putData("time", LocalDateTime.now().toString())
                     .setNotification(new Notification("On:Jeong", content))
+                    .setToken(token)
+                    .build();
+
+            String response = FirebaseMessaging.getInstance().send(message);
+            System.out.println("메시지 전송 알림 완료 : " + response);
+        } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
+    }
+
+    public void sendFamilyAlarm(String content, String topic) throws FirebaseMessagingException {
+        try{
+            Message message = Message.builder()
+                    .putData("time", LocalDateTime.now().toString())
+                    .setNotification(new Notification("OnJeong", content))
                     .setTopic(topic)
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
             System.out.println("메시지 전송 알림 완료 : " + response);
-        }
+        } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }
 }

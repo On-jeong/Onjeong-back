@@ -3,12 +3,10 @@ package com.example.onjeong.profile;
 
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
-import com.example.onjeong.board.controller.BoardController;
-import com.example.onjeong.board.service.BoardService;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.profile.controller.ProfileController;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.dto.ProfileMessageDto;

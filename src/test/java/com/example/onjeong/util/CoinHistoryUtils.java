@@ -1,13 +1,9 @@
 package com.example.onjeong.util;
 
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.home.domain.CoinHistory;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.domain.Flower;
-import com.example.onjeong.profile.domain.Favorite;
-import com.example.onjeong.profile.domain.Profile;
+import com.example.onjeong.coin.domain.CoinHistory;
+import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.user.domain.User;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import java.time.LocalDateTime;
 

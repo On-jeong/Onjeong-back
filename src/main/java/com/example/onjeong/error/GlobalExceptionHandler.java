@@ -7,6 +7,7 @@ import com.example.onjeong.anniversary.exception.EmailDuplicateException;
 import com.example.onjeong.board.exception.BoardNotExistException;
 import com.example.onjeong.board.exception.BoardWriterNotSameException;
 import com.example.onjeong.family.exception.FamilyNotExistException;
+import com.example.onjeong.home.exception.RandCoinDuplicateException;
 import com.example.onjeong.mail.exception.MailNotExistException;
 import com.example.onjeong.mail.exception.ReceiveUserNotExistException;
 import com.example.onjeong.profile.exception.ProfileNotExistException;
@@ -177,6 +178,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserPasswordNotCorrectException.class)
     public ResponseEntity<ErrorResponse> handleUserPasswordNotCorrectException(UserPasswordNotCorrectException ex){
         log.error("handleUserPasswordNotCorrectException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(RandCoinDuplicateException.class)
+    public ResponseEntity<ErrorResponse> handleRandCoinDuplicateException(RandCoinDuplicateException ex){
+        log.error("handleRandCoinDuplicateException",ex);
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }

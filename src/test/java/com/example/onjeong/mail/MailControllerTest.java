@@ -3,8 +3,8 @@ package com.example.onjeong.mail;
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
 import com.example.onjeong.fcm.FCMService;
-import com.example.onjeong.home.domain.CoinHistoryType;
-import com.example.onjeong.home.service.CoinService;
+import com.example.onjeong.coin.domain.CoinHistoryType;
+import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.mail.controller.MailController;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.mail.dto.MailRequestDto;
@@ -22,7 +22,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 

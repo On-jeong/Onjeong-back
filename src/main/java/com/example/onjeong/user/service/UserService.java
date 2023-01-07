@@ -1,15 +1,11 @@
 package com.example.onjeong.user.service;
 
 import com.example.onjeong.S3.S3Uploader;
-import com.example.onjeong.anniversary.repository.AnniversaryRepository;
 import com.example.onjeong.board.domain.Board;
-import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 
 import com.example.onjeong.family.exception.FamilyNotExistException;
-import com.example.onjeong.home.repository.CoinHistoryRepository;
-import com.example.onjeong.mail.repository.MailRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.exception.ProfileNotExistException;
 import com.example.onjeong.profile.repository.*;
@@ -20,7 +16,6 @@ import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
 
 import com.example.onjeong.question.repository.AnswerRepository;
-import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.*;
 import com.example.onjeong.family.repository.FamilyRepository;
@@ -75,6 +70,7 @@ public class UserService {
                 .userPassword(passwordEncoder.encode(userJoinDto.getUserPassword()))
                 .userStatus(userJoinDto.getUserStatus())
                 .userBirth(userJoinDto.getUserBirth())
+                .userEmail(userJoinDto.getUserEmail())
                 .role(UserRole.ROLE_USER)
                 .family(savedFamily)
                 .build();
@@ -103,6 +99,7 @@ public class UserService {
                 .userPassword(passwordEncoder.encode(userJoinedDto.getUserPassword()))
                 .userStatus(userJoinedDto.getUserStatus())
                 .userBirth(userJoinedDto.getUserBirth())
+                .userEmail(userJoinedDto.getUserEmail())
                 .role(UserRole.ROLE_USER)
                 .family(joinedUser.getFamily())
                 .build();
@@ -127,6 +124,7 @@ public class UserService {
         loginUser.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
         loginUser.updateUserStatus(userAccountsDto.getUserStatus());
         loginUser.updateUserBirth(userAccountsDto.getUserBirth());
+        loginUser.updateUserEmail(userAccountsDto.getUserEmail());
     }
 
     //회원탈퇴
