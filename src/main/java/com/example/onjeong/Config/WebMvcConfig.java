@@ -5,7 +5,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -18,24 +17,38 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController( "/" ).setViewName( "forward:/index" );
+        registry.addViewController( "/" ).setViewName( "index" );
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
+        registry.addResourceHandler("/resources/**").addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS);
     }
-
-
 
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(jwtTokenInterceptor())
-                // 토큰 인정된 사용자만 접근할수있도록
-                .addPathPatterns("/anniversaries/*")
-                .addPathPatterns("/anniversary/*")
-                .addPathPatterns("/boards/*");
+                .addPathPatterns("/user-information")
+                .addPathPatterns("/mails/**")
+                .addPathPatterns("/mailList/**")
+                .addPathPatterns("/months/**")
+                .addPathPatterns("/days/**")
+                .addPathPatterns("/boards/**")
+                .addPathPatterns("/questions")
+                .addPathPatterns("/answers")
+                .addPathPatterns("/answers-family")
+                .addPathPatterns("/families")
+                .addPathPatterns("/profiles/**")
+                .addPathPatterns("/flowers")
+                .addPathPatterns("/histories")
+                .addPathPatterns("/coins")
+                .addPathPatterns("/flowers-bloom")
+                .addPathPatterns("/coins-random");
+    }
+
+    @Bean public JwtTokenInterceptor jwtTokenInterceptor() {
+        return new JwtTokenInterceptor();
     }
 
     @Bean
@@ -51,7 +64,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new HeaderFilter();
     }
 
-    @Bean public JwtTokenInterceptor jwtTokenInterceptor() {
-        return new JwtTokenInterceptor();
-    }
 }

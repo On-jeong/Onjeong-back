@@ -1,6 +1,5 @@
 package com.example.onjeong.Config;
 
-import com.example.onjeong.error.CustomAuthenticationEntryPoint;
 import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
 import com.example.onjeong.user.Auth.CustomLoginFailureHandler;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
@@ -37,8 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/image/**",
             "/swagger/**",
             "/swagger-ui/**",
-            // other public endpoints of your API may be appended to this array
-            "/h2/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -46,31 +43,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Override
-    public void configure(WebSecurity web) throws Exception{
+    public void configure(WebSecurity web){
         web.ignoring().antMatchers(AUTH_WHITELIST);
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder(){  //회원가입시 비밀번호 암호화에 사용할 Encoder를 빈에 등록
-        return new BCryptPasswordEncoder();
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
-                .antMatchers("/login", "/logout").authenticated()
-                .antMatchers("/board/**").authenticated()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .anyRequest().permitAll()
-                .and()
+        http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-                .and()
                 .addFilterAfter(jwtAuthenticationFilter, CorsFilter.class);
-
-        http.csrf().disable();
 
         http
                 .formLogin()
@@ -80,20 +62,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessHandler((request, response, authentication) -> {
-                    response.sendRedirect("/home");
-                })
-                .deleteCookies("remember-me");
-/*
-        http.addFilterAfter(
-                jwtAuthenticationFilter,
-                CorsFilter.class
-        );
-
- */
+                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/home"))
+                .invalidateHttpSession(true);
     }
 
-    //필터추가
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
@@ -112,6 +84,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CustomLoginFailureHandler customLoginFailureHandler(){
         return new CustomLoginFailureHandler();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){  //회원가입시 비밀번호 암호화에 사용할 Encoder를 빈에 등록
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
