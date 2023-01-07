@@ -8,6 +8,7 @@ import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
+import com.example.onjeong.notification.dto.NotificationDto;
 import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
@@ -58,9 +59,16 @@ public class NotificationService {
         user.updateDeviceToken("");
     }
 
-    public void getNotifications(){
+    public List<NotificationDto> getNotifications(){
         User user = authUtil.getUserByAuthentication();
-        //notificationRepository.findAllByUserId(user.getUserId());
+        List<Notifications> notificationsList = notificationRepository.findAllByUserId(user.getUserId());
+        List<NotificationDto> notificationDtoList = new ArrayList<>();
+        for(Notifications n : notificationsList){
+            notificationDtoList.add(NotificationDto.builder()
+                    .notificationContent(n.getNotificationContent())
+                    .build());
+        }
+        return notificationDtoList;
     }
 
 

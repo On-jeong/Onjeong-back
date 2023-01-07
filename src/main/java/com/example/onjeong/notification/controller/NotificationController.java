@@ -39,7 +39,6 @@ public class NotificationController {
     @ApiOperation(value="로그아웃 시 FCM 토큰 해제")
     @GetMapping(value = "/notification", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> notifications() {
-        notificationService.getNotifications();
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALARM_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALARM_SUCCESS, notificationService.getNotifications()));
     }
 }
