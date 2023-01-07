@@ -43,19 +43,13 @@ public class NotificationService {
     @Transactional
     public void registerToken(String token) throws FirebaseMessagingException {
 
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+        User user = authUtil.getUserByAuthentication();
         user.updateDeviceToken(token);
     }
 
     @Transactional
     public void deleteToken() throws FirebaseMessagingException {
-
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
         user.updateDeviceToken("");
     }
 
