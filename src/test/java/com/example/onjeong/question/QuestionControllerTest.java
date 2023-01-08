@@ -1,4 +1,4 @@
-package com.example.onjeong.question.controller;
+package com.example.onjeong.question;
 
 import com.example.onjeong.Config.SecurityConfig;
 import com.example.onjeong.Config.WebMvcConfig;
@@ -8,6 +8,7 @@ import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.fcm.FCMService;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.mail.dto.MailRequestDto;
+import com.example.onjeong.question.controller.QuestionController;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.question.dto.AnswerModifyRequestDto;
