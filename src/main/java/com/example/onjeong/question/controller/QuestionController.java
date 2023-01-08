@@ -64,8 +64,8 @@ public class QuestionController {
     }
 
     @ApiOperation(value = "이주의 문답 답변 삭제하기")
-    @DeleteMapping("/answers")
-    public ResponseEntity<ResultResponse> deleteAnswer(@RequestParam Long answerId) {
+    @DeleteMapping("/answers/{answerId}")
+    public ResponseEntity<ResultResponse> deleteAnswer(@PathVariable Long answerId) {
         questionService.deleteAnswer(answerId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.DELETE_ANSWER_SUCCESS));
     }

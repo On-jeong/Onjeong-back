@@ -15,6 +15,7 @@ import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
+import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,13 +34,11 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final AnswerRepository answerRepository;
-    private final FamilyRepository familyRepository;
+    private final AuthUtil authUtil;
 
 
     public QuestionDto showQuestion(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
+        User user = authUtil.getUserByAuthentication();
 
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -54,10 +53,7 @@ public class QuestionService {
     }
 
     public List<AnswerDto> showAllAnswer(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+        User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
             throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
@@ -81,10 +77,8 @@ public class QuestionService {
     }
 
     public List<String> showAllAnswerFamily(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
+        User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
             throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
@@ -101,10 +95,8 @@ public class QuestionService {
     }
 
     public Boolean answerFamilyCheck(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
 
+        User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
             throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
@@ -125,10 +117,7 @@ public class QuestionService {
     @Transactional
     public Answer registerAnswer(String answerContent){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUserNickname(authentication.getName())
-                .orElseThrow(()-> new UserNotExistException("login user not exist", ErrorCode.USER_NOTEXIST));
-
+        User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
             throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
