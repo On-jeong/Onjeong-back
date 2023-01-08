@@ -17,7 +17,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             value = "SELECT * FROM question q WHERE q.family_id = :id " +
                     "ORDER BY q.question_time DESC limit 1")
     Question findWeeklyQuestion(@Param("id") Long id);
-
-    void deleteAllByFamily(Family family);
-    List<Question> findAllByFamily(Family family);
 }
