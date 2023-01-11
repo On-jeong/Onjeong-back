@@ -17,5 +17,7 @@ public class UserDto {
     private String userStatus;
     private String userBirth;
     private String userNickname;
+    private String userEmail;
+    private Boolean userNotification;
     private Long familyId;
 }

@@ -16,4 +16,5 @@ public class UserJoinedDto {
     private LocalDate userBirth;
     private String joinedNickname;
     private String userEmail;
+    private String deviceToken;
 }

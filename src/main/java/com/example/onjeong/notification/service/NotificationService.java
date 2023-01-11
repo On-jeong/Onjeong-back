@@ -42,9 +42,8 @@ public class NotificationService {
 
     @Transactional
     public void registerToken(String token) throws FirebaseMessagingException {
-
         User user = authUtil.getUserByAuthentication();
-        user.updateDeviceToken(token);
+        if(user.getDeviceToken() != null) user.updateDeviceToken(token);
     }
 
     @Transactional

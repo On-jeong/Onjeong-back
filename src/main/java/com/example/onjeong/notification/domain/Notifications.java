@@ -1,5 +1,6 @@
 package com.example.onjeong.notification.domain;
 
+import com.example.onjeong.Config.EmptyStringToNullConverter;
 import com.example.onjeong.user.domain.User;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class Notifications {
     @Column(name="notification_id", nullable = false, unique = true)
     private Long notificationId;
 
+    @Convert(converter = EmptyStringToNullConverter.class)
     @Column(name="notification_content", nullable = false)
     private String notificationContent;
 

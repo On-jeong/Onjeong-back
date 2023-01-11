@@ -38,6 +38,8 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 .userBirth(user.getUserBirth().toString())
                 .userNickname(user.getUserNickname())
                 .familyId(user.getFamily().getFamilyId())
+                .userEmail(user.getUserEmail())
+                .userNotification((user.getDeviceToken() != null))
                 .build();
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");

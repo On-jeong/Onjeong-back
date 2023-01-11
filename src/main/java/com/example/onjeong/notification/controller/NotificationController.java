@@ -22,14 +22,14 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
 
-    @ApiOperation(value="로그인 시 FCM 토큰 저장")
+    @ApiOperation(value="FCM 토큰 저장")
     @PostMapping(value = "/token/generate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> FCMRegister(@RequestParam String token) throws FirebaseMessagingException {
         notificationService.registerToken(token);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_TOKEN_SUCCESS));
     }
 
-    @ApiOperation(value="로그아웃 시 FCM 토큰 해제")
+    @ApiOperation(value="FCM 토큰 해제")
     @PostMapping(value = "/token/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> FCMCancel() throws FirebaseMessagingException {
         notificationService.deleteToken();
