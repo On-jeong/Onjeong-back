@@ -112,7 +112,7 @@ public class CoinService {
         User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
-        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family.getFamilyId());
+        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(pageable, family.getFamilyId()).toList();
         List<CoinHistoryDto> coinHistoryDtoList = new ArrayList<>();
 
         for(CoinHistory c : coinHistoryList){

@@ -12,7 +12,10 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,8 +43,8 @@ public class HomeController {
 
     @ApiOperation(value = "패밀리 코인 적립 내역")
     @GetMapping("/histories")
-    public ResponseEntity<ResultResponse> histories() {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_HISTORY_SUCCESS,coinService.coinHistoryList()));
+    public ResponseEntity<ResultResponse> histories(@PageableDefault(size=20, sort = "coin_history_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_HISTORY_SUCCESS,coinService.coinHistoryList(pageable)));
     }
 
     @ApiOperation(value = "패밀리 코인 보여주기")

@@ -18,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -40,6 +43,9 @@ class CoinServiceTest {
 
     @Mock
     private AuthUtil authUtil;
+
+    @Mock
+    private Pageable pageable;
 
     @Nested
     class 코인적립{
@@ -148,12 +154,13 @@ class CoinServiceTest {
             List<CoinHistory> coinHistoryList = new ArrayList<>();
             coinHistoryList.add(CoinHistoryUtils.getRandomCoinHistory(user, CoinHistoryType.RAND, 10));
             coinHistoryList.add(CoinHistoryUtils.getRandomCoinHistory(user, CoinHistoryType.PROFILEIMAGE, 100));
+            final Page<CoinHistory> coinHistoryPage = new PageImpl(coinHistoryList);
 
             doReturn(user).when(authUtil).getUserByAuthentication();
-            doReturn(coinHistoryList).when(coinHistoryRepository).findByFamily(family.getFamilyId());
+            doReturn(coinHistoryPage).when(coinHistoryRepository).findByFamily(pageable, family.getFamilyId());
 
             //when
-            List<CoinHistoryDto> result = coinService.coinHistoryList();
+            List<CoinHistoryDto> result = coinService.coinHistoryList(pageable);
 
             //then
             assertEquals(result.size(), 2);
@@ -175,11 +182,13 @@ class CoinServiceTest {
             for(int i=0; i<11; i++){
                 coinHistoryList.add(CoinHistoryUtils.getRandomCoinHistory(user, CoinHistoryType.RAND, 95));
             }
+            final Page<CoinHistory> coinHistoryPage = new PageImpl(coinHistoryList);
+
             doReturn(user).when(authUtil).getUserByAuthentication();
-            doReturn(coinHistoryList).when(coinHistoryRepository).findByFamily(family.getFamilyId());
+            doReturn(coinHistoryPage).when(coinHistoryRepository).findByFamily(pageable, family.getFamilyId());
 
             //when
-            List<CoinHistoryDto> result = coinService.coinHistoryList();
+            List<CoinHistoryDto> result = coinService.coinHistoryList(pageable);
 
             //then
             assertNotNull(result.get(10).getAfter());

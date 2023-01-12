@@ -2,6 +2,8 @@ package com.example.onjeong.coin.repository;
 
 import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.coin.domain.CoinHistoryType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,8 +15,8 @@ public interface CoinHistoryRepository extends JpaRepository<CoinHistory, Long> 
 
     @Query(nativeQuery = true,
             value="SELECT * FROM coin_history c WHERE c.family_id = :familyId" +
-                    " ORDER BY c.coin_history_date DESC")
-    List<CoinHistory> findByFamily(@Param("familyId") Long familyId);
+                    " ORDER BY c.coin_history_id DESC")
+    Page<CoinHistory> findByFamily(Pageable pageable, @Param("familyId") Long familyId);
 
     @Query(nativeQuery = true,
             value="SELECT * FROM coin_history c " +
