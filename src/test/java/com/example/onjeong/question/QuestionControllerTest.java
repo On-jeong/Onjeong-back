@@ -5,9 +5,9 @@ import com.example.onjeong.Config.WebMvcConfig;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.fcm.FCMService;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.mail.dto.MailRequestDto;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.question.controller.QuestionController;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
@@ -60,7 +60,7 @@ class QuestionControllerTest {
     private CoinService coinService;
 
     @MockBean
-    private FCMService fcmService;
+    private NotificationService notificationService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -98,7 +98,8 @@ class QuestionControllerTest {
     @WithMockUser
     void 이주의답변확인() throws Exception {
         //given
-        final String uri = "/answers";
+        final Long questionId = 1L;
+        final String uri = "/answers/" + questionId;
 
         //when
         ResultActions resultActions = mockMvc.perform(
@@ -151,8 +152,8 @@ class QuestionControllerTest {
                     .andExpect(jsonPath("$.code", equalTo("Q004")));
 
             verify(coinService, times(1)).coinSave(CoinHistoryType.ANSWER, 10);
-            verify(fcmService,times(1)).sendAnswer(isA(Answer.class));
-            verify(fcmService,times(1)).sendFamilyCheck(isA(Answer.class));
+            verify(notificationService,times(1)).sendAnswer(isA(Answer.class));
+            verify(notificationService,times(1)).sendFamilyCheck(isA(Answer.class));
         }
 
 
