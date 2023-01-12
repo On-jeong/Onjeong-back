@@ -55,24 +55,7 @@ public class CoinService {
         Flower flower = flowerRepository.findBlooming(family.getFamilyId());
 
         int level = flower.getFlowerLevel();
-        if(level >= 10 && level < 20){
-            if((family.getFamilyCoin() / 2000) != 0){
-                // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
-                family.updateCoin(-2000);
-                CoinHistory coinHistory2 = CoinHistory.builder()
-                        .coinAmount(-2000)
-                        .coinHistoryType(CoinHistoryType.USED)
-                        .coinHistoryDate(LocalDateTime.now())
-                        .coinFlower(flower.getFlowerLevel()+1)
-                        .user(user)
-                        .family(family)
-                        .build();
-                coinHistoryRepository.save(coinHistory2);
-                coinHistoryList.add(coinHistory2);
-                flower.levelUp();
-            }
-        }
-        else if(level < 10){
+        if(level < 10){
             if((family.getFamilyCoin() / 1000) != 0){
                 // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
                 family.updateCoin(-1000);
@@ -90,7 +73,7 @@ public class CoinService {
             }
         }
 
-        if(flower.getFlowerLevel() == 20) {
+        if(flower.getFlowerLevel() == 10) {
             // 새로운 꽃 추가
             Flower newFlower = Flower.builder()
                     .flowerBloom(false)
