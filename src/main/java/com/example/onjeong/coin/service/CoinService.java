@@ -11,6 +11,7 @@ import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,27 +107,24 @@ public class CoinService {
         return coinHistoryList;
     }
 
-    public List<CoinHistoryDto> coinHistoryList(){
+    public List<CoinHistoryDto> coinHistoryList(Pageable pageable){
 
         User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
 
-        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(family.getFamilyId());
+        List<CoinHistory> coinHistoryList = coinHistoryRepository.findByFamily(pageable, family.getFamilyId()).toList();
         List<CoinHistoryDto> coinHistoryDtoList = new ArrayList<>();
 
         for(CoinHistory c : coinHistoryList){
-            CoinHistoryDto.CoinHistoryDtoBuilder builder = CoinHistoryDto.builder()
+            CoinHistoryDto coinHistoryDto = CoinHistoryDto.builder()
                     .amount(c.getCoinAmount())
-                    .type(c.getCoinHistoryType());
+                    .type(c.getCoinHistoryType())
+                    .user(c.getUser() == null ? null : c.getUser().getUserStatus())
+                    .date(c.getCoinHistoryDate() == null ? null : c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
+                    .before(c.getCoinFlower() == null ? null : c.getCoinFlower()-1)
+                    .after(c.getCoinFlower() == null ? null : c.getCoinFlower()-1)
+                    .build();
 
-            if (c.getUser() != null) builder.user(c.getUser().getUserStatus());
-            if (c.getCoinHistoryDate() != null) builder.date(c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")));
-            if (c.getCoinFlower() != null) {
-                builder.before(c.getCoinFlower()-1);
-                builder.after(c.getCoinFlower());
-            }
-
-            CoinHistoryDto coinHistoryDto = builder.build();
             coinHistoryDtoList.add(coinHistoryDto);
         }
 
