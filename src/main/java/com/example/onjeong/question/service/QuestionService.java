@@ -3,6 +3,7 @@ package com.example.onjeong.question.service;
 
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.repository.FamilyRepository;
+import com.example.onjeong.profile.exception.ProfileNotExistException;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
@@ -17,6 +18,7 @@ import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,31 +39,27 @@ public class QuestionService {
     private final AuthUtil authUtil;
 
 
-    public QuestionDto showQuestion(){
+    public List<QuestionDto> showQuestion(Pageable pageable){
         User user = authUtil.getUserByAuthentication();
 
-        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
-        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
-           throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        List<Question> questionList = questionRepository.findAllByFamily(pageable, user.getFamily()).toList();
+        List<QuestionDto> questionDtoList = new ArrayList<>();
+        for(Question q : questionList){
+            QuestionDto questionDto = QuestionDto.builder()
+                    .questonId(q.getQuestionId())
+                    .questionContent(q.getQuestionContent())
+                    .build();
+            questionDtoList.add(questionDto);
         }
 
-        QuestionDto questionDto = QuestionDto.builder()
-                .questonId(question.getQuestionId())
-                .questionContent(question.getQuestionContent())
-                .build();
-        return questionDto;
+        return questionDtoList;
     }
 
-    public List<AnswerDto> showAllAnswer(){
-        User user = authUtil.getUserByAuthentication();
-        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
-        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
-            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
-        }
-
-
-        List<AnswerDto> answerDtos = new ArrayList<>();
+    public List<AnswerDto> showAllAnswer(Long questionId){
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(()-> new NullQuestionException("question not exist", ErrorCode.QUESTION_NOTEXIST));
         List<Answer> answers = answerRepository.findByQuestion(question);
+        List<AnswerDto> answerDtos = new ArrayList<>();
 
         for(Answer a : answers){
             AnswerDto answer = AnswerDto.builder()

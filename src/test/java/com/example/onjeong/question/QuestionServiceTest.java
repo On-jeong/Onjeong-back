@@ -19,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,49 +46,33 @@ class QuestionServiceTest {
     @Mock
     private AuthUtil authUtil;
 
-    @Nested
-    class 이주의질문_보여주기{
-        @Test
-        void 이주의문답_존재할때(){
-            //given
-            final Family family = FamilyUtils.getRandomFamily();
-            final User user = UserUtils.getRandomUser(family);
-            final Question question = QuestionUtils.getRandomQuestion(family);
+    @Mock
+    private Pageable pageable;
 
-            doReturn(user).when(authUtil).getUserByAuthentication();
-            doReturn(question).when(questionRepository).findWeeklyQuestion(family.getFamilyId());
-
-            //when
-            QuestionDto questionDto = questionService.showQuestion();
-
-            //then
-            assertNotNull(questionDto);
+    @Test
+    void 질문조회(){
+        //given
+        final Family family = FamilyUtils.getRandomFamily();
+        final User user = UserUtils.getRandomUser(family);
+        final List<Question> questionList = new ArrayList<>();
+        for(int i=0; i<3; i++){
+            questionList.add(QuestionUtils.getRandomQuestion(family));
         }
+        final Page<Question> questions = new PageImpl(questionList);
+        doReturn(user).when(authUtil).getUserByAuthentication();
+        doReturn(questions).when(questionRepository).findAllByFamily(pageable, family);
 
-        @Test
-        void 이주의문답_없을때(){
-            //given
-            final Family family = FamilyUtils.getRandomFamily();
-            final User user = UserUtils.getRandomUser(family);
+        //when
+        List<QuestionDto> questionDtos = questionService.showQuestion(pageable);
 
-            doReturn(user).when(authUtil).getUserByAuthentication();
-            doReturn(null).when(questionRepository).findWeeklyQuestion(family.getFamilyId());
-
-            //when
-            Throwable exception = assertThrows(NullQuestionException.class, () -> {
-                QuestionDto questionDto = questionService.showQuestion();
-            });
-
-
-            //then
-            assertEquals(exception.getMessage(), "weekly question not exist");
-        }
-
+        //then
+        assertEquals(questionDtos.size(), 3);
     }
 
     @Test
     void 답변조회(){
         //given
+        final Long questionId = 1L;
         final Family family = FamilyUtils.getRandomFamily();
         final User user = UserUtils.getRandomUser(family);
         final Question question = QuestionUtils.getRandomQuestion(family);
@@ -94,13 +81,12 @@ class QuestionServiceTest {
         for(int i=0; i<3; i++){
             answerList.add(AnswerUtils.getRandomAnswer(user, question));
         }
-
-        doReturn(user).when(authUtil).getUserByAuthentication();
-        doReturn(question).when(questionRepository).findWeeklyQuestion(family.getFamilyId());
+        
+        doReturn(Optional.of(question)).when(questionRepository).findById(questionId);
         doReturn(answerList).when(answerRepository).findByQuestion(question);
 
         //when
-        List<AnswerDto> answerDtoList = questionService.showAllAnswer();
+        List<AnswerDto> answerDtoList = questionService.showAllAnswer(questionId);
 
         //then
         assertEquals(answerDtoList.size(), 3);
