@@ -13,6 +13,9 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,17 +39,17 @@ public class MailController {
 
     @ApiOperation(value = "받은 메일함 확인")
     @GetMapping("/mailList/receive")
-    public ResponseEntity<ResultResponse> showAllReceiveMail() {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_RECEIVE_MAIL_SUCCESS, mailService.showAllReceiveMail()));
+    public ResponseEntity<ResultResponse> showAllReceiveMail(@PageableDefault(size=20, sort = "mail_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_RECEIVE_MAIL_SUCCESS, mailService.showAllReceiveMail(pageable)));
     }
 
     @ApiOperation(value = "보낸 메일함 확인")
     @GetMapping("/mailList/send")
-    public ResponseEntity<ResultResponse> showAllSendMail() {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_SEND_MAIL_SUCCESS, mailService.showAllSendMail()));
+    public ResponseEntity<ResultResponse> showAllSendMail(@PageableDefault(size=20, sort = "mail_id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_SEND_MAIL_SUCCESS, mailService.showAllSendMail(pageable)));
     }
 
-    @ApiOperation(value = "특정 메일 확인")
+    @ApiOperation(value = "특정 메일 읽음 처리")
     @GetMapping("/mails/{mailId}")
     public ResponseEntity<ResultResponse> showMail(@PathVariable("mailId") Long mailId) {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ONE_MAIL_SUCCESS, mailService.showOneMail(mailId)));

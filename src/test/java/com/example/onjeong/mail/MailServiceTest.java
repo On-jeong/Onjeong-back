@@ -20,6 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
@@ -38,6 +41,9 @@ class MailServiceTest {
 
     @Mock
     private MailRepository mailRepository;
+
+    @Mock
+    private Pageable pageable;
 
     @Test
     void 메일전송() throws FirebaseMessagingException {
@@ -72,11 +78,12 @@ class MailServiceTest {
             final Mail mail = MailUtils.getRandomMail(user2, user);
             mailList.add(mail);
         }
+        final Page<Mail> mailPage = new PageImpl(mailList);
         doReturn(user).when(authUtil).getUserByAuthentication();
-        doReturn(mailList).when(mailRepository).findByReceiver(user.getUserId());
+        doReturn(mailPage).when(mailRepository).findByReceiver(pageable, user.getUserId());
 
         //when
-        List<MailDto> result = mailService.showAllReceiveMail();
+        List<MailDto> result = mailService.showAllReceiveMail(pageable);
 
         //then
         assertEquals(result.size(), 3);
@@ -97,11 +104,12 @@ class MailServiceTest {
             final Mail mail = MailUtils.getRandomMail(user, user2);
             mailList.add(mail);
         }
+        final Page<Mail> mailPage = new PageImpl(mailList);
         doReturn(user).when(authUtil).getUserByAuthentication();
-        doReturn(mailList).when(mailRepository).findByReceiver(user.getUserId());
+        doReturn(mailPage).when(mailRepository).findBySender(pageable, user.getUserId());
 
         //when
-        List<MailDto> result = mailService.showAllReceiveMail();
+        List<MailDto> result = mailService.showAllSendMail(pageable);
 
         //then
         assertEquals(result.size(), 3);

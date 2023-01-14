@@ -15,6 +15,7 @@ import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -52,9 +53,9 @@ public class MailService {
     }
 
     // 받은 메일함 확인
-    public List<MailDto> showAllReceiveMail(){
+    public List<MailDto> showAllReceiveMail(Pageable pageable){
         User user = authUtil.getUserByAuthentication();
-        List<Mail> mailList = mailRepository.findByReceiver(user.getUserId());
+        List<Mail> mailList = mailRepository.findByReceiver(pageable, user.getUserId()).toList();
         List<MailDto> mailDtoList = new ArrayList<>();
 
         for(Mail m : mailList){
@@ -71,9 +72,9 @@ public class MailService {
     }
 
     // 보낸 메일함 확인
-    public List<MailDto> showAllSendMail(){
+    public List<MailDto> showAllSendMail(Pageable pageable){
         User user = authUtil.getUserByAuthentication();
-        List<Mail> mailList = mailRepository.findBySender(user.getUserId());
+        List<Mail> mailList = mailRepository.findBySender(pageable, user.getUserId()).toList();
         List<MailDto> mailDtoList = new ArrayList<>();
 
         for(Mail m : mailList){
