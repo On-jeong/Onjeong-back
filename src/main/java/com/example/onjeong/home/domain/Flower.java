@@ -40,7 +40,7 @@ public class Flower {
     public void levelUp(){
         this.flowerLevel++;
 
-        if(this.flowerLevel == 20){
+        if(this.flowerLevel == 10){
             this.flowerBloom = true;
             this.flowerBloomDate = LocalDate.now();
         }

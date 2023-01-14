@@ -13,7 +13,7 @@ public interface FlowerRepository extends JpaRepository<Flower, Long> {
 
     @Query(nativeQuery = true,
             value = "SELECT * FROM flower f WHERE f.family_id = :id " +
-                    "AND f.flower_bloom = false limit 1")
+                    "AND f.flower_bloom = false ORDER BY f.flower_id desc limit 1")
     Flower findBlooming(@Param("id") Long id);
 
     @Query(nativeQuery = true,

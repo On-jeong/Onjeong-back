@@ -74,8 +74,8 @@ class CoinServiceTest {
         }
 
         @Test
-        @DisplayName("10레벨 미만에서 적립을 통해 레벨 업 되었을 경우")
-        void 적립후_10레벨미만레벨업(){
+        @DisplayName("적립을 통해 레벨 업 되었을 경우")
+        void 적립후_레벨업(){
             final Family family = FamilyUtils.getFamily(1L, 950);
             final User user = UserUtils.getRandomUser(family);
             final Flower flower = FlowerUtils.getRandomFlower(family, 5, false);
@@ -93,28 +93,6 @@ class CoinServiceTest {
             verify(coinHistoryRepository,times(2)).save(any(CoinHistory.class));
             assertEquals(family.getFamilyCoin(), initialCoinAmount + coinAmount - 1000);
             assertEquals(6, result.get(1).getCoinFlower());
-        }
-
-        @Test
-        @DisplayName("10~20레벨 사이에서 적립을 통해 레벨 업 되었을 경우")
-        void 적립후_10레벨이상레벨업(){
-            final Family family = FamilyUtils.getFamily(1L, 1950);
-            final User user = UserUtils.getRandomUser(family);
-            final Flower flower = FlowerUtils.getRandomFlower(family, 15, false);
-
-            final CoinHistoryType coinHistoryType = CoinHistoryType.RAND;
-            final int coinAmount = 100;
-            final int initialCoinAmount = family.getFamilyCoin();
-
-            doReturn(user).when(authUtil).getUserByAuthentication();
-            doReturn(flower).when(flowerRepository).findBlooming(family.getFamilyId());
-
-            //when
-            List<CoinHistory> result = coinService.coinSave(coinHistoryType, coinAmount);
-
-            verify(coinHistoryRepository,times(2)).save(any(CoinHistory.class));
-            assertEquals(family.getFamilyCoin(), initialCoinAmount + coinAmount - 2000);
-            assertEquals(16, result.get(1).getCoinFlower());
         }
 
         @Test
