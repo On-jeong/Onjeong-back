@@ -75,16 +75,16 @@ public class JobConfig {
     public Step mailDeleteStep() {
         return stepBuilderFactory.get("mailDeleteStep")
                 .tasklet((contribution, chunkContext) -> {
-                    List<User> users = userRepository.findAll();
-                    for(User u : users){
-                        List<Mail> validMailReceiveList = mailRepository.findByReceiver(u.getUserId());
-                        List<Mail> validMailSendList = mailRepository.findBySender(u.getUserId());
-                        List<Mail> allMailList = mailRepository.findByUser(u.getUserId());
-                        for(Mail m : allMailList){
-                            if(!validMailReceiveList.contains(m) && !validMailSendList.contains(m))
-                                mailRepository.delete(m);
-                        }
-                    }
+//                    List<User> users = userRepository.findAll();
+//                    for(User u : users){
+//                        List<Mail> validMailReceiveList = mailRepository.findByReceiver(u.getUserId());
+//                        List<Mail> validMailSendList = mailRepository.findBySender(u.getUserId());
+//                        List<Mail> allMailList = mailRepository.findByUser(u.getUserId());
+//                        for(Mail m : allMailList){
+//                            if(!validMailReceiveList.contains(m) && !validMailSendList.contains(m))
+//                                mailRepository.delete(m);
+//                        }
+//                    }
                     return RepeatStatus.FINISHED;
                 })
                 .build();

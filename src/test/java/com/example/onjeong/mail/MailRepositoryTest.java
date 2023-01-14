@@ -13,6 +13,8 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -45,18 +47,18 @@ class MailRepositoryTest {
     }
 
     @Test
-    @DisplayName("받은메일함 조회 시 최신순으로 최대 30개의 메일만 조회 되는지 확인")
     void 받은메일함확인() {
         //given
         final Family family = FamilyUtils.getRandomFamily();
         final User user = UserUtils.getRandomUser(family);
+        final Pageable pageable = PageRequest.of(0, 20);
 
         // when
-        List<Mail> result = mailRepository.findByReceiver(user.getUserId());
+        List<Mail> result = mailRepository.findByReceiver(pageable, user.getUserId()).toList();
 
         // then
         // 리스트 갯수가 30 이하인지
-        assertThat(result.size(),  lessThanOrEqualTo(30));
+        assertThat(result.size(),  lessThanOrEqualTo(20));
         for(Mail m : result){
             // 받는 사람이 정확한지
             assertEquals(user.getUserId(), m.getReceiveUser().getUserId());
@@ -71,18 +73,17 @@ class MailRepositoryTest {
     }
 
     @Test
-    @DisplayName("보낸메일함 조회 시 최신순으로 최대 30개의 메일만 조회 되는지 확인")
     void 보낸메일함확인() {
         //given
         final Family family = FamilyUtils.getRandomFamily();
         final User user = UserUtils.getRandomUser(family);
-
+        final Pageable pageable = PageRequest.of(0, 20);
         // when
-        List<Mail> result = mailRepository.findBySender(user.getUserId());
+        List<Mail> result = mailRepository.findBySender(pageable, user.getUserId()).toList();
 
         // then
         // 리스트 갯수가 30 이하인지
-        assertThat(result.size(),  lessThanOrEqualTo(30));
+        assertThat(result.size(),  lessThanOrEqualTo(20));
         for(Mail m : result){
             // 받는 사람이 정확한지
             assertEquals(user.getUserId(), m.getSendUser().getUserId());
