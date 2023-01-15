@@ -79,10 +79,11 @@ public class CoinService {
         if(flower.getFlowerLevel() == 10) {
             // 새로운 꽃 추가
             List<FlowerKind> flowerKinds = FindRandomFlowerKind(family.getFamilyId());
+            List<FlowerColor> flowerColors = FindRandomFlowerColor(family.getFamilyId());
             Flower newFlower = Flower.builder()
                     .flowerBloom(false)
-                    .flowerKind(FlowerKind.values()[new Random().nextInt(flowerKinds.size())])
-                    .flowerColor(FlowerColor.values()[new Random().nextInt(FlowerColor.values().length)])
+                    .flowerKind(flowerKinds.get(new Random().nextInt(flowerKinds.size())))
+                    .flowerColor(flowerColors.get(new Random().nextInt(flowerColors.size())))
                     .flowerLevel(1)
                     .family(family)
                     .build();
@@ -145,5 +146,27 @@ public class CoinService {
         }
 
         return flowerKinds;
+    }
+
+    // 최대한 안 쓴 색상 반환
+    public List<FlowerColor> FindRandomFlowerColor(Long familyId){
+
+        List<Flower> flowerFullBlooms = flowerRepository.findFullBloom(familyId);
+        List<FlowerColor> flowerColors = new ArrayList<>();
+        // 꽃 종류가 8개니까 0~7사이
+        int[] flowerColor = {0, 0, 0, 0, 0, 0, 0, 0};
+
+        for(Flower f : flowerFullBlooms){
+            flowerColor[f.getFlowerColor().ordinal()]++;
+        }
+
+        int min = Arrays.stream(flowerColor).min().getAsInt();
+        int[] answer = IntStream.range(0, flowerColor.length).filter(i -> flowerColor[i] == min).toArray();
+
+        for(int i : answer){
+            flowerColors.add(FlowerColor.values()[i]);
+        }
+
+        return flowerColors;
     }
 }
