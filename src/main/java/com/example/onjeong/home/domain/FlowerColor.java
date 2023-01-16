@@ -1,5 +1,5 @@
 package com.example.onjeong.home.domain;
 
 public enum FlowerColor {
-    RED, GREEN, YELLOW
+    RED, ORANGE, YELLOW, SKYBLUE, NAVY, PURPLE, PINK, WHITE
 }
