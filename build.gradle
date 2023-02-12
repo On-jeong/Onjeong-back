@@ -4,61 +4,69 @@ plugins {
 	id 'java'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+subprojects{
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java'
+
+	group = 'com.example'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '11'
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
 	}
-}
 
-repositories {
-	mavenCentral()
-}
+	repositories {
+		mavenCentral()
+	}
 
-dependencies {
-	implementation 'mysql:mysql-connector-java'
+	dependencies {
+		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+		implementation 'mysql:mysql-connector-java'
 
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+		implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+		implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
 //	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.20'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mockito:mockito-core'
-	//testImplementation 'org.mockito:mockito-all:1.10.19'
-	//implementation 'org.projectlombok:lombok:1.18.20'
-	//testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-	implementation 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-	compileOnly 'org.slf4j:slf4j-api:1.7.5'
-	//compileOnly 'org.projectlombok:lombok'
-	compileOnly 'org.projectlombok:lombok:1.16.20'
-	runtimeOnly 'com.h2database:h2'
-	implementation "com.sparkjava:spark-core:2.9.3"
+		annotationProcessor 'org.projectlombok:lombok:1.18.20'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
+		testImplementation 'org.mockito:mockito-core'
+		//testImplementation 'org.mockito:mockito-all:1.10.19'
+		//implementation 'org.projectlombok:lombok:1.18.20'
+		//testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+		implementation 'org.projectlombok:lombok:1.18.20'
+		testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+		compileOnly 'org.slf4j:slf4j-api:1.7.5'
+		//compileOnly 'org.projectlombok:lombok'
+		compileOnly 'org.projectlombok:lombok:1.18.20'
+		runtimeOnly 'com.h2database:h2'
+		implementation "com.sparkjava:spark-core:2.9.3"
 
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	implementation 'com.google.firebase:firebase-admin:6.8.1'
+		implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	implementation 'org.apache.commons:commons-lang3:3.4'
-	//implementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-	testImplementation("org.junit.vintage:junit-vintage-engine") {    exclude group: "org.hamcrest", module: "hamcrest-core"}
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.3.1.RELEASE'
-}
+		implementation 'com.google.firebase:firebase-admin:6.8.1'
+
+		implementation 'org.apache.commons:commons-lang3:3.4'
+		//implementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+		testImplementation("org.junit.vintage:junit-vintage-engine") {    exclude group: "org.hamcrest", module: "hamcrest-core"}
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.3.1.RELEASE'
+	}
 
 /*
 tasks.named('test') {
@@ -66,6 +74,24 @@ tasks.named('test') {
 }
 */
 
-test {
-	useJUnitPlatform()
+	test {
+		useJUnitPlatform()
+	}
+
+
+}
+
+project(':module-common') {
+	dependencies {
+	}
+}
+
+project(':module-api') {
+	dependencies {
+	}
+}
+
+project(':module-batch') {
+	dependencies {
+	}
 }
