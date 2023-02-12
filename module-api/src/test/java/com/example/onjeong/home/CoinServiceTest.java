@@ -4,12 +4,15 @@ import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.dto.CoinHistoryDto;
 import com.example.onjeong.coin.repository.CoinHistoryRepository;
+
+import com.example.onjeong.home.domain.FlowerKind;
+import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.util.AuthUtil;
+import com.example.onjeong.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -96,11 +99,11 @@ class CoinServiceTest {
         }
 
         @Test
-        @DisplayName("레벨 업이 돼서 20레벨을 초과하는 경우")
+        @DisplayName("레벨 업이 돼서 10레벨을 초과하는 경우")
         void 적립후_새로운꽃생성(){
-            final Family family = FamilyUtils.getFamily(1L, 1950);
+            final Family family = FamilyUtils.getFamily(1L, 950);
             final User user = UserUtils.getRandomUser(family);
-            final Flower flower = FlowerUtils.getRandomFlower(family, 19, false);
+            final Flower flower = FlowerUtils.getRandomFlower(family, 9, false);
 
             final CoinHistoryType coinHistoryType = CoinHistoryType.RAND;
             final int coinAmount = 100;
@@ -114,7 +117,7 @@ class CoinServiceTest {
             //then
             verify(coinHistoryRepository,times(2)).save(any(CoinHistory.class));
             verify(flowerRepository,times(1)).save(any(Flower.class));
-            assertEquals(20, flower.getFlowerLevel());
+            assertEquals(10, flower.getFlowerLevel());
             assertNotNull(flower.getFlowerBloomDate());
             assertTrue(flower.getFlowerBloom());
         }

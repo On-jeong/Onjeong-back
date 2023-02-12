@@ -10,7 +10,7 @@ import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.question.service.QuestionService;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.util.AuthUtil;
+import com.example.onjeong.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

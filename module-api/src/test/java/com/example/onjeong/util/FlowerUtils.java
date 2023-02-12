@@ -11,7 +11,7 @@ public class FlowerUtils {
 
     public static Flower getRandomFlower(Family family, Integer flowerLevel, boolean flowerBloom){
         final FlowerKind flowerKind = FlowerKind.ROSE;
-        final FlowerColor flowerColor = FlowerColor.GREEN;
+        final FlowerColor flowerColor = FlowerColor.SKYBLUE;
 
         return getFlower(flowerKind, flowerColor, flowerBloom, flowerLevel, family);
     }
