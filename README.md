@@ -33,6 +33,7 @@
         <li><a href="#infra-structure">Infra Structure</a></li>
         <li><a href="#package structure">Package Structure</a></li>
         <li><a href="#commit-convention">Commit Convention</a></li>
+        <li><a href="#pr-convention">PR Convention</a></li>
         <li><a href="#erd">ERD</a></li>
       </ul>
     </li>
@@ -92,7 +93,38 @@
 <!--Commit Convention-->
 ### Commit Convention
 
+```txt
+Type: Subject
+ex) Feat: 로그인 로직 추가
+```
+- <b>Type</b>
+  - feat: 새로운 기능 추가
+  - fix: 버그 수정
+  - docs : 문서 수정
+  - style : 코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우
+  - refactor : 코드 리펙토링
+  - test : 테스트 코드, 리펙토링 테스트 코드 추가
+  - chore : 빌드 업무 수정, 패키지 매니저 수정
+- <b>Reference</b>
+  - [Git Commit Message Convention](https://velog.io/@shin6403/Git-git-%EC%BB%A4%EB%B0%8B-%EC%BB%A8%EB%B2%A4%EC%85%98-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+
+<!--PR Convention-->
+### PR Convention
+
+```txt
+## 개요
+## 작업사항
+## 변경로직
+### 변경전
+### 변경후
+## 사용방법
+## 기타
+```
+- <b>Reference</b>
+  - [Git PR Convention](https://medium.com/prnd/%ED%97%A4%EC%9D%B4%EB%94%9C%EB%9F%AC-%EA%B0%9C%EB%B0%9C%ED%8C%80-%EB%AA%A8%EB%91%90%EA%B0%80-%ED%96%89%EB%B3%B5%ED%95%9C-%EA%B0%9C%EB%B0%9C-pr%EA%B4%80%EB%A6%AC-%EB%B0%A9%EB%B2%95-7%EA%B0%80%EC%A7%80-1d4cd5d091f0)
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
