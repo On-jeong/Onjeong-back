@@ -87,7 +87,129 @@
 <!--Package Structure-->
 ###  Package Structure
 
-
+```txt
+└── module-api
+    ├── src
+    │   ├── main
+    │   │   └── java.com.example.onjeong
+    │   │       ├── anniversary
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── board
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── coin
+    │   │       │   └── service
+    │   │       ├── home
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── infra
+    │   │       │   └── controller
+    │   │       ├── mail
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── notification
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── profile
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── question
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       ├── user
+    │   │       │   ├── controller
+    │   │       │   └── service
+    │   │       └── OnjeongApplication.java
+    │   │     
+    |   |    └── resources
+    |   |           ├── application.properties
+    |   |           ├── application-dev.properties
+    |   |           ├── application-prod.properties
+    |   |           ├── server-application.yml
+    |   |           └── firebase
+    |   |           |      └── firebase_service_key.json
+    |   |           └── static
+    |   |                  └── index.html
+    │   └── test.java.com.example.onjeong
+    |
+└── module-batch
+    ├── src.main.java.com.example.onjeong
+    │   ├── config
+    │   │     └── JobConfig.java
+    |   ├── scheduler
+    │   │     └── JobScheduler.java
+    │   └── BatchApplication.java
+    |
+└── module-common
+    ├── src.main.java.com.example.onjeong
+    │   ├── Config
+    │   │      └── ....
+    │   ├── S3
+    │   │      └── ....
+    │   ├── anniversary
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── board
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── coin
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── service
+    │   ├── family
+    │   │      ├── domain
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── home
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── mail
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── notification
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      └── repository
+    │   ├── profile
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── question
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      └── exception
+    │   ├── user
+    │   │      ├── Auth
+    │   │      ├── redis
+    │   │      ├── domain
+    │   │      ├── dto
+    │   │      ├── repository
+    │   │      ├── service
+    │   │      └── exception
+    │   ├── error
+    │   │      ├── ErrorCode.java
+    │   │      ├── ErrorController.java
+    │   │      ├── ErrorResponse.java
+    │   │      └── GlobalExceptionHandler.java
+    │   ├── result
+    │   │      ├── ResultCode.java
+    │   │      └── ResultResponse.java
+    │   └── util
+               ├── AuthUtil.java
+               └── ProfileUtil.java
+```
 
 
 <!--Commit Convention-->
