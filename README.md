@@ -57,6 +57,7 @@
 -   [MySQL](https://www.mysql.com)
 -   [Redis](https://redis.io/)
 -   [Amazon Web Services](https://aws.amazon.com/)
+-   [Nginx](https://www.nginx.com/)
 -   [Jenkins](https://www.jenkins.io/)
 -   [Docker Hub](https://hub.docker.com/)
 
