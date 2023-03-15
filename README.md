@@ -29,6 +29,7 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#convention">Convention</a></li>
+        <li><a href="#java-code-convention">Java Code Convention</a></li>
         <li><a href="#database-convention">Database Convention</a></li>
         <li><a href="#infra-structure">Infra Structure</a></li>
         <li><a href="#package structure">Package Structure</a></li>
@@ -80,11 +81,170 @@
             "code": "DATETYPE-ERR-500"
         }
         ```
+      - status : http status code를 작성합니다.
+      - message : 에러에 대한 내용을 작성합니다.
+      - code : 에러에 할당되는 유니크한 코드 값입니다.
 
+    - Error Response 객체
+        ```java
+        @Getter
+        @Setter
+        public class ErrorResponse {
+            private int status;
+            private String message;
+            private String code;
+
+            public ErrorResponse(ErrorCode errorCode){
+                this.status = errorCode.getStatus();
+                this.message = errorCode.getMessage();
+                this.code = errorCode.getErrorCode();
+            }
+        }
+        ```
+    - Error Code 정의
+        ```java
+        @Getter
+        @AllArgsConstructor
+        public enum ErrorCode {
+            // Common
+            NOT_FOUND(404,"COMMON-ERR-404","PAGE NOT FOUND"),
+            INTER_SERVER_ERROR(500,"COMMON-ERR-500","INTER SERVER ERROR"),
+            ....
+    
+            // User
+            USER_NOTEXIST(500,"U001","LOGIN USER NOT EXIST"),
+            USER_UNAUTHORIZED(401,"U002","USER UNAUTHORIZED"),
+            USER_NICKNAME_DUPLICATION(400,"U003","USER NICKNAME DUPLICATION"),
+            ....
+            ;
+            
+            final private int status;
+            final private String errorCode;
+            final private String message;
+        }
+        ```
+    - @RestControllerAdvice로 모든 예외를 핸들링
+        ```java
+        @Slf4j
+        @RestControllerAdvice
+        public class GlobalExceptionHandler {
+          @ExceptionHandler(Exception.class)
+          public ResponseEntity<ErrorResponse> handleException(Exception ex){
+              log.error("handleException",ex);
+              final ErrorResponse response = new ErrorResponse(ErrorCode.INTER_SERVER_ERROR);
+              return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+          }
+          
+          @ExceptionHandler(UserNotExistException.class)
+          public ResponseEntity<ErrorResponse> handleUserNotExistException(UserNotExistException ex){
+              log.error("handleUserNotExistException",ex);
+              final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+              return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+          }
+          
+          @ExceptionHandler(UserUnauthorizedException.class)
+          public ResponseEntity<ErrorResponse> handleUserUnauthorizedException(UserUnauthorizedException ex){
+              log.error("handleUserUnauthorizedException",ex);
+              final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+              return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+          }
+          
+          @ExceptionHandler(UserNicknameDuplicationException.class)
+          public ResponseEntity<ErrorResponse> handleUserNicknameDuplicationException(UserNicknameDuplicationException ex){
+              log.error("handleUserNicknameDuplicationException",ex);
+              final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+              return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+          }
+          ....
+        }
+        ```
+        
+2. 통일된 Error Response 객체
+    - Result Response JSON
+      ```json
+        {
+          "status": 200,
+          "code": "U001",
+          "message": "회원가입에 성공했습니다.",
+          "data": ""
+        }
+        ```
+      - status : http status code를 작성합니다.
+      - code : 결과에 할당되는 유니크한 코드 값입니다.
+      - message : 결과에 대한 내용을 작성합니다.
+      - data : 결과 객체를 JSON 형태로 반환합니다.
+
+    - Result Response 객체
+      ```java
+      @Getter
+      public class ResultResponse {
+          private final int status;
+          private final String code;
+          private final String message;
+          private final Object data;
+
+          public ResultResponse(ResultCode resultCode, Object data) {
+              this.status = resultCode.getStatus();
+              this.code = resultCode.getCode();
+              this.message = resultCode.getMessage();
+              this.data = data;
+          }
+
+          public static ResultResponse of(ResultCode resultCode, Object data) {
+              return new ResultResponse(resultCode, data);
+          }
+
+          public static ResultResponse of(ResultCode resultCode) {
+              return new ResultResponse(resultCode, "");
+          }
+      }
+      ```
+    - @RestController에서 통일된 응답 사용
+    ```java
+    @RestController
+    @RequiredArgsConstructor
+    public class UserController {
+        private final UserService userService;
+        
+        @ApiOperation(value="가족회원이 없는 회원 가입")
+        @PostMapping(value = "/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
+        public ResponseEntity<ResultResponse> signUp(@RequestBody UserJoinDto userJoinDto){
+            ...
+            
+            return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_SUCCESS));
+        }
+        ...
+    }
+    ```
+    
+
+<!--Java Code Convention-->
+###  Java Code Convention
+<b>[Reference]</b>
+- [캠퍼스 핵데이 Java 코딩 컨벤션](https://naver.github.io/hackday-conventions-java/)
 
 
 <!--Database Convention-->
 ###  Database Convention
+<b>[Common]</b>
+- 소문자 사용
+- 단어를 임의로 축약 x
+  > ex) register_date O reg_date X
+- 동사는 능동태 사용
+  > ex) register_date O registered_date X
+- 이름을 구성하는 각각의 단어를 `underscore(_)`로 연결 **(snake case)**
+
+<b>[Table]</b>
+- 복수형 사용
+
+<b>[Column]</b>
+- PK는 `테이블 명 단수형_id`으로 사용
+- boolean 유형의 컬럼은 `is_` 접미어 사용
+- date, datetime 유형의 컬럼은 `_date` 접미어 사용
+
+<b>[Reference]</b>
+- [DB 네이밍 컨벤션](https://purumae.tistory.com/200)
+
 
 
 <!--Infra Structure-->
