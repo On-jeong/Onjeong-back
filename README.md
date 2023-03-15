@@ -71,7 +71,15 @@
 
 ### Convention
 
-
+1. 통일된 Error Response 객체
+    - Error Response JSON
+      ```json
+        {
+            "status": 500,
+            "message": "DATETYPE CONVERSE FAIL",
+            "code": "DATETYPE-ERR-500"
+        }
+        ```
 
 
 
