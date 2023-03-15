@@ -451,14 +451,14 @@ ex) Feat: 로그인 로직 추가
   <tr>
     <td align="center">
       <a href="https://github.com/haeun-i">
-        <img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/haeun.jpg" width="110px;" alt=""/><br />
+        <img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/haeun.jpg" width="110px;" height="110px;" alt=""/><br />
         <sub><b>김하은</b></sub></a><br />
         <sub><b>Back-end</b></sub></a><br />
         <a href="https://github.com/haeun-i" title="Code">💻</a>
     </td>
     <td align="center">
       <a href="https://github.com/Junhui0u0">
-        <img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/junhui.jpg" width="110px;" alt=""/><br />
+        <img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/junhui.jpg" width="110px;" height="110px;" alt=""/><br />
         <sub><b>박준희</b></sub></a><br />
         <sub><b>Back-end</b></sub></a><br />
         <a href="https://github.com/Junhui0u0" title="Code">💻</a>
