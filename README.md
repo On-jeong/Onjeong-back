@@ -438,7 +438,7 @@ ex) Feat: 로그인 로직 추가
 <!--ERD-->
 ### ERD
 <p align="center"><a href="https://www.erdcloud.com/d/9JxX7unXDjeZN5XHC"><img src="https://img.shields.io/badge/ERD Cloud-946CEE?style=for-the-badge"/></a></p>
-
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 <!--Contributors -->
