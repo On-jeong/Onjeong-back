@@ -384,6 +384,7 @@
 
 <b>[Reference]</b>
 - [멀티모듈 설계](https://techblog.woowahan.com/2637/)
+- [멀티모듈 사용 이유](https://velog.io/@cha-sung-soo/Multi-Module-%EC%82%AC%EC%9A%A9-%EC%9D%B4%EC%9C%A0)
 
 
 <!--Commit Convention-->
