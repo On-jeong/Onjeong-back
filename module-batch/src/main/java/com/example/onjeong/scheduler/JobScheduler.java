@@ -1,5 +1,5 @@
 package com.example.onjeong.scheduler;
-import com.example.onjeong.config.JobConfig;
+import com.example.onjeong.job.WeeklyQuestionBuildJob;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
@@ -15,17 +15,15 @@ import java.util.Map;
 public class JobScheduler {
 
     private final JobLauncher jobLauncher;
-    private final JobConfig jobConfig;
+    private final WeeklyQuestionBuildJob weeklyQuestionBuildJob;
 
     // 매주 월요일 0시에 실행
-    @Scheduled(cron="0 38 14 ? * WED")
-    public void task() {
-
+    @Scheduled(cron="0 00 00 ? * MON")
+    public void runWeeklyQuestionBuildJob() {
         try {
-            System.out.println("배치 시작");
             Map<String, JobParameter> confMap = new HashMap<>();
-            confMap.put("time", new JobParameter(System.currentTimeMillis()));
-            jobLauncher.run(jobConfig.simpleJob(), new JobParameters(confMap));
+            confMap.put("requestDate", new JobParameter(System.currentTimeMillis()));
+            jobLauncher.run(weeklyQuestionBuildJob.questionBuildJob(), new JobParameters(confMap));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

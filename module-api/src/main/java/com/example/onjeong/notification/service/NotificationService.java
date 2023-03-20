@@ -79,7 +79,7 @@ public class NotificationService {
         Question question = answer.getQuestion();
         List<Answer> answers = question.getAnswerList();
         Family family = answer.getUser().getFamily();
-        
+
         List<User> answeredFamily = new ArrayList<>();
         List<User> notAnsweredFamily = new ArrayList<>();
         for(Answer a : answers){
@@ -88,7 +88,7 @@ public class NotificationService {
         for(User u : family.getUsers()){
             if(!answeredFamily.contains(u)) notAnsweredFamily.add(u);
         }
-        
+
         if(notAnsweredFamily.size() == 1){
             // 메일 수신 알림
             String token = notAnsweredFamily.get(0).getDeviceToken();
