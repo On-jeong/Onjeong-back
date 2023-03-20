@@ -34,9 +34,6 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-    // 배치 추가 및 질문 시 전체 알림 추가 필요
-    private final UserRepository userRepository;
-    private final AnniversaryRepository anniversaryRepository;
     private final NotificationRepository notificationRepository;
     private final AuthUtil authUtil;
 
@@ -132,23 +129,6 @@ public class NotificationService {
         sendFamilyAlarm(content, topic);
         for(User u : profile.getFamily().getUsers()){
             saveNotifications(content, u);
-        }
-    }
-
-    public void sendAnnivarsary() throws FirebaseMessagingException {
-        // 기념일 전날 가족들에게 알림
-        // 배치 추가 예정
-        LocalDate date = LocalDate.now().plusDays(1);
-        List<Anniversary> anniversaryList = anniversaryRepository.findAllByAnniversaryDate(date);
-
-        for (Anniversary a : anniversaryList) {
-            String topic = a.getFamily().getFamilyId().toString();
-            String content = a.getAnniversaryContent() + "이 하루 전입니다.";
-
-            sendFamilyAlarm(content, topic);
-            for(User u : a.getFamily().getUsers()){
-                saveNotifications(content, u);
-            }
         }
     }
 
