@@ -15,7 +15,11 @@ import com.example.onjeong.home.domain.FlowerColor;
 import com.example.onjeong.home.domain.FlowerKind;
 import com.example.onjeong.home.repository.FlowerRepository;
 
+import com.example.onjeong.question.domain.PureQuestion;
+import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.question.repository.AnswerRepository;
+import com.example.onjeong.question.repository.PureQuestionRepository;
+import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.domain.*;
 import com.example.onjeong.family.repository.FamilyRepository;
@@ -35,6 +39,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +52,8 @@ public class UserService {
     private final FamilyRepository familyRepository;
     private final ProfileRepository profileRepository;
     private final FlowerRepository flowerRepository;
+    private final QuestionRepository questionRepository;
+    private final PureQuestionRepository pureQuestionRepository;
     private final AnswerRepository answerRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -86,6 +93,14 @@ public class UserService {
                 .family(savedFamily)
                 .build();
         flowerRepository.save(newFlower);
+
+        final PureQuestion pureQuestion = pureQuestionRepository.chooseWeeklyQuestion();
+        final Question newQuestion = Question.builder()
+                .questionTime(LocalDateTime.now())
+                .questionContent(pureQuestion.getPureQuestionContent())
+                .family(family)
+                .build();
+        questionRepository.save(newQuestion);
     }
 
     //가족회원이 있는 회원 가입
