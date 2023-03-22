@@ -123,18 +123,15 @@ public class MailService {
 
     // 특정 받은 메시지 삭제
     @Transactional
-    public List<Mail> deleteReceiveMail(Long[] mailIds){
-        List<Mail> deleteList = new ArrayList<>();
+    public void deleteReceiveMail(Long[] mailIds){
         for(Long mailId : mailIds) {
             Mail mail = mailRepository.findById(mailId)
                     .orElseThrow(() -> new MailNotExistException("mail not exist", ErrorCode.MAIL_NOTEXIST));
             mail.deleteReceive();
-            deleteList.add(mail);
 
             if(mail.isReceiverWantDelete() && mail.isSenderWantDelete()){
                 mailRepository.delete(mail);
             }
         }
-        return deleteList;
     }
 }

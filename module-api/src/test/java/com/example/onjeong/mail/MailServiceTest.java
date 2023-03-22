@@ -193,11 +193,11 @@ class MailServiceTest {
         for(Long id : mailIds){
             doReturn(Optional.of(mail)).when(mailRepository).findById(id);
         }
-        List<Mail> deletedMailList = mailService.deleteReceiveMail(mailIds);
+        mailService.deleteReceiveMail(mailIds);
 
         //then
-        for(Mail m : deletedMailList){
-            assertTrue(m.isReceiverWantDelete());
+        for(Long id : mailIds){
+            assertTrue(mailRepository.findById(id).get().isReceiverWantDelete());
         }
     }
 
