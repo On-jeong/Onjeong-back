@@ -77,7 +77,6 @@ public class QuestionService {
     }
 
     public List<String> showAllAnswerFamily(){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -95,7 +94,6 @@ public class QuestionService {
     }
 
     public Boolean answerFamilyCheck(){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -108,7 +106,6 @@ public class QuestionService {
             if(!answeredFamily.contains(a.getUser())) answeredFamily.add(a.getUser());
         }
 
-        System.out.println(answeredFamily.size());
         if(answeredFamily.equals(question.getFamily().getUsers())) return true;
         else return false;
 
@@ -116,7 +113,6 @@ public class QuestionService {
 
     @Transactional
     public Answer registerAnswer(String answerContent){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -136,32 +132,21 @@ public class QuestionService {
     }
 
     @Transactional
-    public AnswerDto modifyAnswer(AnswerModifyRequestDto answerModifyRequestDto) {
-
+    public void modifyAnswer(AnswerModifyRequestDto answerModifyRequestDto) {
         Answer answer = answerRepository.findById(answerModifyRequestDto.getAnswerId())
                 .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         if (answerModifyRequestDto.getAnswerContent() != null) {
             answer.updateContent(answerModifyRequestDto.getAnswerContent());
         }
-
-        AnswerDto answerDto = AnswerDto.builder()
-                .userName(answer.getUser().getUserName())
-                .answerContent(answer.getAnswerContent())
-                .answerTime(answer.getAnswerTime())
-                .build();
-
-        return answerDto;
     }
 
     @Transactional
-    public boolean deleteAnswer(Long answerId){
-
+    public void deleteAnswer(Long answerId){
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         answerRepository.delete(answer);
-        return true;
     }
 
 }

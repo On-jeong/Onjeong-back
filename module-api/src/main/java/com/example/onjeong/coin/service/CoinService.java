@@ -106,10 +106,10 @@ public class CoinService {
             CoinHistoryDto coinHistoryDto = CoinHistoryDto.builder()
                     .amount(c.getCoinAmount())
                     .type(c.getCoinHistoryType())
-                    .user(c.getUser() == null ? null : c.getUser().getUserStatus())
-                    .date(c.getCoinHistoryDate() == null ? null : c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
-                    .before(c.getCoinFlower() == null ? null : c.getCoinFlower()-1)
-                    .after(c.getCoinFlower() == null ? null : c.getCoinFlower()-1)
+                    .user(c.getUser().getUserStatus())
+                    .date(c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
+                    .before(c.getCoinFlower()-1)
+                    .after(c.getCoinFlower()-1)
                     .build();
 
             coinHistoryDtoList.add(coinHistoryDto);
@@ -153,7 +153,7 @@ public class CoinService {
 
         List<Flower> flowerFullBlooms = flowerRepository.findFullBloom(familyId);
         List<FlowerColor> flowerColors = new ArrayList<>();
-        // 꽃 종류가 8개니까 0~7사이
+        // 꽃 색상이 8개니까 0~7사이
         int[] flowerColor = {0, 0, 0, 0, 0, 0, 0, 0};
 
         for(Flower f : flowerFullBlooms){
