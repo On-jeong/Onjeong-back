@@ -77,7 +77,6 @@ public class QuestionService {
     }
 
     public List<String> showAllAnswerFamily(){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -95,7 +94,6 @@ public class QuestionService {
     }
 
     public Boolean answerFamilyCheck(){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
@@ -108,7 +106,6 @@ public class QuestionService {
             if(!answeredFamily.contains(a.getUser())) answeredFamily.add(a.getUser());
         }
 
-        System.out.println(answeredFamily.size());
         if(answeredFamily.equals(question.getFamily().getUsers())) return true;
         else return false;
 
@@ -116,7 +113,6 @@ public class QuestionService {
 
     @Transactional
     public Answer registerAnswer(String answerContent){
-
         User user = authUtil.getUserByAuthentication();
         Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
         if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
