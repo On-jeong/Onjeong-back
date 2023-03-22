@@ -132,27 +132,17 @@ public class QuestionService {
     }
 
     @Transactional
-    public AnswerDto modifyAnswer(AnswerModifyRequestDto answerModifyRequestDto) {
-
+    public void modifyAnswer(AnswerModifyRequestDto answerModifyRequestDto) {
         Answer answer = answerRepository.findById(answerModifyRequestDto.getAnswerId())
                 .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         if (answerModifyRequestDto.getAnswerContent() != null) {
             answer.updateContent(answerModifyRequestDto.getAnswerContent());
         }
-
-        AnswerDto answerDto = AnswerDto.builder()
-                .userName(answer.getUser().getUserName())
-                .answerContent(answer.getAnswerContent())
-                .answerTime(answer.getAnswerTime())
-                .build();
-
-        return answerDto;
     }
 
     @Transactional
     public boolean deleteAnswer(Long answerId){
-
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 

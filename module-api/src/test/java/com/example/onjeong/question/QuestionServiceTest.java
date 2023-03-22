@@ -206,10 +206,10 @@ class QuestionServiceTest {
         doReturn(Optional.of(answer)).when(answerRepository).findById(answerModifyRequestDto.getAnswerId());
 
         //when
-        AnswerDto result = questionService.modifyAnswer(answerModifyRequestDto);
+        questionService.modifyAnswer(answerModifyRequestDto);
 
         //then
-        assertEquals(answerModifyRequestDto.getAnswerContent(), result.getAnswerContent());
+        assertEquals(answer.getAnswerContent(), answerModifyRequestDto.getAnswerContent());
     }
 
     @Test
