@@ -91,14 +91,12 @@ public class NotificationService {
             String token = notAnsweredFamily.get(0).getDeviceToken();
             String content = notAnsweredFamily.get(0).getUserStatus() + "님만 답변하면 가족 전체의 답변이 완성됩니다";
 
-            // 알림 범위 논의 필요
             sendPersonalAlarm(content, token);
             saveNotifications(content, notAnsweredFamily.get(0));
         }
     }
 
     public void sendBoard(Board board) throws FirebaseMessagingException {
-
         // 오늘의 기록 작성했을 때 알림
         String topic = board.getFamily().getFamilyId().toString();
         String content = board.getUser().getUserStatus() + "님이 오늘의 기록을 작성했습니다.";
@@ -128,7 +126,7 @@ public class NotificationService {
 
         sendFamilyAlarm(content, topic);
         for(User u : profile.getFamily().getUsers()){
-            saveNotifications(content, u);
+            if(!u.equals(profile.getUser())) saveNotifications(content, u);
         }
     }
 
