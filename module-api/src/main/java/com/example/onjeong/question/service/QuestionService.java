@@ -2,8 +2,11 @@ package com.example.onjeong.question.service;
 
 
 import com.example.onjeong.error.ErrorCode;
+import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.profile.exception.ProfileNotExistException;
+import com.example.onjeong.question.domain.PureQuestion;
+import com.example.onjeong.question.repository.PureQuestionRepository;
 import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
@@ -34,10 +37,9 @@ import java.util.List;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final UserRepository userRepository;
+    private final PureQuestionRepository pureQuestionRepository;
     private final AnswerRepository answerRepository;
     private final AuthUtil authUtil;
-
 
     public List<QuestionDto> showQuestion(Pageable pageable){
         User user = authUtil.getUserByAuthentication();

@@ -11,8 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 public class BatchApplication {
 	public static final String APPLICATION_LOCATIONS = "spring.config.location="
-			+ "classpath:application.properties,"
-			+ "classpath:aws.yml";
+			+ "classpath:application.properties";
 
 	public static void main(String[] args) {
 		//SpringApplication.run(OnjeongApplication.class, args);
