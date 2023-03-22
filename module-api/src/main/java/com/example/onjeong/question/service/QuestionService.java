@@ -142,12 +142,11 @@ public class QuestionService {
     }
 
     @Transactional
-    public boolean deleteAnswer(Long answerId){
+    public void deleteAnswer(Long answerId){
         Answer answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new AnswerNotExistException("answer not exist", ErrorCode.ANSWER_NOTEXIST));
 
         answerRepository.delete(answer);
-        return true;
     }
 
 }
