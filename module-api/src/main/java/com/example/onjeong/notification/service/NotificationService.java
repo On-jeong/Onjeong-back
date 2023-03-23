@@ -17,6 +17,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
@@ -134,7 +136,7 @@ public class NotificationService {
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("메시지 전송 알림 완료 : " + response);
+            log.info("메시지 전송 알림 완료 : " + response);
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }
 
@@ -147,7 +149,7 @@ public class NotificationService {
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("메시지 전송 알림 완료 : " + response);
+            log.info("메시지 전송 알림 완료 : " + response);
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }
 

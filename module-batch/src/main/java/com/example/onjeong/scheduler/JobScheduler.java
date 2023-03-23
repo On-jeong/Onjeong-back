@@ -3,6 +3,7 @@ import com.example.onjeong.job.AnniversaryNotificationJob;
 import com.example.onjeong.job.NotificationDeleteJob;
 import com.example.onjeong.job.WeeklyQuestionBuildJob;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JobScheduler {
 
     private final JobLauncher jobLauncher;
@@ -29,7 +31,7 @@ public class JobScheduler {
             confMap.put("requestDate", new JobParameter(System.currentTimeMillis()));
             jobLauncher.run(weeklyQuestionBuildJob.questionBuildJob(), new JobParameters(confMap));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -41,7 +43,7 @@ public class JobScheduler {
             confMap.put("requestDate", new JobParameter(System.currentTimeMillis()));
             jobLauncher.run(anniversaryNotificationJob.notificationBuildJob(), new JobParameters(confMap));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -53,7 +55,7 @@ public class JobScheduler {
             confMap.put("requestDate", new JobParameter(System.currentTimeMillis()));
             jobLauncher.run(notificationDeleteJob.notificationsDeleteJob(), new JobParameters(confMap));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 }

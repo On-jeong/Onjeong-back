@@ -29,7 +29,6 @@ public class WeeklyQuestionProcessor implements ItemProcessor<Family, Question> 
                 .questionContent(questionContent)
                 .family(family)
                 .build();
-        System.out.println(question);
         return question;
     }
 }
