@@ -4,9 +4,6 @@ import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.dto.CoinHistoryDto;
 import com.example.onjeong.coin.repository.CoinHistoryRepository;
-
-import com.example.onjeong.home.domain.FlowerKind;
-import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;

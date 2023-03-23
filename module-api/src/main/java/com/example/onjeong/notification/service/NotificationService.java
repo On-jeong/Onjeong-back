@@ -1,10 +1,7 @@
 package com.example.onjeong.notification.service;
 
 
-import com.example.onjeong.anniversary.domain.Anniversary;
-import com.example.onjeong.anniversary.repository.AnniversaryRepository;
 import com.example.onjeong.board.domain.Board;
-import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
@@ -14,18 +11,15 @@ import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.exception.UserNotExistException;
-import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

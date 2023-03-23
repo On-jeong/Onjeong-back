@@ -1,9 +1,7 @@
 package com.example.onjeong.service;
 
 import com.example.onjeong.anniversary.domain.Anniversary;
-import com.example.onjeong.anniversary.repository.AnniversaryRepository;
 import com.example.onjeong.notification.domain.Notifications;
-import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.user.domain.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;

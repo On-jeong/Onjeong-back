@@ -29,15 +29,6 @@ class AnswerRepositoryTest {
     @Autowired
     AnswerRepository answerRepository;
 
-    @Autowired
-    FamilyRepository familyRepository;
-
-    @Autowired
-    QuestionRepository questionRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
     @Test
     void 답변전체조회(){
         //given

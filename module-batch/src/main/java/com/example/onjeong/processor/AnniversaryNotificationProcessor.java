@@ -3,13 +3,11 @@ package com.example.onjeong.processor;
 import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.notification.domain.Notifications;
 import com.example.onjeong.service.NotificationBatchService;
-import com.example.onjeong.service.QuestionBatchService;
-import com.example.onjeong.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component

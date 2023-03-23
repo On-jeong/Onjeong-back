@@ -1,6 +1,5 @@
 package com.example.onjeong.home.controller;
 
-import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.error.ErrorCode;
