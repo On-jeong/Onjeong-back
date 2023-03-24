@@ -17,12 +17,12 @@ public interface MailRepository extends JpaRepository<Mail, Long> {
     List<Mail> findByUser(@Param("id") Long id);
 
     @Query(nativeQuery = true,
-            value="SELECT * FROM mail m WHERE m.receiver_id = :id AND m.receiver_delete = false" +
+            value="SELECT * FROM mail m WHERE m.receiver_id = :id AND m.check_receiver = false" +
             " ORDER BY m.mail_id DESC")
     Page<Mail> findByReceiver(Pageable pageable, @Param("id") Long id);
 
     @Query(nativeQuery = true,
-            value="SELECT * FROM mail m WHERE m.sender_id = :id AND m.sender_delete = false" +
+            value="SELECT * FROM mail m WHERE m.sender_id = :id AND m.check_sender = false" +
             " ORDER BY m.mail_id DESC")
     Page<Mail> findBySender(Pageable pageable, @Param("id") Long id);
 
