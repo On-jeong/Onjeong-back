@@ -56,7 +56,7 @@ public class HomeController {
     @PostMapping("/coins-random")
     public ResponseEntity<ResultResponse> coinsRandom() throws FirebaseMessagingException {
         Pair<Boolean, Integer> randomResult = homeService.randomCoin();
-        if(randomResult.getFirst()) coinService.coinSave(CoinHistoryType.RAND, randomResult.getSecond()).get(0);
+        if(randomResult.getFirst()) coinService.coinSave(CoinHistoryType.RAND, randomResult.getSecond());
         else throw new RandCoinDuplicateException("random coin can accumulate once a day", ErrorCode.RAND_COIN_DUPLICATE);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_COIN_SUCCESS,  randomResult.getSecond()));
     }

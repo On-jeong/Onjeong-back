@@ -88,11 +88,11 @@ class CoinServiceTest {
             doReturn(flower).when(flowerRepository).findBlooming(family.getFamilyId());
 
             //when
-            List<CoinHistory> result = coinService.coinSave(coinHistoryType, coinAmount);
+            coinService.coinSave(coinHistoryType, coinAmount);
 
             verify(coinHistoryRepository,times(2)).save(any(CoinHistory.class));
             assertEquals(family.getFamilyCoin(), initialCoinAmount + coinAmount - 1000);
-            assertEquals(6, result.get(1).getCoinFlower());
+            assertEquals(6, flower.getFlowerLevel());
         }
 
         @Test
