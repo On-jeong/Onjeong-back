@@ -1,12 +1,12 @@
 package com.example.onjeong.mail.controller;
 
 
-import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.mail.dto.MailRequestDto;
 import com.example.onjeong.mail.service.MailService;
+import com.example.onjeong.notification.service.NotificationService;
 import com.example.onjeong.result.ResultCode;
 import com.example.onjeong.result.ResultResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;

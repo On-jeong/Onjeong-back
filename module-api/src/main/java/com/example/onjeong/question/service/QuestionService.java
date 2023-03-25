@@ -1,13 +1,6 @@
 package com.example.onjeong.question.service;
 
-
 import com.example.onjeong.error.ErrorCode;
-import com.example.onjeong.family.domain.Family;
-import com.example.onjeong.family.repository.FamilyRepository;
-import com.example.onjeong.profile.exception.ProfileNotExistException;
-import com.example.onjeong.question.domain.PureQuestion;
-import com.example.onjeong.question.repository.PureQuestionRepository;
-import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.question.dto.AnswerDto;
@@ -16,14 +9,12 @@ import com.example.onjeong.question.dto.QuestionDto;
 import com.example.onjeong.question.exception.AnswerNotExistException;
 import com.example.onjeong.question.exception.NullQuestionException;
 import com.example.onjeong.question.repository.AnswerRepository;
+import com.example.onjeong.question.repository.PureQuestionRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import com.example.onjeong.user.domain.User;
-import com.example.onjeong.user.repository.UserRepository;
 import com.example.onjeong.util.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +28,6 @@ import java.util.List;
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final PureQuestionRepository pureQuestionRepository;
     private final AnswerRepository answerRepository;
     private final AuthUtil authUtil;
 

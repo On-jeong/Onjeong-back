@@ -4,9 +4,6 @@ import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.coin.domain.CoinHistoryType;
 import com.example.onjeong.coin.dto.CoinHistoryDto;
 import com.example.onjeong.coin.repository.CoinHistoryRepository;
-
-import com.example.onjeong.home.domain.FlowerKind;
-import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.coin.service.CoinService;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.home.domain.Flower;
@@ -91,11 +88,11 @@ class CoinServiceTest {
             doReturn(flower).when(flowerRepository).findBlooming(family.getFamilyId());
 
             //when
-            List<CoinHistory> result = coinService.coinSave(coinHistoryType, coinAmount);
+            coinService.coinSave(coinHistoryType, coinAmount);
 
             verify(coinHistoryRepository,times(2)).save(any(CoinHistory.class));
             assertEquals(family.getFamilyCoin(), initialCoinAmount + coinAmount - 1000);
-            assertEquals(6, result.get(1).getCoinFlower());
+            assertEquals(6, flower.getFlowerLevel());
         }
 
         @Test

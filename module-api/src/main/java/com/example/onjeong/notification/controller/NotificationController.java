@@ -11,16 +11,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Api(tags="FCM")
 @RequiredArgsConstructor
 @RestController
 public class NotificationController {
 
-    private final UserService userService;
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
 
     @ApiOperation(value="FCM 토큰 저장")
     @PostMapping(value = "/token/generate", produces = MediaType.APPLICATION_JSON_VALUE)

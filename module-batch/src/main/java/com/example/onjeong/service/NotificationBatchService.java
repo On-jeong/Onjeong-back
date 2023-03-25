@@ -1,15 +1,14 @@
 package com.example.onjeong.service;
 
 import com.example.onjeong.anniversary.domain.Anniversary;
-import com.example.onjeong.anniversary.repository.AnniversaryRepository;
 import com.example.onjeong.notification.domain.Notifications;
-import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.user.domain.User;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class NotificationBatchService {
 
     public List<Notifications> sendAnniversary(Anniversary a) throws FirebaseMessagingException {
@@ -47,7 +47,7 @@ public class NotificationBatchService {
                     .build();
 
             String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("메시지 전송 알림 완료 : " + response);
+            log.info("메시지 전송 알림 완료 : " + response);
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }
 

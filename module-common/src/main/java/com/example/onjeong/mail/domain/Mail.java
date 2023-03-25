@@ -35,10 +35,10 @@ public class Mail {
     @Column(name="check_read", nullable = false)
     boolean checkRead;
 
-    @Column(name="sender_delete", nullable = false)
+    @Column(name="check_sender", nullable = false)
     boolean senderWantDelete;
 
-    @Column(name="receiver_delete", nullable = false)
+    @Column(name="check_receiver", nullable = false)
     boolean receiverWantDelete;
 
     public void Read(){

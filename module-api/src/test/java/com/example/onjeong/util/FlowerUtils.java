@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class FlowerUtils {
 
     public static Flower getRandomFlower(Family family, Integer flowerLevel, boolean flowerBloom){
-        final FlowerKind flowerKind = FlowerKind.ROSE;
+        final FlowerKind flowerKind = FlowerKind.CAMELLIA;
         final FlowerColor flowerColor = FlowerColor.SKYBLUE;
 
         return getFlower(flowerKind, flowerColor, flowerBloom, flowerLevel, family);

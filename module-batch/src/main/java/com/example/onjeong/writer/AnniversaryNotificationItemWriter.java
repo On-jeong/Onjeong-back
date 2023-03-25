@@ -2,7 +2,6 @@ package com.example.onjeong.writer;
 
 import com.example.onjeong.notification.domain.Notifications;
 import com.example.onjeong.notification.repository.NotificationRepository;
-import com.example.onjeong.question.domain.Question;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;

@@ -1,14 +1,10 @@
 package com.example.onjeong.mail.service;
 
-
-
-
 import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.mail.dto.MailDto;
 import com.example.onjeong.mail.dto.MailRequestDto;
 import com.example.onjeong.mail.exception.MailNotExistException;
-import com.example.onjeong.user.exception.UserNotExistException;
 import com.example.onjeong.mail.repository.MailRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.repository.UserRepository;
@@ -16,8 +12,6 @@ import com.example.onjeong.util.AuthUtil;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

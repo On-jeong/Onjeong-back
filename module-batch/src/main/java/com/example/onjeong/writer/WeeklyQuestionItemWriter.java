@@ -1,13 +1,13 @@
 package com.example.onjeong.writer;
 
-import com.example.onjeong.question.domain.PureQuestion;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.question.repository.PureQuestionRepository;
 import com.example.onjeong.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
-import java.util.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component

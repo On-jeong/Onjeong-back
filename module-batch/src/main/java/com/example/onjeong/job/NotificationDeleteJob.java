@@ -1,10 +1,7 @@
 package com.example.onjeong.job;
 
-import com.example.onjeong.anniversary.domain.Anniversary;
 import com.example.onjeong.config.BatchConfig;
 import com.example.onjeong.notification.domain.Notifications;
-import com.example.onjeong.processor.AnniversaryNotificationProcessor;
-import com.example.onjeong.writer.AnniversaryNotificationItemWriter;
 import com.example.onjeong.writer.NotificationsDeleteItemWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Slf4j // log 사용을 위한 lombok 어노테이션
 @RequiredArgsConstructor // 생성자 DI를 위한 lombok 어노테이션
