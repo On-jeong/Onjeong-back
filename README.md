@@ -241,7 +241,7 @@
 
 <b>[Column]</b>
 - PK는 `테이블 명 단수형_id`으로 사용
-- boolean 유형의 컬럼은 `is_` 접미어 사용
+- boolean 유형의 컬럼은 `check_` 접미어 사용
 - date, datetime 유형의 컬럼은 `_date` 접미어 사용
 
 <b>[Reference]</b>
