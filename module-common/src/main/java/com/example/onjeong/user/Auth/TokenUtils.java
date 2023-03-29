@@ -15,7 +15,7 @@ import java.util.*;
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TokenUtils {
-    private static final String secretKey = "ThisIsA_SecretKeyForJwtExample";
+    private static final String secretKey = "ThisIsA_SecretKeyForJwt";
 
     public static String generateJwtToken(User user) {
         JwtBuilder builder = Jwts.builder()

@@ -116,13 +116,6 @@ public class ProfileController {
     public ResponseEntity<ResultResponse> registerProfileFavorite(@PathVariable("userId") Long userId
             , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
-//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite");
-//        else{
-//            fcmService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
-//            coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
-//        }
-
-
         if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
         else{
             notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
@@ -140,12 +133,8 @@ public class ProfileController {
 
     @ApiOperation(value="싫어하는 것 작성하기")
     @PostMapping(value = "/profiles/hates/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> registerProfileHate(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
-//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
-//        else{
-//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate");
-//            coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
-//        }
+    public ResponseEntity<ResultResponse> registerProfileHate(@PathVariable("userId") Long userId
+            , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
         if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
         else{
@@ -153,8 +142,6 @@ public class ProfileController {
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
         return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
-
-
     }
 
     @ApiOperation(value="싫어하는 것 삭제하기")
@@ -166,13 +153,8 @@ public class ProfileController {
 
     @ApiOperation(value="한단어로 표현하는 것 작성하기")
     @PostMapping(value = "/profiles/expressions/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> registerProfileExpression(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
-
-//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
-//        else{
-//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression");
-//            coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
-//        }
+    public ResponseEntity<ResultResponse> registerProfileExpression(@PathVariable("userId") Long userId
+            , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
         if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
         else{
@@ -191,12 +173,8 @@ public class ProfileController {
 
     @ApiOperation(value="관심사 작성하기")
     @PostMapping(value = "/profiles/interests/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultResponse> registerProfileInterest(@PathVariable("userId") Long userId, @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
-//        if(profileService.checkProfileUpload()) profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
-//        else{
-//            profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest");
-//            coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
-//        }
+    public ResponseEntity<ResultResponse> registerProfileInterest(@PathVariable("userId") Long userId
+            , @RequestBody SelfIntroductionAnswerRegisterDto selfIntroductionAnswerRegisterDto) throws FirebaseMessagingException{
 
         if(profileService.checkProfileUpload()) notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
         else{

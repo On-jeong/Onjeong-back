@@ -3,7 +3,6 @@ import com.example.onjeong.user.Auth.CustomAuthenticationFilter;
 import com.example.onjeong.user.Auth.CustomLoginFailureHandler;
 import com.example.onjeong.user.Auth.CustomLoginSuccessHandler;
 import com.example.onjeong.user.redis.RefreshTokenRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

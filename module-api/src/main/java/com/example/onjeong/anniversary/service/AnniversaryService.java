@@ -30,11 +30,13 @@ public class AnniversaryService {
     public List<AnniversaryDto> getAllAnniversaryOfMonth(final LocalDate anniversaryDate){
         final User loginUser= authUtil.getUserByAuthentication();
         final Family family= loginUser.getFamily();
+
         LocalDate start= anniversaryDate.withDayOfMonth(1);
         final LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
+
         final List<AnniversaryDto> result= new ArrayList<>();
         while(!start.isAfter(end)){
-            for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())){ //해당 패밀리만 가져오는지 체크
+            for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())){
                 final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                         .anniversaryId(a.getAnniversaryId())
                         .anniversaryContent(a.getAnniversaryContent())
@@ -45,6 +47,7 @@ public class AnniversaryService {
             }
             start= start.plus(1, ChronoUnit.DAYS);
         }
+
         return result;
     }
 

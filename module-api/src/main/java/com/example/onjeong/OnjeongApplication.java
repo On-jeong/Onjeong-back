@@ -1,10 +1,7 @@
 package com.example.onjeong;
 
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -15,7 +12,6 @@ public class OnjeongApplication {
 			+ "classpath:application.properties";
 
 	public static void main(String[] args) {
-		//SpringApplication.run(OnjeongApplication.class, args);
 		new SpringApplicationBuilder(OnjeongApplication.class)
 				.properties(APPLICATION_LOCATIONS)
 				.run(args);

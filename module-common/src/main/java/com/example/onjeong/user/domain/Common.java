@@ -15,24 +15,17 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public abstract class Common implements Serializable {
-    /*
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;                                        // 고유번호
 
-
-     */
     @CreationTimestamp
     @Column(nullable = false, length = 20, updatable = false)
-    private LocalDateTime createdAt;                        // 등록 일자
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(length = 20)
-    private LocalDateTime updatedAt;                        // 수정 일자
+    private LocalDateTime updatedAt;
 
     @Setter
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
-    private Boolean isEnable = true;                        // 사용 여부
+    private Boolean isEnable = true;
 
 }

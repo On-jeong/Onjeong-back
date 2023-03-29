@@ -4,7 +4,6 @@ import com.example.onjeong.error.ErrorCode;
 import com.example.onjeong.result.ResultCode;
 import com.example.onjeong.result.ResultResponse;
 import com.example.onjeong.user.Auth.AuthConstants;
-import com.example.onjeong.user.Auth.TokenUtils;
 import com.example.onjeong.user.dto.*;
 import com.example.onjeong.user.exception.UserNicknameDuplicationException;
 import io.swagger.annotations.*;
@@ -14,14 +13,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 @Api(tags="User")
 @RequiredArgsConstructor
