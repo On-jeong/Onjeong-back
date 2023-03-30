@@ -1,14 +1,11 @@
 package com.example.onjeong.user;
 
-import com.example.onjeong.S3.S3Uploader;
-import com.example.onjeong.board.repository.BoardRepository;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.family.repository.FamilyRepository;
 import com.example.onjeong.home.domain.Flower;
 import com.example.onjeong.home.repository.FlowerRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.profile.repository.ProfileRepository;
-import com.example.onjeong.question.repository.AnswerRepository;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.user.dto.*;
 import com.example.onjeong.user.repository.UserRepository;
@@ -23,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -51,16 +48,7 @@ public class UserServiceTest {
     private AuthUtil authUtil;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private BoardRepository boardRepository;
-
-    @Mock
-    private AnswerRepository answerRepository;
-
-    @Mock
-    private S3Uploader s3Uploader;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Mock
     private FlowerRepository flowerRepository;
