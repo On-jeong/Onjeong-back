@@ -1,12 +1,14 @@
 package com.example.onjeong.anniversary;
 
 import com.example.onjeong.anniversary.domain.Anniversary;
+import com.example.onjeong.anniversary.domain.AnniversaryType;
 import com.example.onjeong.anniversary.dto.AnniversaryDto;
 import com.example.onjeong.anniversary.dto.AnniversaryRegisterDto;
 import com.example.onjeong.anniversary.repository.AnniversaryRepository;
 import com.example.onjeong.anniversary.service.AnniversaryService;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.user.domain.User;
+import com.example.onjeong.util.AnniversaryUtils;
 import com.example.onjeong.util.AuthUtil;
 import com.example.onjeong.util.FamilyUtils;
 import com.example.onjeong.util.UserUtils;
@@ -18,9 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,24 +40,64 @@ public class AnniversaryServiceTest {
 
 
 
-    @Test
-    void 월별_모든_특수일정_가져오기(){
-        //given
-        final LocalDate anniversaryDate= LocalDate.of(2022,12,03);
-        final Family family= FamilyUtils.getRandomFamily();
-        final User user= UserUtils.getRandomUser(family);
+    @Nested
+    class 월별_모든_특수일정_가져오기{
+        @Test
+        void 결과값사이즈가_0인_경우(){
+            //given
+            final LocalDate anniversaryDate= LocalDate.of(2022,12,03);
+            final Family family= FamilyUtils.getRandomFamily();
+            final User user= UserUtils.getRandomUser(family);
 
-        doReturn(user).when(authUtil).getUserByAuthentication();
-        doReturn(Collections.emptyList()).when(anniversaryRepository).findByAnniversaryDate(any(LocalDate.class),any(Long.class));
-
-
-        //when
-        List<AnniversaryDto> result= anniversaryService.getAllAnniversaryOfMonth(anniversaryDate);
+            doReturn(user).when(authUtil).getUserByAuthentication();
 
 
-        //then
-        assertThat(result.size()).isEqualTo(0);
-        verify(anniversaryRepository,times(31)).findByAnniversaryDate(any(LocalDate.class),any(Long.class));
+            //when
+            HashMap<LocalDate,List<AnniversaryDto>> result= anniversaryService.getAllAnniversaryOfMonth(anniversaryDate);
+
+
+            //then
+            assertThat(result.size()).isEqualTo(0);
+            verify(anniversaryRepository,times(31)).findByAnniversaryDate(any(LocalDate.class),any(Long.class));
+        }
+
+        @Test
+        void 결과값사이즈가_1개이상인_경우(){
+            //given
+            final LocalDate anniversaryDate= LocalDate.of(2022,12,03);
+            final Family family= FamilyUtils.getRandomFamily();
+            final User user= UserUtils.getRandomUser(family);
+
+            List<Anniversary> list1= new ArrayList<>();
+            list1.add(AnniversaryUtils.getAnniversary(1L,"기념일1", AnniversaryType.ANNIVERSARY,LocalDate.of(2022,12,01),family));
+            list1.add(AnniversaryUtils.getAnniversary(1L,"특수일정1", AnniversaryType.SPECIAL_SCHEDULE,LocalDate.of(2022,12,01),family));
+
+            List<Anniversary> list2= new ArrayList<>();
+            list2.add(AnniversaryUtils.getAnniversary(1L,"기념일2", AnniversaryType.ANNIVERSARY,LocalDate.of(2022,12,10),family));
+
+            List<Anniversary> list3= new ArrayList<>();
+            list3.add(AnniversaryUtils.getAnniversary(1L,"특수일정2", AnniversaryType.SPECIAL_SCHEDULE,LocalDate.of(2022,12,31),family));
+
+
+            doReturn(user).when(authUtil).getUserByAuthentication();
+
+            for(int i=1;i<=31;i++){
+                if(i==1) doReturn(list1).when(anniversaryRepository).findByAnniversaryDate(LocalDate.of(2022,12,01),family.getFamilyId());
+                else if(i==10) doReturn(list2).when(anniversaryRepository).findByAnniversaryDate(LocalDate.of(2022,12,10),family.getFamilyId());
+                else if(i==31) doReturn(list3).when(anniversaryRepository).findByAnniversaryDate(LocalDate.of(2022,12,31),family.getFamilyId());
+                else doReturn(Collections.emptyList()).when(anniversaryRepository).findByAnniversaryDate(LocalDate.of(2022,12,i),family.getFamilyId());
+            }
+
+
+            //when
+            HashMap<LocalDate,List<AnniversaryDto>> result= anniversaryService.getAllAnniversaryOfMonth(anniversaryDate);
+
+
+            //then
+            assertThat(result.size()).isEqualTo(3);
+            assertThat(result.get(LocalDate.of(2022,12,01)).size()).isEqualTo(2);
+            verify(anniversaryRepository,times(31)).findByAnniversaryDate(any(LocalDate.class),any(Long.class));
+        }
     }
 
 
