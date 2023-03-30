@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 
 @Api(tags="Anniversary")
@@ -27,7 +28,7 @@ public class AnniversaryController {
     @ApiOperation(value="월별 모든 특수일정 가져오기")
     @GetMapping(value = "/months/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getAllAnniversaryOfMonth(@PathVariable("anniversaryDate") String anniversaryDate){
-        List<AnniversaryDto> data= anniversaryService.getAllAnniversaryOfMonth(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
+        HashMap<LocalDate,List<AnniversaryDto>> data= anniversaryService.getAllAnniversaryOfMonth(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_ANNIVERSARY_SUCCESS,data));
     }
 
