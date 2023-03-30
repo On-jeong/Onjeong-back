@@ -27,24 +27,26 @@ public class AnniversaryService {
 
     //월별 모든 특수일정 가져오기
     @Transactional(readOnly = true)
-    public List<AnniversaryDto> getAllAnniversaryOfMonth(final LocalDate anniversaryDate){
+    public HashMap<LocalDate,List<AnniversaryDto>> getAllAnniversaryOfMonth(final LocalDate anniversaryDate){
         final User loginUser= authUtil.getUserByAuthentication();
         final Family family= loginUser.getFamily();
 
         LocalDate start= anniversaryDate.withDayOfMonth(1);
         final LocalDate end= anniversaryDate.withDayOfMonth(anniversaryDate.lengthOfMonth());
 
-        final List<AnniversaryDto> result= new ArrayList<>();
+        final HashMap<LocalDate,List<AnniversaryDto>> result= new HashMap<>();
         while(!start.isAfter(end)){
+            final List<AnniversaryDto> anniversaryDtoList= new ArrayList<>();
+
             for(Anniversary a:anniversaryRepository.findByAnniversaryDate(start,family.getFamilyId())){
                 final AnniversaryDto anniversaryDto= AnniversaryDto.builder()
                         .anniversaryId(a.getAnniversaryId())
                         .anniversaryContent(a.getAnniversaryContent())
                         .anniversaryType(a.getAnniversaryType())
-                        .anniversaryDate(a.getAnniversaryDate())
                         .build();
-                result.add(anniversaryDto);
+                anniversaryDtoList.add(anniversaryDto);
             }
+            if(anniversaryDtoList.size()>0) result.put(start, anniversaryDtoList);
             start= start.plus(1, ChronoUnit.DAYS);
         }
 
@@ -63,7 +65,6 @@ public class AnniversaryService {
                     .anniversaryId(a.getAnniversaryId())
                     .anniversaryContent(a.getAnniversaryContent())
                     .anniversaryType(a.getAnniversaryType())
-                    .anniversaryDate(a.getAnniversaryDate())
                     .build();
             result.add(anniversaryDto);
         }

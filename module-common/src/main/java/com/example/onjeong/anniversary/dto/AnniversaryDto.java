@@ -16,5 +16,4 @@ public class AnniversaryDto {
     private Long anniversaryId;
     private String anniversaryContent;
     private AnniversaryType anniversaryType;
-    private LocalDate anniversaryDate;
 }
