@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @ApiOperation(value="기본 홈")
-    @GetMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getHome (){
         return ResponseEntity.ok(ResultResponse.of(ResultCode.LOGOUT_SUCCESS));
     }

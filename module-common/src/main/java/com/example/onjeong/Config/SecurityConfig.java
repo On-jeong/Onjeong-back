@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/home"))
+                .logoutSuccessHandler((request, response, authentication) -> request.getRequestDispatcher("/home").forward(request, response))
                 .invalidateHttpSession(true);
     }
 
