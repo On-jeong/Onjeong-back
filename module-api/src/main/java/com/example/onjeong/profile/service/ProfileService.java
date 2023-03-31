@@ -41,6 +41,7 @@ public class ProfileService {
             final AllUserOfFamilyDto allUserOfFamilyDto = AllUserOfFamilyDto.builder()
                     .userId(u.getUserId())
                     .userStatus(u.getUserStatus())
+                    .profileImageUrl(u.getProfile().getProfileImageUrl())
                     .build();
             result.add(allUserOfFamilyDto);
         }

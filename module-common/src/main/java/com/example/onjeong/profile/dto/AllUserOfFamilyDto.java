@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class AllUserOfFamilyDto {
     private  Long userId;
     private String userStatus;
+    private String profileImageUrl;
 }
