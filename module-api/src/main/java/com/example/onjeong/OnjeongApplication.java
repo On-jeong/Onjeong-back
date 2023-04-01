@@ -9,7 +9,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 public class OnjeongApplication {
 	public static final String APPLICATION_LOCATIONS = "spring.config.location="
-			+ "classpath:application.properties";
+			+ "classpath:application.properties,"
+			+ "classpath:server-application.yml";
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(OnjeongApplication.class)
