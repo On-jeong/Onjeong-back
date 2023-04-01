@@ -18,10 +18,14 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +54,16 @@ public class NotificationService {
         List<Notifications> notificationsList = notificationRepository.findAllByUserId(user.getUserId());
         List<NotificationDto> notificationDtoList = new ArrayList<>();
         for(Notifications n : notificationsList){
+
+            Long days = ChronoUnit.DAYS.between(n.getNotificationTime(), LocalDateTime.now());
+            Long hours = ChronoUnit.HOURS.between(n.getNotificationTime(), LocalDateTime.now());
+            Long minutes = ChronoUnit.SECONDS.between(n.getNotificationTime(), LocalDateTime.now())/60;
+
+            String notificationTime = days != 0 ? days.toString() + "일전" : hours != 0  ? hours.toString() + "시간전" : minutes.toString() + "분전";
+
             notificationDtoList.add(NotificationDto.builder()
                     .notificationContent(n.getNotificationContent())
+                    .notificationTime(notificationTime)
                     .build());
         }
         return notificationDtoList;

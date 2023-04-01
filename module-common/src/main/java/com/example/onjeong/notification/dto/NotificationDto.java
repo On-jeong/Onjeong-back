@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NotificationDto {
     private String notificationContent;
+    private String notificationTime;
 }
