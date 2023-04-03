@@ -33,14 +33,14 @@ public class ProfileController {
     @GetMapping(value = "/families", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getAllUserOfFamily(){
         List<AllUserOfFamilyDto> data= profileService.getAllUserOfFamily();
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_USER_SUCCESS,data));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_FAMILY_SUCCESS,data));
     }
 
     @ApiOperation(value="프로필 상단에 개인 정보 보여주기")
     @GetMapping(value = "/profiles/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getUserInformation(@PathVariable("userId") Long userId) {
         UserInformationDto data= profileService.getUserInformation(userId);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_USER_INFORMATION_SUCCESS,data));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_PROFILE_USER_INFORMATION_SUCCESS,data));
     }
 
     @ApiOperation(value="프로필 사진 등록하기")
@@ -52,7 +52,7 @@ public class ProfileController {
             ProfileImageUrlDto data= ProfileImageUrlDto.builder()
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
-            return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
+            return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_PROFILE_IMAGE_SUCCESS, data));
         }
         else{
             Profile profile= profileService.registerProfileImage(multipartFile);
@@ -61,7 +61,7 @@ public class ProfileController {
                     .profileImageUrl(profile.getProfileImageUrl())
                     .build();
             coinService.coinSave(CoinHistoryType.PROFILEIMAGE, 100);
-            return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_IMAGE_SUCCESS, data));
+            return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_PROFILE_IMAGE_SUCCESS, data));
         }
     }
 
@@ -87,14 +87,14 @@ public class ProfileController {
             notificationService.sendProfileModify(profileService.registerProfileMessage(profileMessageDto));
             coinService.coinSave(CoinHistoryType.PROFILEMESSAGE, 100);
         }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_PROFILE_MESSAGE_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_PROFILE_MESSAGE_SUCCESS));
     }
 
     @ApiOperation(value="상태메시지 수정하기")
     @PatchMapping(value = "/profiles/message", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyProfileMessage(@RequestBody ProfileMessageDto profileMessageDto) {
         profileService.modifyProfileMessage(profileMessageDto);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_PROFILE_MESSAGE_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PUT_PROFILE_MESSAGE_SUCCESS));
     }
 
     @ApiOperation(value="유저 개인정보+상태메시지 보여주기")
@@ -108,7 +108,7 @@ public class ProfileController {
     @GetMapping(value = "/profiles/{userId}/self-introduction", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getSelfIntroductionAnswer(@PathVariable("userId") Long userId) {
         SelfIntroductionAnswerListGetDto data= profileService.getSelfIntroductionAnswer(userId);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_INFORMATIONS_SUCCESS,data));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_SELF_INTRODUCTION_SUCCESS,data));
     }
 
     @ApiOperation(value="좋아하는 것 작성하기")
@@ -121,7 +121,7 @@ public class ProfileController {
             notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "favorite"));
             coinService.coinSave(CoinHistoryType.PROFILEFAV, 100);
         }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_FAVORITE_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_FAVORITE_SUCCESS));
     }
 
     @ApiOperation(value="좋아하는 것 삭제하기")
@@ -141,7 +141,7 @@ public class ProfileController {
             notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "hate"));
             coinService.coinSave(CoinHistoryType.PROFILEHATE, 100);
         }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_HATE_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_HATE_SUCCESS));
     }
 
     @ApiOperation(value="싫어하는 것 삭제하기")
@@ -161,7 +161,7 @@ public class ProfileController {
             notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "expression"));
             coinService.coinSave(CoinHistoryType.PROFILEEXPRESSION, 100);
         }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_EXPRESSION_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_EXPRESSION_SUCCESS));
     }
 
     @ApiOperation(value="한단어로 표현하는 것 삭제하기")
@@ -181,7 +181,7 @@ public class ProfileController {
             notificationService.sendProfileModify(profileService.registerSelfIntroductionAnswer(userId, selfIntroductionAnswerRegisterDto, "interest"));
             coinService.coinSave(CoinHistoryType.PROFILEINTEREST, 100);
         }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_INTEREST_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_INTEREST_SUCCESS));
     }
 
     @ApiOperation(value="관심사 삭제하기")
