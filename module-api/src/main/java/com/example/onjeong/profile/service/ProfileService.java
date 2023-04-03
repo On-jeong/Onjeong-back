@@ -27,7 +27,7 @@ public class ProfileService {
     private final AuthUtil authUtil;
     private final ProfileUtil profileUtil;
 
-    @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
+    @Value("${cloud.aws.s3.bucket.url}")
     private String AWS_S3_BUCKET_URL;
 
 

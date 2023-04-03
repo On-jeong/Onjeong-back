@@ -61,7 +61,7 @@ public class UserService {
     private final AuthUtil authUtil;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Value("https://onjeong.s3.ap-northeast-2.amazonaws.com/")
+    @Value("${cloud.aws.s3.bucket.url}")
     private String AWS_S3_BUCKET_URL;
 
     //가족회원이 없는 회원 가입
