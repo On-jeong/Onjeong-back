@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResultCode {
     // User
-    REGISTER_SUCCESS(200, "U001", "회원가입에 성공했습니다."),
+    REGISTER_SUCCESS(201, "U001", "회원가입에 성공했습니다."),
     LOGIN_SUCCESS(200, "U002", "로그인에 성공했습니다."),
     LOGOUT_SUCCESS(200,"U003","로그아웃에 성공했습니다."),
     MODIFY_USER_INFORMATION_SUCCESS(200,"U004","회원정보를 수정했습니다."),
@@ -20,13 +20,13 @@ public enum ResultCode {
     // Anniversary
     GET_ALL_ANNIVERSARY_SUCCESS(200, "A001", "월별 모든 특수일정을 조회했습니다."),
     GET_ANNIVERSARY_SUCCESS(200, "A002", "해당 일의 특수일정을 조회했습니다."),
-    REGISTER_ANNIVERSARY_SUCCESS(200, "A003", "해당 일의 특수일정을 등록했습니다."),
+    REGISTER_ANNIVERSARY_SUCCESS(201, "A003", "해당 일의 특수일정을 등록했습니다."),
     DELETE_ANNIVERSARY_SUCCESS(200, "A004", "해당 일의 특수일정을 삭제했습니다."),
 
     // Board
     GET_ALL_BOARD_SUCCESS(200, "B001", "모든 오늘의 기록을 조회했습니다."),
     GET_BOARD_SUCCESS(200, "B002", "오늘의 기록을 조회했습니다."),
-    REGISTER_BOARD_SUCCESS(200, "B003", "오늘의 기록을 등록했습니다."),
+    REGISTER_BOARD_SUCCESS(201, "B003", "오늘의 기록을 등록했습니다."),
     MODIFY_BOARD_SUCCESS(200, "B004", "오늘의 기록을 수정했습니다."),
     DELETE_BOARD_SUCCESS(200, "B005", "오늘의 기록을 삭제했습니다."),
 
@@ -39,16 +39,16 @@ public enum ResultCode {
     REGISTER_PROFILE_MESSAGE_SUCCESS(200,"P006","상태메시지를 등록했습니다."),
     MODIFY_PROFILE_MESSAGE_SUCCESS(200,"P007","상태메시지를 수정했습니다."),
     GET_FAVORITES_SUCCESS(200,"P008","좋아하는 것 목록을 조회했습니다."),
-    REGISTER_FAVORITE_SUCCESS(200,"P009","좋아하는 것을 등록했습니다."),
+    REGISTER_FAVORITE_SUCCESS(201,"P009","좋아하는 것을 등록했습니다."),
     DELETE_FAVORITE_SUCCESS(200,"P010","좋아하는 것을 삭제했습니다."),
     GET_HATES_SUCCESS(200,"P011","싫어하는 것 목록을 조회했습니다."),
-    REGISTER_HATE_SUCCESS(200,"P012","싫어하는 것을 등록했습니다."),
+    REGISTER_HATE_SUCCESS(201,"P012","싫어하는 것을 등록했습니다."),
     DELETE_HATE_SUCCESS(200,"P013","싫어하는 것을 삭제했습니다."),
     GET_EXPRESSIONS_SUCCESS(200,"P014","한단어로 표현하는 것 목록을 조회했습니다."),
-    REGISTER_EXPRESSION_SUCCESS(200,"P015","한단어로 표현하는 것을 등록했습니다."),
+    REGISTER_EXPRESSION_SUCCESS(201,"P015","한단어로 표현하는 것을 등록했습니다."),
     DELETE_EXPRESSION_SUCCESS(200,"P016","한단어로 표현하는 것을 삭제했습니다."),
     GET_INTERESTS_SUCCESS(200,"P017","관심사 목록을 조회했습니다."),
-    REGISTER_INTEREST_SUCCESS(200,"P018","관심사를 등록했습니다."),
+    REGISTER_INTEREST_SUCCESS(201,"P018","관심사를 등록했습니다."),
     DELETE_INTEREST_SUCCESS(200,"P019","관심사를 삭제했습니다."),
     GET_PROFILE_SUCCESS(200,"P020","유저 프로필(개인정보+상태메시지)을 조회했습니다."),
     GET_INFORMATIONS_SUCCESS(200,"P021","유저 개인정보(좋아하는것, 싫어하는것..등)를 조회했습니다."),
@@ -63,10 +63,10 @@ public enum ResultCode {
     GET_BLOOM_SUCCESS(200, "H002", "만개한 꽃들의 목록을 조회했습니다."),
     GET_HISTORY_SUCCESS(200, "H003", "패밀리 코인 적립내역을 조회했습니다."),
     GET_COIN_SUCCESS(200, "H004", "패밀리 코인 수를 조회했습니다."),
-    POST_COIN_SUCCESS(200, "H005", "랜덤 코인을 적립했습니다."),
+    POST_COIN_SUCCESS(201, "H005", "랜덤 코인을 적립했습니다."),
 
     // Mail
-    POST_MAIL_SUCCESS(200, "M001", "메일을 전송했습니다."),
+    POST_MAIL_SUCCESS(201, "M001", "메일을 전송했습니다."),
     GET_RECEIVE_MAIL_SUCCESS(200, "M002", "받은 메일함을 조회했습니다."),
     GET_SEND_MAIL_SUCCESS(200, "M003", "보낸 메일함을 조회했습니다."),
     GET_ONE_MAIL_SUCCESS(200, "M004", "선택한 메일을 조회했습니다."),
@@ -77,7 +77,7 @@ public enum ResultCode {
     GET_QUESTION_SUCCESS(200, "Q001", "이 주의 문답 질문을 조회했습니다."),
     GET_ANSWERS_SUCCESS(200, "Q002", "이 주의 문답에 대한 답변들을 조회했습니다."),
     GET_ANSWERED_FAMILY_SUCCESS(200, "Q003", "이 주의 문답에 참여한 가족들을 조회했습니다."),
-    POST_ANSWER_SUCCESS(200, "Q004", "이 주의 문답 답변을 작성했습니다."),
+    POST_ANSWER_SUCCESS(201, "Q004", "이 주의 문답 답변을 작성했습니다."),
     PUT_ANSWER_SUCCESS(200, "Q005", "이 주의 문답 답변을 수정했습니다."),
     DELETE_ANSWER_SUCCESS(200, "Q006", "이 주의 문답 답변을 삭제했습니다.")
     ;
