@@ -33,7 +33,7 @@ public class UserController {
             throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
         }
         userService.signUp(userJoinDto);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.SIGNUP_SUCCESS));
     }
 
     @ApiOperation(value="가족회원이 있는 회원 가입")
@@ -43,7 +43,7 @@ public class UserController {
             throw new UserNicknameDuplicationException("UserNickname Duplication", ErrorCode.USER_NICKNAME_DUPLICATION);
         }
         userService.signUpJoined(userJoinedDto);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.SIGNUP_SUCCESS));
     }
 
     @ApiOperation(value="로그인")
@@ -62,7 +62,7 @@ public class UserController {
     @PutMapping(value="/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyUserInformation (@Validated  @RequestBody UserAccountDto userAccountsDto){
         userService.modifyUserInformation(userAccountsDto);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_USER_INFORMATION_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PUT_USER_INFORMATION_SUCCESS));
     }
 
     @ApiOperation(value = "회원탈퇴")
@@ -100,7 +100,7 @@ public class UserController {
         String newAccessToken= userService.refreshToken(refreshToken);
         HttpHeaders headers = new HttpHeaders();
         headers.add(AuthConstants.AUTH_HEADER_ACCESS, newAccessToken);
-        return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.NEW_TOKEN_SUCCESS));
+        return ResponseEntity.ok().headers(headers).body(ResultResponse.of(ResultCode.POST_ACCESS_TOKEN_SUCCESS));
     }
 
     @ApiOperation(value="사용할 수 있는 아이디인지 체크")

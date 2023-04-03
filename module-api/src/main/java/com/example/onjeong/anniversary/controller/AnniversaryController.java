@@ -29,21 +29,21 @@ public class AnniversaryController {
     @GetMapping(value = "/months/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getAllAnniversaryOfMonth(@PathVariable("anniversaryDate") String anniversaryDate){
         HashMap<LocalDate,List<AnniversaryDto>> data= anniversaryService.getAllAnniversaryOfMonth(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ALL_ANNIVERSARY_SUCCESS,data));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_MONTH_ANNIVERSARY_SUCCESS,data));
     }
 
     @ApiOperation(value="해당 일의 특수일정 가져오기")
     @GetMapping(value = "/days/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> getAnniversaryOfDay(@PathVariable("anniversaryDate") String anniversaryDate){
         List<AnniversaryDto> data= anniversaryService.getAnniversaryOfDay(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE));
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ANNIVERSARY_SUCCESS,data));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_DAY_ANNIVERSARY_SUCCESS,data));
     }
 
     @ApiOperation(value="해당 일의 특수일정 등록하기")
     @PostMapping(value = "/days/anniversaries/{anniversaryDate}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> registerAnniversary(@PathVariable("anniversaryDate") String anniversaryDate, @RequestBody AnniversaryRegisterDto anniversaryRegisterDto){
         anniversaryService.registerAnniversary(LocalDate.parse(anniversaryDate, DateTimeFormatter.ISO_DATE),anniversaryRegisterDto);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_ANNIVERSARY_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_ANNIVERSARY_SUCCESS));
     }
 
     @ApiOperation(value="해당 일의 특수일정 삭제하기")

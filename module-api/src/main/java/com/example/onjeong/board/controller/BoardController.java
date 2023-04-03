@@ -45,7 +45,7 @@ public class BoardController {
         Board board= boardService.registerBoard(LocalDate.parse(boardDate, DateTimeFormatter.ISO_DATE), multipartFile, boardContent);
         notificationService.sendBoard(board);
         coinService.coinSave(CoinHistoryType.BOARD, 20);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.REGISTER_BOARD_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.POST_BOARD_SUCCESS));
     }
 
     @ApiOperation(value="오늘의 기록 한개 가져오기")
@@ -59,7 +59,7 @@ public class BoardController {
     @PutMapping(value = "/boards/{boardId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> modifyBoard(@PathVariable("boardId") Long boardId, @RequestPart(name = "images", required = false) MultipartFile multipartFile, @RequestPart("boardContent") String boardContent){
         boardService.modifyBoard(boardId, multipartFile, boardContent);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.MODIFY_BOARD_SUCCESS));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PUT_BOARD_SUCCESS));
     }
 
     @ApiOperation(value="오늘의 기록 삭제하기")
