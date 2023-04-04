@@ -73,7 +73,7 @@ public class NotificationService {
     public void sendMail(Mail mail) throws FirebaseMessagingException {
         // 메일 전송 시 받는 사람에게 알림 전송
         String token = mail.getReceiveUser().getDeviceToken();
-        String content = mail.getSendUser().getUserStatus() + "로부터 메일이 도착했습니다.";
+        String content = mail.getSendUser().getUserStatus() + "(으)로부터 메일이 도착했습니다.";
 
         sendPersonalAlarm(content, token);
         saveNotifications(content, mail.getReceiveUser());
@@ -130,7 +130,7 @@ public class NotificationService {
     public void sendProfileModify(Profile profile) throws FirebaseMessagingException {
         // 프로필이 수정될 때 알림
         String topic = profile.getFamily().getFamilyId().toString();
-        String content = profile.getUser().getUserStatus() + "의 프로필이 수정되었습니다.";
+        String content = profile.getUser().getUserStatus() + "님님의 프로필이 수정되었습니다.";
 
         sendFamilyAlarm(content, topic);
         for(User u : profile.getFamily().getUsers()){
