@@ -29,14 +29,14 @@ public class QuestionController {
 
     @ApiOperation(value = "이주의 문답 질문 보여주기")
     @GetMapping("/questions")
-    public ResponseEntity<ResultResponse> showQuestion(@PageableDefault(size=20, sort = "questionId", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_QUESTION_SUCCESS, questionService.showQuestion(pageable)));
+    public ResponseEntity<ResultResponse> showQuestion() {
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_QUESTION_SUCCESS, questionService.showWeeklyQuestion()));
     }
 
     @ApiOperation(value = "이주의 문답 답변들 보여주기")
     @GetMapping("/answers/{questionId}")
     public ResponseEntity<ResultResponse> showAllAnswer(@PathVariable("questionId") Long questionId) {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ANSWERS_SUCCESS, questionService.showAllAnswer(questionId)));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ANSWERS_SUCCESS, questionService.showWeeklyAnswer()));
     }
 
     @ApiOperation(value = "이주의 문답에 답변한 가족 리스트")

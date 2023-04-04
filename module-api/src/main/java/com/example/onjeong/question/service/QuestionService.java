@@ -31,6 +31,40 @@ public class QuestionService {
     private final AnswerRepository answerRepository;
     private final AuthUtil authUtil;
 
+    public QuestionDto showWeeklyQuestion(){
+        User user = authUtil.getUserByAuthentication();
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
+        QuestionDto questionDto = QuestionDto.builder()
+                .questonId(question.getQuestionId())
+                .questionContent(question.getQuestionContent())
+                .build();
+        return questionDto;
+    }
+
+    public List<AnswerDto> showWeeklyAnswer(){
+        User user = authUtil.getUserByAuthentication();
+        Question question = questionRepository.findWeeklyQuestion(user.getFamily().getFamilyId());
+        if(question == null){ // 서버에 준비된 이주의 질문 내용이 없는 경우
+            throw new NullQuestionException("weekly question not exist", ErrorCode.QUESTION_NOTEXIST);
+        }
+        List<Answer> answers = answerRepository.findByQuestion(question);
+        List<AnswerDto> answerDtos = new ArrayList<>();
+        for(Answer a : answers){
+            AnswerDto answer = AnswerDto.builder()
+                    .answerId(a.getAnswerId())
+                    .userName(a.getUser().getUserName())
+                    .answerContent(a.getAnswerContent())
+                    .answerTime(a.getAnswerTime())
+                    .build();
+            answerDtos.add(answer);
+        }
+        return answerDtos;
+    }
+
+
     public List<QuestionDto> showQuestion(Pageable pageable){
         User user = authUtil.getUserByAuthentication();
 
