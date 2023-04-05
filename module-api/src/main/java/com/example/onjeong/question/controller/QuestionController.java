@@ -34,8 +34,8 @@ public class QuestionController {
     }
 
     @ApiOperation(value = "이주의 문답 답변들 보여주기")
-    @GetMapping("/answers/{questionId}")
-    public ResponseEntity<ResultResponse> showAllAnswer(@PathVariable("questionId") Long questionId) {
+    @GetMapping("/answers")
+    public ResponseEntity<ResultResponse> showAllAnswer() {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_ANSWERS_SUCCESS, questionService.showWeeklyAnswer()));
     }
 
