@@ -43,7 +43,7 @@ public class HomeController {
     @ApiOperation(value = "패밀리 코인 적립 내역")
     @GetMapping("/histories")
     public ResponseEntity<ResultResponse> histories(@PageableDefault(size=20, sort = "coin_history_id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_HISTORY_SUCCESS,coinService.coinHistoryList(pageable)));
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.GET_HISTORY_SUCCESS, coinService.coinHistoryList(pageable)));
     }
 
     @ApiOperation(value = "패밀리 코인 보여주기")

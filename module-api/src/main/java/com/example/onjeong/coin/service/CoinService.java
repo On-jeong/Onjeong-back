@@ -37,43 +37,34 @@ public class CoinService {
     @Transactional
     public void coinSave(CoinHistoryType coinHistoryType, int amount) {
 
-        List<CoinHistory> coinHistoryList = new ArrayList<>();
         User user = authUtil.getUserByAuthentication();
         Family family = user.getFamily();
-
-        // 가족 코인 수 업데이트
         family.updateCoin(amount);
+
+        Flower flower = flowerRepository.findBlooming(family.getFamilyId());
+        int level = flower.getFlowerLevel();
+
+        // 꽃 레벨이 변경 되었는지 확인 및 꽃 상태 변경
+        boolean changeFlag = false;
+        if (level <= 10) {
+            if ((family.getFamilyCoin() / 1000) != 0) {
+                // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
+                family.updateCoin(-1000);
+                changeFlag = true;
+                flower.levelUp();
+            }
+        }
 
         // 코인 사용 내역 저장
         CoinHistory coinHistory = CoinHistory.builder()
                 .coinAmount(amount)
                 .coinHistoryType(coinHistoryType)
                 .coinHistoryDate(LocalDateTime.now())
+                .coinFlower(changeFlag ? flower.getFlowerLevel() : null)
                 .user(user)
                 .family(family)
                 .build();
         coinHistoryRepository.save(coinHistory);
-
-        // 변경 된 코인 수에 따라 꽃 상태 변경
-        Flower flower = flowerRepository.findBlooming(family.getFamilyId());
-
-        int level = flower.getFlowerLevel();
-        if (level <= 10) {
-            if ((family.getFamilyCoin() / 1000) != 0) {
-                // 레벨을 상승시켜야 할 정도로 코인이 쌓였을 경우
-                family.updateCoin(-1000);
-                CoinHistory coinHistory2 = CoinHistory.builder()
-                        .coinAmount(-1000)
-                        .coinHistoryType(CoinHistoryType.USED)
-                        .coinHistoryDate(LocalDateTime.now())
-                        .coinFlower(flower.getFlowerLevel() + 1)
-                        .user(user)
-                        .family(family)
-                        .build();
-                coinHistoryRepository.save(coinHistory2);
-                flower.levelUp();
-            }
-        }
 
         if (flower.getFlowerLevel() == 10) {
             // 새로운 꽃 추가
@@ -105,10 +96,9 @@ public class CoinService {
                     .type(c.getCoinHistoryType())
                     .user(c.getUser().getUserStatus())
                     .date(c.getCoinHistoryDate().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")))
-                    .before(c.getCoinFlower() - 1)
-                    .after(c.getCoinFlower() - 1)
+                    .before(c.getCoinFlower() == null ? null : c.getCoinFlower() - 1)
+                    .after(c.getCoinFlower() == null ? null : c.getCoinFlower())
                     .build();
-
             coinHistoryDtoList.add(coinHistoryDto);
         }
 
