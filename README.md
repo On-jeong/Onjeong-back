@@ -17,6 +17,9 @@
   </p>
 </div>
 
+### AWS Public Cloud Architecture
+![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+aws+%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C+%EA%B5%AC%EC%A1%B0_2.png)
+
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
