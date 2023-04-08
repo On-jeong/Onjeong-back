@@ -65,12 +65,12 @@
 -   Amazon Web Services (EC2, RDS, S3, Route 53, VPC, Internet gateway, NAT gateway, NLB, Certificate Manager)
 <br><br><br><br><br>
 
-##  Package Structure
+##  패키지 구조
 - api와 batch 작업은 서로 독립적으로 이뤄지기때문에 모듈별로 분리하여 재사용, 유지보수, 에러파악 측면에서의 이점을 얻고자 `멀티모듈(Multi Module)`을 도입했습니다.
 - 저희는 **api 모듈**, **batch 모듈**, api와 batch가 공통으로 사용하고 있는 **common 모듈**로 3개의 모듈로 분리했습니다.
 
 <details>
-<summary><b>Structure</b></summary>
+<summary><b>구조</b></summary>
 
 ```txt
 └── module-api
