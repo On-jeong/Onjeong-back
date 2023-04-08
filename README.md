@@ -159,7 +159,7 @@
         }
         ```
         
-2. 통일된 Error Response 객체
+2. 통일된 Result Response 객체
     - Result Response JSON
       ```json
         {
