@@ -35,15 +35,19 @@
 
 
 ## AWS 클라우드 구조
-![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+aws+%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C+%EA%B5%AC%EC%A1%B0_2.png) <br><br><br>
+<div style="text-align: center;">
+<img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+aws+%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C+%EA%B5%AC%EC%A1%B0_2.png" width="900" height="450" />
+</div>  
+<br><br><br>
 
 
 ##  인프라 구조
 - 운영서버 CI/CD
-![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EC%9A%B4%EC%98%81+CI%2CCD+1.png)
+<img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EC%9A%B4%EC%98%81+CI%2CCD+1.png"/>
+<br><br>
 
 - 개발서버 CI/CD
-![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EA%B0%9C%EB%B0%9C+CI%2CCD+1.png)
+<img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EA%B0%9C%EB%B0%9C+CI%2CCD+1.png"/>
 <br><br><br>
 
 
