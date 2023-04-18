@@ -6,6 +6,7 @@ import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
 import com.example.onjeong.notification.dto.NotificationDto;
+import com.example.onjeong.notification.dto.NotificationRegisterDto;
 import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
@@ -75,8 +76,8 @@ public class NotificationService {
         String token = mail.getReceiveUser().getDeviceToken();
         String content = mail.getSendUser().getUserStatus() + "(으)로부터 메일이 도착했습니다.";
 
-        sendPersonalAlarm(content, token);
         saveNotifications(content, mail.getReceiveUser());
+        sendPersonalAlarm(content, token);
     }
 
     public void sendFamilyCheck(Answer answer) throws FirebaseMessagingException {
@@ -99,8 +100,8 @@ public class NotificationService {
             String token = notAnsweredFamily.get(0).getDeviceToken();
             String content = notAnsweredFamily.get(0).getUserStatus() + "님만 답변하면 가족 전체의 답변이 완성됩니다";
 
-            sendPersonalAlarm(content, token);
             saveNotifications(content, notAnsweredFamily.get(0));
+            sendPersonalAlarm(content, token);
         }
     }
 
@@ -110,10 +111,10 @@ public class NotificationService {
         String content = board.getUser().getUserStatus() + "님이 오늘의 기록을 작성했습니다.";
 
         //알림 전송
-        sendFamilyAlarm(content, topic);
         for(User u : board.getFamily().getUsers()){
             if(!u.equals(board.getUser())) saveNotifications(content, u);
         }
+        sendFamilyAlarm(content, topic);
     }
 
     public void sendAnswer(Answer answer) throws FirebaseMessagingException {
@@ -121,21 +122,21 @@ public class NotificationService {
         String topic = answer.getUser().getFamily().getFamilyId().toString();
         String content = answer.getUser().getUserStatus() + "님이 이주의 문답에 대한 답변을 작성했습니다.";
 
-        sendFamilyAlarm(content, topic);
         for(User u : answer.getUser().getFamily().getUsers()){
             if(!u.equals(answer.getUser())) saveNotifications(content, u);
         }
+        sendFamilyAlarm(content, topic);
     }
 
     public void sendProfileModify(Profile profile) throws FirebaseMessagingException {
         // 프로필이 수정될 때 알림
         String topic = profile.getFamily().getFamilyId().toString();
-        String content = profile.getUser().getUserStatus() + "님님의 프로필이 수정되었습니다.";
+        String content = profile.getUser().getUserStatus() + "님의 프로필이 수정되었습니다.";
 
-        sendFamilyAlarm(content, topic);
         for(User u : profile.getFamily().getUsers()){
             if(!u.equals(profile.getUser())) saveNotifications(content, u);
         }
+        sendFamilyAlarm(content, topic);
     }
 
 
