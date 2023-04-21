@@ -6,7 +6,6 @@ import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
 import com.example.onjeong.notification.dto.NotificationDto;
-import com.example.onjeong.notification.dto.NotificationRegisterDto;
 import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.profile.domain.Profile;
 import com.example.onjeong.question.domain.Answer;
