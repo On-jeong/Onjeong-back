@@ -194,4 +194,25 @@ public class GlobalExceptionHandler {
         final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
         return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
     }
+
+    @ExceptionHandler(AccessTokenNotSameException.class)
+    public ResponseEntity<ErrorResponse> handleAccessTokenNotSameException(AccessTokenNotSameException ex){
+        log.error("handleAccessTokenNotSameException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(AccessTokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleAccessTokenExpiredException(AccessTokenExpiredException ex){
+        log.error("handleAccessTokenExpiredException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
+
+    @ExceptionHandler(LoginFailException.class)
+    public ResponseEntity<ErrorResponse> handleLoginFailException(LoginFailException ex){
+        log.error("handleLoginFailException",ex);
+        final ErrorResponse response = new ErrorResponse(ex.getErrorCode());
+        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getErrorCode().getStatus()));
+    }
 }
