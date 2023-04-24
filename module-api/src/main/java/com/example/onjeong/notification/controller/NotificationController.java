@@ -42,7 +42,7 @@ public class NotificationController {
     }
 
     @ApiOperation(value="알림 허용 여부 확인")
-    @PostMapping(value = "/token/check", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/token/check", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultResponse> FCMCheck() {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.CHECK_TOKEN_SUCCESS, notificationService.checkNotification()));
     }
