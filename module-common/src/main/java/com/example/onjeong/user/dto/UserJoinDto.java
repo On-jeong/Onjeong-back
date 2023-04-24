@@ -15,5 +15,4 @@ public class UserJoinDto {
     private LocalDate userBirth;
     private String userEmail;
     private Boolean checkNotification;
-    private String deviceToken;
 }
