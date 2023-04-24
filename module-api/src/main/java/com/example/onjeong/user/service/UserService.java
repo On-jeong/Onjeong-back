@@ -79,7 +79,6 @@ public class UserService {
                 .userBirth(userJoinDto.getUserBirth())
                 .userEmail(userJoinDto.getUserEmail())
                 .checkNotification(userJoinDto.getCheckNotification())
-                .deviceToken(userJoinDto.getDeviceToken())
                 .role(UserRole.ROLE_USER)
                 .family(savedFamily)
                 .build();
@@ -118,7 +117,6 @@ public class UserService {
                 .userBirth(userJoinedDto.getUserBirth())
                 .userEmail(userJoinedDto.getUserEmail())
                 .checkNotification(userJoinedDto.getCheckNotification())
-                .deviceToken(userJoinedDto.getDeviceToken())
                 .role(UserRole.ROLE_USER)
                 .family(joinedUser.getFamily())
                 .build();

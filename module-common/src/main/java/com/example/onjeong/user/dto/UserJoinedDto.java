@@ -16,5 +16,4 @@ public class UserJoinedDto {
     private String joinedNickname;
     private String userEmail;
     private Boolean checkNotification;
-    private String deviceToken;
 }
