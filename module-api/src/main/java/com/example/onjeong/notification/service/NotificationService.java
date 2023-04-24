@@ -5,6 +5,7 @@ import com.example.onjeong.board.domain.Board;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
+import com.example.onjeong.notification.dto.DeviceTokenRequest;
 import com.example.onjeong.notification.dto.NotificationDto;
 import com.example.onjeong.notification.repository.NotificationRepository;
 import com.example.onjeong.profile.domain.Profile;
@@ -40,13 +41,29 @@ public class NotificationService {
     @Transactional
     public void registerToken(String token) throws FirebaseMessagingException {
         User user = authUtil.getUserByAuthentication();
-        if(user.getDeviceToken() != null) user.updateDeviceToken(token);
+        if(user.getCheckNotification()) user.updateDeviceToken(token);
     }
 
     @Transactional
     public void deleteToken() throws FirebaseMessagingException {
         User user = authUtil.getUserByAuthentication();
         user.updateDeviceToken("");
+    }
+
+    public Boolean checkNotification() {
+        User user = authUtil.getUserByAuthentication();
+        return user.getCheckNotification();
+    }
+
+    @Transactional
+    public void updateNotification(DeviceTokenRequest deviceTokenRequest) {
+        User user = authUtil.getUserByAuthentication();
+        user.updateCheckNotification(deviceTokenRequest.getCheck());
+        if(deviceTokenRequest.getCheck()){
+            user.updateDeviceToken(deviceTokenRequest.getToken());
+        }else{
+            user.updateDeviceToken("");
+        }
     }
 
     public List<NotificationDto> getNotifications(){
