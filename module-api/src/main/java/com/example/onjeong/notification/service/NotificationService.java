@@ -13,10 +13,7 @@ import com.example.onjeong.question.domain.Answer;
 import com.example.onjeong.question.domain.Question;
 import com.example.onjeong.user.domain.User;
 import com.example.onjeong.util.AuthUtil;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Local;
@@ -123,36 +120,40 @@ public class NotificationService {
 
     public void sendBoard(Board board) throws FirebaseMessagingException {
         // 오늘의 기록 작성했을 때 알림
-        String topic = board.getFamily().getFamilyId().toString();
+        List<String> topics =  new ArrayList<>();
         String content = board.getUser().getUserStatus() + "님이 오늘의 기록을 작성했습니다.";
 
         //알림 전송
         for(User u : board.getFamily().getUsers()){
             if(!u.equals(board.getUser())) saveNotifications(content, u);
+            if(u.getDeviceToken() != null) topics.add(u.getDeviceToken());
         }
-        sendFamilyAlarm(content, topic);
+        sendFamilyAlarm(content, topics);
     }
 
     public void sendAnswer(Answer answer) throws FirebaseMessagingException {
         // 이주의 문답 답변 작성했을 때 알림
-        String topic = answer.getUser().getFamily().getFamilyId().toString();
+        List<String> topics =  new ArrayList<>();
         String content = answer.getUser().getUserStatus() + "님이 이주의 문답에 대한 답변을 작성했습니다.";
 
         for(User u : answer.getUser().getFamily().getUsers()){
             if(!u.equals(answer.getUser())) saveNotifications(content, u);
+            if(u.getDeviceToken() != null) topics.add(u.getDeviceToken());
         }
-        sendFamilyAlarm(content, topic);
+        sendFamilyAlarm(content, topics);
     }
 
     public void sendProfileModify(Profile profile) throws FirebaseMessagingException {
         // 프로필이 수정될 때 알림
-        String topic = profile.getFamily().getFamilyId().toString();
+        List<String> topics =  new ArrayList<>();
         String content = profile.getUser().getUserStatus() + "님의 프로필이 수정되었습니다.";
 
         for(User u : profile.getFamily().getUsers()){
             if(!u.equals(profile.getUser())) saveNotifications(content, u);
+            if(u.getDeviceToken() != null) topics.add(u.getDeviceToken());
         }
-        sendFamilyAlarm(content, topic);
+
+        sendFamilyAlarm(content, topics);
     }
 
 
@@ -169,15 +170,14 @@ public class NotificationService {
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }
 
-    public void sendFamilyAlarm(String content, String topic) throws FirebaseMessagingException {
+    public void sendFamilyAlarm(String content, List<String> tokens) throws FirebaseMessagingException {
         try{
-            Message message = Message.builder()
+            MulticastMessage multicastMessage = MulticastMessage.builder()
                     .putData("time", LocalDateTime.now().toString())
                     .setNotification(new Notification("OnJeong", content))
-                    .setTopic(topic)
+                    .addAllTokens(tokens)
                     .build();
-
-            String response = FirebaseMessaging.getInstance().send(message);
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
             log.info("메시지 전송 알림 완료 : " + response);
         } catch (Exception e){} // 에러가 발생해도 무시하고 다음 코드 진행
     }

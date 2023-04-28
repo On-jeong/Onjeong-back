@@ -60,7 +60,7 @@ public class AnniversaryNotificationJob {
                 .name("anniversaryReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(batchConfig.getChunk())
-                .queryString("select a from Anniversary a WHERE a.anniversaryDate = :date")
+                .queryString("select a from Anniversary a WHERE a.anniversaryDate = :date and a.anniversaryType = 'ANNIVERSARY'")
                 .parameterValues(paramValues)
                 .build();
     }
