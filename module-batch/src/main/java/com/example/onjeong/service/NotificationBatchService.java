@@ -23,6 +23,7 @@ public class NotificationBatchService {
 
         List<Notifications> notificationList = new ArrayList<>();
         for(User u : a.getFamily().getUsers()){
+            if(u.getDeviceToken() != null) topics.add(u.getDeviceToken());
             Notifications notification = Notifications.builder()
                     .notificationContent(content)
                     .notificationTime(LocalDateTime.now())
