@@ -143,7 +143,7 @@ public class UserService {
     public void modifyUserInformation(UserAccountDto userAccountsDto){
         final User loginUser= authUtil.getUserByAuthentication();
         loginUser.updateUserName(userAccountsDto.getUserName());
-        loginUser.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
+        if(!userAccountsDto.getUserPassword().equals("")) loginUser.setEncryptedPassword(passwordEncoder.encode(userAccountsDto.getUserPassword()));
         loginUser.updateUserStatus(userAccountsDto.getUserStatus());
         loginUser.updateUserBirth(userAccountsDto.getUserBirth());
         loginUser.updateUserEmail(userAccountsDto.getUserEmail());
