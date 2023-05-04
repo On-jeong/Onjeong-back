@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -37,6 +38,10 @@ public class NotificationBatchService {
 
     public void sendFamilyAlarm(String content, List<String> tokens) throws FirebaseMessagingException {
         try{
+            tokens = new ArrayList<String>(
+                    tokens.stream().distinct()
+                            .collect(Collectors.toList())
+            );
             MulticastMessage multicastMessage = MulticastMessage.builder()
                     .putData("time", LocalDateTime.now().toString())
                     .setNotification(new Notification("OnJeong", content))

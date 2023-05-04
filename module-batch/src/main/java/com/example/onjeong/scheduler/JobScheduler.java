@@ -36,7 +36,7 @@ public class JobScheduler {
     }
 
     // 매일 12시에 실행
-    @Scheduled(cron="0 0 0 1/1 * ?")
+    @Scheduled(cron="0 1 0 1/1 * ?")
     public void runAnniversaryNotificationBuildJob() {
         try {
             Map<String, JobParameter> confMap = new HashMap<>();
