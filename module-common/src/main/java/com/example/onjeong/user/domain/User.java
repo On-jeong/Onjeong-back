@@ -1,6 +1,7 @@
 package com.example.onjeong.user.domain;
 
 import com.example.onjeong.board.domain.Board;
+import com.example.onjeong.coin.domain.CoinHistory;
 import com.example.onjeong.family.domain.Family;
 import com.example.onjeong.mail.domain.Mail;
 import com.example.onjeong.notification.domain.Notifications;
@@ -75,6 +76,9 @@ public class User extends Common implements Serializable {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private final List<Notifications> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private final List<CoinHistory> coinHistoryList = new ArrayList<>();
 
     public void updateUserName(String userName){ this.userName=userName; }
 
