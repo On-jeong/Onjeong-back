@@ -38,12 +38,12 @@
 <!--Infra Structure-->
 ##  Infra Structure
 - 운영서버 CI/CD
-![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EC%9A%B4%EC%98%81+CI%2CCD+1.png)
+![image](https://github.com/On-jeong/Onjeong-back/assets/71383600/efafe455-28e9-4f8b-9bfb-a2cc0a558e6c)
 
 <br>
 
 - 개발서버 CI/CD
-![image](https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/git/%EC%98%A8%EC%A0%95+%EA%B0%9C%EB%B0%9C+CI%2CCD+1.png)
+![image](https://github.com/On-jeong/Onjeong-back/assets/71383600/96cf0096-4dad-4dbe-aff7-97e5faa9574a)
 
 
 <br><br>
