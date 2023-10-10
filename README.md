@@ -1,7 +1,7 @@
 <br />
 <div align="center">
   <a href="https://www.onjeong-app.com/">
-    <img src="https://onjeong-prod.s3.ap-northeast-2.amazonaws.com/profile/24c4b2d3-be1c-4bd8-8d95-79e7a66ce23eonjeong%20logo.png?s=200&v=4" alt="Logo" width="80" height="80">
+    <img src="https://github.com/On-jeong/.github/assets/71383600/2a83f153-af03-45b5-b8d4-54ed5cf31737" alt="Logo" width="80" height="80">
   </a>
   <h3 align="center">Onjeong-Backend</h3>
 
